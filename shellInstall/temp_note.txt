@@ -55,7 +55,6 @@ grant all privileges on *.* to root@"%" identified by "sks123.com";
 ./soffice -headless -accept="socket,host=127.0.0.1,port=8100:urp;" -nofirststartwizard & 
 
 firewall-cmd --zone=public --add-port=8012/tcp --add-port=8100/tcp --add-port=9000/tcp --permanent
-firewall-cmd --zone=public --add-port=8100/tcp --permanent
 firewall-cmd --permanent --zone=public address="192.168.10.107" port protocol="tcp" port="111"
 grant all privileges on *.* to sone1@"%" identified by "sks123.com";
 create database smartone_common CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
@@ -77,6 +76,7 @@ revoke all on *.* from dba@localhost;
 # 查看数据库版本
 进入数据库，show version();
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 # 给文件中ip server，发送id_rsa.pub
 for i in `cat ip_sp.txt`;do ssh-copy-id -i ~/.ssh/id_rsa.pub root@$i;done
 #  显示过滤掉# 开头和空格后的配置信息
@@ -142,11 +142,11 @@ weekly：
 
 - 未完成：
 
-2. 端口备案（我手机上接收不到短信，已经联系了10086，正在后台受理）
+2. 端口备案（总算通过了，正在走管局审核...）
 
 ---
 - 下周计划：
-运维工作
+运维工作;
 项目上的安排
 
 
@@ -154,16 +154,17 @@ weekly：
 1. centos，整理笔记
     1. 用xmind整理下更好，梳理下
 
-2. 整理下，最近出差的地跌交通费，，然后打印天府通的电子单票。
+2. 整理下，最近出差的地铁交通费，，然后打印天府通的电子单票。
+3. 
 
 
 
 
 2. 内核有点难。搭建实验环境，好像也不太顺利，这个坑慢慢填
 
-3. linux_security， 服务器安全方面、安全加固， 的一些操作，能深入实践更好
+3. linux_security， 服务器安全方面、安全加固， 的一些操作， **能深入实践更好**
 4. linux shell 脚本
-    linux的 底层容器技术， 完善下
+5. linux的 底层容器技术， 完善下
 
 5. 每周一--周四，整理分享笔记，不管轮没轮到都整一篇。
 
