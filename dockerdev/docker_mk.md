@@ -150,20 +150,24 @@
 
 - 理解镜像构建上下文（context）
     1. 构建命令中的 . 通常被误认为是，指定Dockerfile的所在目录。这是因为在默认情况下，如若不额外指定dockerfile的话，会将上下文目录下的名为dockerfile的文件作为Dockerfile
-        
+
 1. 这是默认行为。实际上，dockerfile的文件名并不要求必须为dockerfile，而且并不要求必须位于上下文目录中。例如，-f ../Dockerfile.php 指定某个文件作为Dockerfile
-        
-    2. images打包迁移，save和load命令，不推荐使用，应该直接用docker registry，无论是dockerhub还是内网私仓
-    1. `docker save <IMAGE ID> | bzip2 | pv | ssh <用户名>@<主机名> 'cat | docker load'`  用ssh和pv和管道，将images迁移并能看进度条
-    
+
+    1. images打包迁移，save和load命令，不推荐使用，应该直接用docker registry，无论是dockerhub还是内网私仓
+    2. `docker save <IMAGE ID> | bzip2 | pv | ssh <用户名>@<主机名> 'cat | docker load'`  用ssh和pv和管道，将images迁移并能看进度条
+
         `docker save 7382 > mysql.tar`
-    
+
         `docker load -i /home/bakup/mysql.tar`
-    
+
     3. container打包，
-    
+
         1. export 将一个容器导出为文件， import将文件导入成为一个新镜像。 但相比docker save, 容器文件会丢失所有元数据和历史记录，仅保存容器当时的状态，相当于虚拟机快照
-    
+
+            docker export -o ubu_lzl01.tar d006
+
+            docker import ubu_lzl01.tar -- ubu/lzl001:v1.0
+
 - 容器的网络模式:       ifconfig -a ;route -n
     1. bridge模式,默认的,创建容器后,各容器为172.17.0.x  容器名docker_bri1
     2. host模式,要指定, --net host  容器不会虚拟出自己的网卡,不会配置自己的IP,而是使用宿主机的
@@ -232,10 +236,10 @@
 ## 磁盘占用
 
 1. `docker system df`             查看docker占用分布
-    
-1. `docker system df -v`      进一步查看空间占用细节，以确定是哪个image、container或volume占用过高空间
-    
-2. `docker system prune`          对占用空间自动清理
+
+2. `docker system df -v`      进一步查看空间占用细节，以确定是哪个image、container或volume占用过高空间
+
+3. `docker system prune`          对占用空间自动清理
     1. -a   一并清除所有未被使用的image和悬空image，    -f          用以强制删除，不提示信息
     2. `docker image prune`       删除悬空image
     3. `docker container prune`   删除无用的container(this will remove all stopped containers)
@@ -245,7 +249,7 @@
 
     > 悬空镜像：未配置任何tag（也就是无法被引用）的镜像。通常是由于镜像编译过程中未指定 -t 参数配置tag导致的。
 
-3. 手动清除
+4. 手动清除
     1. `docker rmi $(docker images -f "dangling=true" -q)`        删除所有悬空镜像，不删除未使用镜像
         -f filter
     2. `docker volume rm $(docker volume ls -qf dangling=true)`   删除未被容器引用的卷
@@ -564,3 +568,5 @@
 2. docker logs --tail=100 -f aada                                   查看容器输出信息，表示输出最近的若干日志
 
     man docker-logs
+
+3. `docker stats d006`                                              查看当前运行中容器的系统资源使用统计
