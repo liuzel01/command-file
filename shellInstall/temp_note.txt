@@ -402,7 +402,11 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     git rebase --continue                               会提示， Successfully rebased and updated refs/heads/master.
     git add -A（如果你在这期间， 对文件有更改）            所以说，你在修改注释的时候，就不要改动文件了
 
-10. 
+10. 拉取指定分支的代码，
+    
+    git clone -b meeting_standard_v3.0 http://192.168.10.68:8000/meeting/meeting.git
+
+
 
 
 
@@ -414,9 +418,6 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
     make: *** [strings-static] 错误 1
 - 解决： 
     1. yum install glibc-static
-
-
-
 
 
 
