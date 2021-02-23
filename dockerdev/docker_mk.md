@@ -22,6 +22,7 @@
 `docker run --rm -d --privileged --name=centos7 --hostname centos7 -v /opt/vol/shell/:/opt/shell/ xiaobai/centos7:v1 /usr/sbin/sshd -D`
 
 `docker run --rm -d --privileged -p 10020:22 --name=centoslzl --hostname centoslzl -v /opt/vol/shell/:/opt/shell/ lzl_centos7 /usr/sbin/sshd -D`
+    -v source:destination
 
 ---
 
@@ -41,6 +42,7 @@
     `docker build -t mysql:5.7-utf8 .`
 
     `docker run -d -p 4406:3306 --name mysql -v /opt/mysql/mysql-data/:/var/lib/mysql -e MYSQL_DATABASE=tiny_wish -e MYSQL_ROOT_PASSWORD=123456 mysql:5.7-utf8`
+        -v xxx/mysql:/var/lib/mysql:ro           加了ro后，容器内对所挂载数据卷内的数据就无法修改了
 
     `ss -tlnp | grep 4406`，检查数据库是否启动，用navicat连接上可以看到tiny_wish说明可以
 
@@ -326,6 +328,9 @@
         `docker ps -f label=zone=lzl --format='{{.Names}}'`           docker ps -f label=group=meet
 
 4. 快速进入容器内，没必要把ID全部写上~      `docker exec -it f69 sh`
+
+    有个弊端，就是在查看你创建好的容器信息， 看不到是具体的哪个镜像，不过查还是能查出来
+
     1. `docker inspect -f '{{.GraphDriver.Data.DeviceName}}' nginx`   查看容器的devicemapper 设备
     2. `docker inspect -f '{{.State.Pid}}' nginx01`                   查看容器的PID
 
@@ -551,11 +556,11 @@
 
         df -hT，                                                        查看对应的设备，所挂载的宿主机目录
 
-    5. 我虚拟机上有个脚本，不过是resize2fs 需要完善
+    5. ../shellInstall/modify_docker_disk.sh, 有个脚本，不过是 resize2fs ，**需要进行完善**
 
 ## 入门与实践
 
-1. docker history --no-trunc e445                                   查看镜像历史。images由多层组成，该命令列出各层的创建信息
+- docker history --no-trunc e445                                   查看镜像历史。images由多层组成，该命令列出各层的创建信息
 
     ```bash
     docker search --filter=is-official=true nginx                   查看官方提供的镜像
@@ -563,10 +568,63 @@
         --filter=stars=3 --limit=5                                  限制输出结果个数为，5个
         添加 --no-trunc                                             不截断输出结果
         --format string                                             格式化输出内容
+    docker search --format "table {{.Name}}\t{{.IsAutomated}}\t{{.IsOfficial}}" nginx
     ```
 
-2. docker logs --tail=100 -f aada                                   查看容器输出信息，表示输出最近的若干日志
+    注册服务器（ registry ）与仓库（ repository ）不同， registry 是存放仓库的具体服务器，一个registry 可有多个仓库，每个仓库下面又可有多个 image 。 所以，仓库可看作一个具体的项目或目录（参照 harbor）。
 
-    man docker-logs
+    **docker search 后面的 nginx， 其实代表 nginx 这个仓库。同理，可以搜索私仓里的某个项目仓库， docker search xxxxxx/env_dev**
 
-3. `docker stats d006`                                              查看当前运行中容器的系统资源使用统计
+- `docker logs --tail=100 -f aada`                                 查看容器输出信息，表示输出最近的若干日志
+
+    `man docker-logs`
+
+- `docker stats d006`                                              查看当前运行中容器的系统资源使用统计
+    `docker diff d006`                                              查看容器内的数据修改
+    `docker port d006`                                              查看容器的端口映射（无用但是）
+    `docker update --cpu-quota 1000000 d006`                        更新容器的一些运行时配置，主要是一些资源限制份额
+
+- 自动构建，automated builds， 自动化服务，可以自动跟随项目代码的变更而重新构建镜像。步骤如下（harbor+jenkins 也可实现）
+
+    1. 创建并登录docker hub，以及目标网站如github
+    2. 在目标网站中允许docker hub 访问服务
+    3. 在docker hub 中配置一个“自动创建”类型的项目
+    4. 选取一个目标网站中的项目（需要含dockerfile） 和分支
+    5. 指定dockerfile 的位置，并提交创建
+
+- 数据卷特性，
+
+    1. 数据卷可以在容器之间共享和重用，容器间传递数据变得高效方便
+    2. 对数据卷内数据的修改会立马生效，无论是容器内操作还是本地操作
+    3. 对数据卷的更新不会影响镜像，解耦应用和数据
+    4. 卷会一直存在，直到没有容器使用，可以安全地卸载它
+
+---
+
+1. 创建数据卷容器
+
+    docker run -it -v /dbdata --name dbdata 2c04
+
+    docker inspect 313e | grep -iC 10 mount                         能看到在外面（宿主机）并没有 /dbdata 文件夹，还是存储到docker 那的， /var/lib/docker/volumes/55e1xxx/_data
+
+    docker run -it --volumes-from  dbdata --name lzl01 2c04
+    --volumes-from  dbdata  --volumes-from data02                   可以从多个容器挂载多个数据卷，还可以从其他已经挂载了容器卷的容器来挂载
+
+    tips： volumes-from 数据卷来源容器，并不需要保持在运行状态
+
+    1. 利用数据卷容器来迁移数据
+    `docker run --volumes-from dbdata -v /home/database/:/backup --name lzl_wkr 2c04 tar cvf /backup/lzlbakup.tar /dbdata`                                           将数据卷 dbdata 备份到外面的 /home/database/lzlbackup.tar 完了后，容器 lzl_wkr 会处于 Exited 状态
+    `docker run -it -v /dbdata --name lzl0101 2c04`                 恢复数据到一个容器内（无用）...
+    `docker run -it  --volumes-from lzl0101 -v /home/database:/backup 2c04 tar xvf /backup/lzlbakup.tar`
+
+    另外，有时不希望数据保存在宿主机或容器中，可以使用tmpfs类型的数据卷，其中数据只存在于内存中，容器退出后自动删除
+
+2. 容器间互联，
+    1. docker run -d --name db001 xxxx/postgres
+    2. docker run -d -P --name web001 --link db:db xxxx/webapp python app.py
+
+        --link 格式为，--link name:alias, 其中，name是要链接的容器名称，alias是别名
+
+    3. 相当于在两个互联的容器间创建了一个虚拟通道，而不用映射它们的端口到宿主主机上，避免了暴露数据库服务端口到外部网络上
+
+3. 
