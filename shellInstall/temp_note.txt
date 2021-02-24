@@ -406,6 +406,13 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     
     git clone -b meeting_standard_v3.0 http://192.168.10.68:8000/meeting/meeting.git
 
+11. win10环境，使用 vscode remote ssh 远程连接服务器，免密连接
+
+    cmd, ssh-keygen -t rsa,                             生成秘钥
+    将win10 上的 用户/user01/.ssh/id_rsa.pub 上传到服务器的 /root/.ssh/  目录下，
+        cat id_rsa.pub  >> authorized_keys
+
+    本来，试讲win10上面的资料mount 挂载到虚拟机 centos7mini 上去的。 现在发现，用远程服务器可以同样实现，大功告成。 不过这样的话，虽然本地资源压力减轻，但是安全性就没了。
 
 
 
@@ -418,6 +425,15 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
     make: *** [strings-static] 错误 1
 - 解决： 
     1. yum install glibc-static
+
+- 前后端分项目，后端使用 spring-boot 的项目一般都打成了jar包，需要排查问题或是修改配置的时候需要解压和打包，
+
+    1. unzip meeting-standard.jar  -d meeting-stand                 解压包，
+    2. jar -cvfM0 meeting_lzl.jar meeting-stand/                    打包
+
+        1. 如果是我这种打了jar包，可以直接找到 对应的文件， vim修改内容并保存退出
+
+
 
 
 
@@ -469,8 +485,6 @@ TODO：
 ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 去报工系统那个地址，添加自己的报销单。不过需要首先由PM将项目建立好~~
 
-近几周，去部署项目的，交通费，自己找发票，来报销，关联到项目上。
-    只能是年后，再赶早报销了
 
 
 
