@@ -113,6 +113,8 @@
     RUN cd /opt/nginx-1.13.7 && ./configure --prefix=/usr/local/nginx && make && make install && ln -s /usr/local/nginx/sbin/nginx /usr/bin/nginx
     ADD ./nginx_tiny.conf /usr/local/nginx/conf
     RUN chmod +x /tiny/*.sh
+    
+    # 注意这里，只是起到声明作用，并不会自动完成端口映射。映射端口还是要，在启动时 -p 参数
     EXPOSE 88
     EXPOSE 8089
     CMD ["./startup.sh"]
@@ -188,9 +190,9 @@
 1. 使用jenkins/jenkins:lts，~~因为此版本jenkins较新~~  
 2. 注意将之前使用的jenkins的数据存储（比如/var/lib/jenkins），迁移到现服务器上；然后添加映射到容器内
 
-- 关于docer 多阶构建
+- 关于docer 多阶构建 multi-stage build
 
-1. `docker build -t lzl_meet_nginx  .  -f meeting_nginx.dockerfile`   创建项目所用nginx image
+1. `docker build -t lzl_meet_nginx  .  -f meeting_nginx.dockerfile`                     创建项目所用nginx image
     1. `docker build -t lzl_meet . -f meet.dockerfile`                                  创建项目所用后台  image
     2. `docker run -itd --name lzl_meet  -p 8090:8080 lzl_meet`
         `docker run -itd --name lzl_meet_nginx  -p 80:80 lzl_meet_nginx`
@@ -613,7 +615,7 @@
     tips： volumes-from 数据卷来源容器，并不需要保持在运行状态
 
     1. 利用数据卷容器来迁移数据
-    `docker run --volumes-from dbdata -v /home/database/:/backup --name lzl_wkr 2c04 tar cvf /backup/lzlbakup.tar /dbdata`                                           将数据卷 dbdata 备份到外面的 /home/database/lzlbackup.tar 完了后，容器 lzl_wkr 会处于 Exited 状态
+    `docker run --volumes-from dbdata -v /home/database/:/backup --name lzl_wkr 2c04 tar cvf /backup/lzlbakup.tar /dbdata`                                                         将数据卷 dbdata 备份到外面的 /home/database/lzlbackup.tar 完了后，容器 lzl_wkr 会处于 Exited 状态
     `docker run -it -v /dbdata --name lzl0101 2c04`                 恢复数据到一个容器内（无用）...
     `docker run -it  --volumes-from lzl0101 -v /home/database:/backup 2c04 tar xvf /backup/lzlbakup.tar`
 
@@ -627,4 +629,22 @@
 
     3. 相当于在两个互联的容器间创建了一个虚拟通道，而不用映射它们的端口到宿主主机上，避免了暴露数据库服务端口到外部网络上
 
-3. 
+---
+
+- 最佳实践
+
+1. 原则
+    1. 精简镜像用途
+    2. 选用合适的基础镜像
+    3. 提供注释和维护者信息
+    4. 正确使用版本号
+    5. 减少镜像层数
+    6. 恰当使用多步骤创建
+    7. 使用 .dockerignore 文件
+    8. 及时删除临时文件和缓存文件
+    9. 提高生成速度
+    10. 调整合理的指令顺序
+    11. 减少外部源的干扰， 需要指定持久的地址，并带版本信息等，让他人可以复用而不出错
+
+2. docker run -it --name busybox_lzl01 busybox                  busybox， linux系统的瑞士军刀，方便快速熟悉linux命令
+    docker run -it --name alpine_lzl01 alpine
