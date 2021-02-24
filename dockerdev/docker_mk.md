@@ -648,3 +648,9 @@
 
 2. docker run -it --name busybox_lzl01 busybox                  busybox， linux系统的瑞士军刀，方便快速熟悉linux命令
     docker run -it --name alpine_lzl01 alpine
+
+3. 就docker 容器是否启用SSH服务,
+    看容器用途,如若作为应用容器,容器行为围绕应用生命周期,较为简单,不需要人工的额外干预;而系统容器,则需要支持管理员的登录再进行操作,这时SSH服务就很有必要
+    并且,还能作为额外的开发环境来使用~
+
+4. 
