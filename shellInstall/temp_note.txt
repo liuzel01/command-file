@@ -151,8 +151,17 @@ weekly：
 1. centos，整理笔记
     1. 用xmind整理下更好，梳理下
 
-2. 整理下，最近出差的地铁交通费，，然后打印天府通的电子单票。
 1. docker 技术入门到实践第3版,补充一下 docker_mk.txt 文档
+
+2. smartone， 环境部署脚本， 方便其他客户（比如，windows） 快速搭建部署环境
+    版本信息，mariadb， Server version: 10.1.48-MariaDB MariaDB Server
+            java， openjdk version "1.8.0_272"
+            minio, version RELEASE.2020-11-19T23-48-16Z
+            nginx, nginx version: nginx/1.8.1
+            kkfile, wget https://kkfileview.keking.cn/kkFileView-2.2.1.tar.gz
+            redis, Redis server v=5.0.5 sha=00000000:0 malloc=jemalloc-5.1.0 bits=64 build=f3676dc6baceb8a
+
+
 
 
 
