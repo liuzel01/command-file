@@ -118,7 +118,7 @@ appid+secret，拼接的地址为，
 - 获取结果的最后一列, 例如  docker ps -a | awk '{print $NF}'
 
 
-- 哦，remote-ssh连接上后，打开文件夹，之后再开终端才会是你写代码的那个路径
+- 哦，remote-ssh连接上后，打开文件夹，之后再开终端才会是你写代码的那个路径a
 
 
 
@@ -126,7 +126,7 @@ appid+secret，拼接的地址为，
 
 
 
-汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报
+汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇汇报报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报
 weekly：
 - 已完成：
 
@@ -423,6 +423,19 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
     本来，试讲win10上面的资料mount 挂载到虚拟机 centos7mini 上去的。 现在发现，用远程服务器可以同样实现，大功告成。 不过这样的话，虽然本地资源压力减轻，但是安全性就没了。
 
+12. [ ! -n "$JAVA_HOME" ] && echo 'is null'             判断一个变量是否为空
+
+13. 条理清晰，有理有据
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -504,3 +517,4 @@ name=nginx repo
 baseurl=http://nginx.org/packages/centos/7/$basearch/ 
 gpgcheck=0 
 enabled=1
+
