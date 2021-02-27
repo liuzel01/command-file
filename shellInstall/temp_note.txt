@@ -161,6 +161,14 @@ weekly：
             kkfile, wget https://kkfileview.keking.cn/kkFileView-2.2.1.tar.gz
             redis, Redis server v=5.0.5 sha=00000000:0 malloc=jemalloc-5.1.0 bits=64 build=f3676dc6baceb8a
 
+3. 明天.打印下鵩鸟赋/
+    1. [大墙上藁行](https://so.gushiwen.org/shiwenv_9ea68b29d042.aspx), 
+
+4. 完善下jianli? 应该是在硬盘里头
+5. 写下安装smartone 环境脚本/
+6. 还有一道菜(昨儿吃的🍅鸡蛋)
+7. 有多少人破除了我执,这个好
+
 
 
 
@@ -483,7 +491,7 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
 
 
 TODO：
-
+1. 可以自己列一个, 日程(日常)时间安排
 
 
 
