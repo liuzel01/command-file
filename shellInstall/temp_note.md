@@ -155,7 +155,7 @@ weekly：
         ~~`mariadb， Server version: 10.1.48-MariaDB MariaDB Server`~~
         ~~`java， openjdk version "1.8.0_272"`~~
         ~~`minio, version RELEASE.2020-11-19T23-48-16Z`~~
-        `nginx, nginx version: nginx/1.8.1`
+        **`nginx, nginx version: nginx/1.8.1`**
         ~~`kkfile, wget https://kkfileview.keking.cn/kkFileView-2.2.1.tar.gz`~~
         `redis, Redis server v=5.0.5 sha=00000000:0 malloc=jemalloc-5.1.0 bits=64 build=f3676dc6baceb8a`
 
