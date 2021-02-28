@@ -1,4 +1,5 @@
-temp note
+# temp note
+
 角色 IP
 k8s-master  192.168.31.61（原）   10.0.2.4    master
 k8s-node1   192.168.31.62（原）   10.0.2.x    mode1
@@ -12,7 +13,7 @@ kubeadm init \
 --pod-network-cidr=10.244.0.0/16
 
 kubectl get nodes
-https://github.com/coreos/flannel/blob/v0.12.0/Documentation/kube-flannel.yml
+[kube-flannel.yml](https://github.com/coreos/flannel/blob/v0.12.0/Documentation/kube-flannel.yml)
 
 topk(5,(rate(namedprocess_namegroup_cpu_seconds_total{groupname="docker",instance=~"192.168.10.137"}[$interval])+
 rate(namedprocess_namegroup_thread_cpu_seconds_total{groupname="docker",instance=~"192.168.10.137"}[$interval])
@@ -24,13 +25,11 @@ rate(namedprocess_namegroup_thread_cpu_seconds_total{groupname="docker",instance
 )
 )
 
-topk(5,(irate(namedprocess_namegroup_cpu_seconds_total{groupname=~"$processes",instance=~"$host"}[$__interval])+ 
-rate(namedprocess_namegroup_thread_cpu_seconds_total{groupname=~"$processes",instance=~"$host"}[$__interval])
+topk(5,(irate(namedprocess_namegroup_cpu_seconds_total{groupname=~"$processes",instance=~"$host"}[$__interval])+rate(namedprocess_namegroup_thread_cpu_seconds_total{groupname=~"$processes",instance=~"$host"}[$__interval])
 ))
-##
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-mysql: 
+mysql:
 select user,host,password from mysql.user;
 CREATE USER 'sks_sone'@'localhost' IDENTIFIED BY 'sksHykf8gw6l8bfs3ef';
 grant all privileges on *.* to 'sks_sone'@'%' identified by 'sksHykf8gw6l8bfs3ef' with grant option;
@@ -71,10 +70,13 @@ grant all privileges on smartone_nacos.* to 'sks_sone'@'%' identified by 'sksHyk
 grant all privileges on smartone_license.* to 'sks_sone'@'%' identified by 'sksHykf8gw6l8bfs3ef' with grant option;
 
 # 查看用户的权限，及撤销权限
+
 show grants for sks_sone;
 revoke all on *.* from dba@localhost;
 # 查看数据库版本
+
 进入数据库，show version();
+
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 # 给文件中ip server，发送id_rsa.pub
@@ -117,27 +119,21 @@ appid+secret，拼接的地址为，
 
 - 获取结果的最后一列, 例如  docker ps -a | awk '{print $NF}'
 
-
 - 哦，remote-ssh连接上后，打开文件夹，之后再开终端才会是你写代码的那个路径a
-
-
-
-
-
-
 
 汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇汇报报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报
 weekly：
+
 - 已完成：
 
-1. 
-2. 会议系统: 
+1.
+2. 会议系统:
 
 ---
 
 - 其他：
 
-1. 
+1.
 
 - 未完成：
 
@@ -154,18 +150,19 @@ weekly：
 1. docker 技术入门到实践第3版,补充一下 docker_mk.txt 文档
 
 2. smartone， 环境部署脚本， 方便其他客户（比如，windows） 快速搭建部署环境
-    版本信息，mariadb， Server version: 10.1.48-MariaDB MariaDB Server
-            java， openjdk version "1.8.0_272"
-            minio, version RELEASE.2020-11-19T23-48-16Z
-            nginx, nginx version: nginx/1.8.1
-            kkfile, wget https://kkfileview.keking.cn/kkFileView-2.2.1.tar.gz
-            redis, Redis server v=5.0.5 sha=00000000:0 malloc=jemalloc-5.1.0 bits=64 build=f3676dc6baceb8a
+    版本信息，
 
-3. 明天.打印下鵩鸟赋/
-    1. [大墙上藁行](https://so.gushiwen.org/shiwenv_9ea68b29d042.aspx), 
+        ~~`mariadb， Server version: 10.1.48-MariaDB MariaDB Server`~~
+        ~~`java， openjdk version "1.8.0_272"`~~
+        ~~`minio, version RELEASE.2020-11-19T23-48-16Z`~~
+        `nginx, nginx version: nginx/1.8.1`
+        ~~`kkfile, wget https://kkfileview.keking.cn/kkFileView-2.2.1.tar.gz`~~
+        `redis, Redis server v=5.0.5 sha=00000000:0 malloc=jemalloc-5.1.0 bits=64 build=f3676dc6baceb8a`
+
+3. ~~曾国藩- 诫子书~~
 
 4. 完善下jianli? 应该是在硬盘里头
-5. 写下安装smartone 环境脚本/
+    5. 写下安装smartone 环境脚本/
 6. 还有一道菜(昨儿吃的🍅鸡蛋)
 7. 有多少人破除了我执,这个好
 
@@ -491,7 +488,7 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
 
 
 TODO：
-1. 可以自己列一个, 日程(日常)时间安排
+1. 可以自己列一个,  作息时刻表，这名不错
 
 
 
