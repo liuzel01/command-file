@@ -164,8 +164,6 @@ weekly：
 4. 完善下jianli? 应该是在硬盘里头
     5. 写下安装smartone 环境脚本/
 6. 还有一道菜(昨儿吃的🍅鸡蛋)
-7. 有多少人破除了我执,这个好
-
 
 
 
@@ -263,8 +261,8 @@ clouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclou
 2. 解决：在 /lib/systemd/system/docker.socket 里将SocketGroup=docker，改成root，
     之后，root用户启动就成功了。
     接着将用户加入到root用户组，或者是加入docker组，
-    sudo usermod -aG root lzl 
-    检查，id lzl 
+    sudo usermod -aG root lzl
+    检查，id lzl
     另外，还可以设置主组，sudo usermod -g root lzl
 
 - 问题记录：
