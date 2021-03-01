@@ -1,4 +1,8 @@
 #!/bin/bash
+# Function:  auto install the nginx-1.8.1
+# TODOList:
+# 1. 判断之前，有无安装 nginx， 版本是否一致，并备份后， 卸载
+# 2. 
 
 Ngx_bag="nginx-1.8.1"
 Ngx_src="${Ngx_bag}.tar.gz"
@@ -13,11 +17,11 @@ install_depend_package() {
 # 创建nginx源码包存放目录
 create_source_storage_directory() {
         if [ ! -d /usr/src/nginx ];then
-                mkdir /usr/src/nginx -p
+                mkdir -p /usr/src/nginx
         fi
 }
 
-# # 下载nginx源码包
+# # 下载nginx 源码包
 # download_nginx_package() {
 #         if [ ! -f ${Ngx_src} ];then
 #                 wget -c http://nginx.org/download/${Ngx_src}
@@ -64,8 +68,10 @@ WantedBy=multi-user.target
 install_depend_package
 create_source_storage_directory
 compile_install_nginx
-join_system_services_os7
-
+join_system_services_os7 &&\
+# 设置开机自启
+        systemctl enable nginx &>/dev/null &&\
+        echo '已设置为开机自启'
 
 # while true
 # do

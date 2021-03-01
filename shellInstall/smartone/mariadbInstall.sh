@@ -5,10 +5,11 @@
 # 2. 测试，服务器上是否有安装mariadb
 # 3. 开启端口
 # 3. 检测，安装前，需要的环境准备，或者说优化部分
-# 4. 判断是否有 mariadb 运行
+# 4. 判断是否有 mariadb 运行， 并备份后 卸载
     # yum list installed | grep MariaDB
     # yum remove MariaDB -y
     # rm -rf /var/lib/mysql/*
+# 5. 设置开机自启
 
 # 判断，mariadb.repo 是否存在
 mari=`find . ! -name "." -type d -prune -o -type f -name "*.repo" -print | grep -i mariadb`

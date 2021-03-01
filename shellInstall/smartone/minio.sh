@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # read, 让使用者自己输入
+# 设置成开机自启
+
 MINIO_DIR=/home/minio
 MINIO_HOST=127.0.0.1
 MINIO_PORT=9000
