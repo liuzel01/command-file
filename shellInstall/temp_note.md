@@ -148,6 +148,8 @@ weekly：
     1. 用xmind整理下更好，梳理下
 
 1. docker 技术入门到实践第3版,补充一下 docker_mk.txt 文档
+    1. 可以把西藏项目用到的试试写个dockerfile，比如 微心愿
+    2. 最近部署smartone测试环境，可以搞个dockerfile，就不必这么麻烦了
 
 2. smartone， 环境部署脚本， 方便其他客户（比如，windows） 快速搭建部署环境
     版本信息，
@@ -163,7 +165,6 @@ weekly：
 
 4. 完善下jianli? 应该是在硬盘里头
     5. 写下安装smartone 环境脚本/
-6. 还有一道菜(昨儿吃的🍅鸡蛋)
 
 
 
