@@ -1,9 +1,9 @@
 #!/bin/bash
 # 源码安装jdk
 # TODOList:
-# 2. 将 /etx/profile 文件中以前的配置jdk 删掉。 虽然 /etc/profile 是以追加在最后的内容 为准
-# 3. 判断默认安装的jdk，并卸载
-    # # yum list installed | grep jdk  && yum remove java-1.8.0-openjdk*
+# 1. 将 /etx/profile 文件中以前的配置jdk 删掉。 虽然 /etc/profile 是以追加在最后的内容 为准
+# 2. 判断默认安装的jdk，并卸载
+    # yum list installed | grep jdk  && yum remove java-1.8.0-openjdk*
 
 #变量
 java_dir="/usr/local/java"

@@ -19,21 +19,9 @@ cat >> /etc/profile <<eof
 export MINIO_ACCESS_KEY=minioadmin
 export MINIO_SECRET_KEY=luhgft125td4s
 eof
-
 # 后台指定参数运行
 cd $MINIO_DIR
 source /etc/profile
-# 开启端口， 9000
-open_port() {
-firewall-cmd --list-ports &>/dev/null
-[ $? -ne 0 ] && echo '请检查防火墙是否运行，再执行以下： ' &&\
-        echo 'firewall-cmd --zone=public --add-port=9000/tcp --permanent' &&\
-        echo 'firewall-cmd --reload' || firewall-cmd --zone=public --add-port=9000/tcp --permanent &>/dev/null &&\
-        firewall-cmd --reload &>/dev/null &&\
-        echo '检查端口是否添加成功： ' `firewall-cmd --zone=public --query-port=9000/tcp`
-}
-
-open_port
 # 设置成开机自启
 touch /etc/init.d/minio
 chmod +x /etc/init.d/minio
@@ -53,5 +41,15 @@ chkconfig --add minio &&\
 chkconfig --list | grep minio &>/dev/null &&\
     [ $? -eq 0 ] &&\
     echo 'minio已设置为开机自启'
+# 开启端口， 9000
+open_port() {
+firewall-cmd --list-ports &>/dev/null
+[ $? -ne 0 ] && echo '请检查防火墙是否运行，再执行以下： ' &&\
+        echo 'firewall-cmd --zone=public --add-port=9000/tcp --permanent' &&\
+        echo 'firewall-cmd --reload' || firewall-cmd --zone=public --add-port=9000/tcp --permanent &>/dev/null &&\
+        firewall-cmd --reload &>/dev/null &&\
+        echo '检查端口是否添加成功： ' `firewall-cmd --zone=public --query-port=9000/tcp`
+}
+open_port
 
 nohup ./minio server --address "${MINIO_HOST}:${MINIO_PORT}" $MINIO_DIR/data  >> $MINIO_DIR/minio.log 2>&1 &
