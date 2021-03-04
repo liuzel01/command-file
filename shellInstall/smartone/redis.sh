@@ -9,11 +9,11 @@ REDS_SRC=/usr/src/redis
 REDS_DIR=/usr/local/redis
 #安装依赖库
 yum install -y cpp binutils glibc-kernheaders glibc-common glibc-devel gcc make wget &>/dev/null
-[ ! -f packages/$REDS_BAG ] && wget http://download.redis.io/releases/$REDS_BAG -P packages/  &>/dev/null
+wget http://meeting.sipingsoft.com/smart/$REDS_BAG -P /tmp/  &>/dev/null
 
 [ ! -d  $REDS_DIR/bin ] && mkdir -p $REDS_DIR || echo $REDS_DIR'目录已存在'
 [ ! -d $REDS_SRC/src ] && mkdir -p $REDS_SRC &&\
-    tar -zxvf packages/$REDS_BAG -C $REDS_SRC --strip-components 1 &&\
+    tar -zxvf /tmp/$REDS_BAG -C $REDS_SRC --strip-components 1 &&\
     cd $REDS_SRC &&\
     make &&\
     make install PREFIX=$REDS_DIR || echo $REDS_SRC'目录已存在'
@@ -29,18 +29,12 @@ sed -i 's/#bind 127.0.0.1/bind 0.0.0.0/' redis.conf.bak
 grep -v '^#' redis.conf.bak | grep -v '^$' > redis.conf
 # sed -i '88s/protected-mode yes/protected-mode no/' $REDS_DIR/redis.conf
 
-#(将初始化文件配置到系统自启动的文件夹内，redisd为服务名，可自行修改)
-# mkdir -p /etc/redis
-# ln -s $REDS_DIR/redis.conf /etc/redis/6379.conf
-# ln -s $REDS_SRC/utils/redis_init_script /etc/init.d/redisd
-#(开启redis服务，服务名为：redisd)
-
 which redis-server &>/dev/null
 [ $? -eq 1 ] && ln -sf $REDS_DIR/bin/* /usr/bin/
 ss -tlnp | grep 6379 &>/dev/null
 [ $? -eq 0 ] && echo '端口6379 已被占用' || nohup redis-server redis.conf &
 
-netstat -ntpl|grep redis
+netstat -tlnp|grep redis
 
 # 设置开机自启
 touch /etc/init.d/redis
@@ -51,8 +45,7 @@ cat > /etc/init.d/redis <<salute
 # redis - this script starts and stops the redis daemon
 #
 # chkconfig:   - 85 15
-# description:  NGINX is an HTTP(S) server, HTTP(S) reverse 
-#               proxy and IMAP/POP3 proxy server
+# description:  redis is 
 # processname: redis
 
 nohup redis-server /usr/local/redis/redis.conf &
@@ -68,4 +61,11 @@ echo " "
 echo "如果你的系统是Centos 7在安装完毕后留意防火墙，可执行以下命令来放行redis 外部通信。"
 echo "firewall-cmd --zone=public --add-port=6379/tcp --permanent"
 echo "firewall-cmd --reload"
-echo "firewall-cmd --zone= public --query-port=6379/tcp"
+echo "firewall-cmd --zone=public --query-port=6379/tcp"
+# 开启端口， 6379
+firewall-cmd --list-ports &>/dev/null
+[ $? -ne 0 ] && echo '请检查防火墙是否运行，再执行以下： ' &&\
+        echo 'firewall-cmd --zone=public --add-port=6379/tcp --permanent' &&\
+        echo 'firewall-cmd --reload' || firewall-cmd --zone=public --add-port=6379/tcp --permanent &>/dev/null &&\
+        firewall-cmd --reload &>/dev/null &&\
+        echo '检查端口是否添加成功： ' `firewall-cmd --zone=public --query-port=6379/tcp`
