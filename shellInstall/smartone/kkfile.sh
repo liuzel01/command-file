@@ -33,9 +33,8 @@ else
   echo 'download package error...'
 fi
 }
-# 哦，没太多， 可以不写成函数
-install_redhat
 
+install_redhat
 # 下面是改配置文件， 和启动脚本相关的
 cd $KKFILEVIEW_BIN_FOLDER
 echo "Using KKFILEVIEW_BIN_FOLDER $KKFILEVIEW_BIN_FOLDER"
