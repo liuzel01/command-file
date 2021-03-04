@@ -29,20 +29,15 @@ create_source_storage_directory() {
 # }
 
 # 编译安装nginx
+# 这里, 对软件包是否存在判断不很准确
 compile_install_nginx() {
-        if [ ! -f /tmp/${Ngx_src} ];then
-                echo -e "\033[31m Nginx package is downloading from \033[0m"
-                wget http://meeting.sipingsoft.com/smart/$Ngx_src -P /tmp
-        else
-                if [ ! -d /tmp/${Ngx_bag} ];then
-                        tar -xzf /tmp/${Ngx_src} -C /usr/src/nginx/
-                else
-                        tar -xzf /tmp/${Ngx_src} -C /usr/src/nginx/
-                fi
-                cd /usr/src/nginx/${Ngx_bag}
-                ./configure --prefix=${Ngx_dir}
-                make && make install
-        fi
+        [ ! -f /tmp/${Ngx_src} ] && echo -e "\033[31m Nginx package is downloading from \033[0m" &&\
+                wget http://meeting.sipingsoft.com/smart/$Ngx_src -P /tmp &&\
+                tar -xzf /tmp/${Ngx_src} -C /usr/src/nginx/ &&\
+                cd /usr/src/nginx/${Ngx_bag} &&\
+                ./configure --prefix=${Ngx_dir} &&\
+                make && make install || echo '已存在 '${Ngx_src}
+
 }
 
 # centos7版本时，加入系统服务管理
@@ -60,7 +55,7 @@ ExecStop=/bin/kill -s TERM \$MAINPID
 
 [Install]
 WantedBy=multi-user.target
-" > /usr/lib/systemd/system/nginx_os7.service
+" > /usr/lib/systemd/system/nginx.service
         else
                 echo -e "\033[31m Nginx is not install\033[0m"
         fi
@@ -72,7 +67,9 @@ compile_install_nginx
 join_system_services_os7 &&\
 # 设置开机自启
         systemctl enable nginx &>/dev/null &&\
-        echo '已设置为开机自启'
+        echo '已设置为开机自启' &&\
+        systemctl start nginx &&\
+        ps -ef | grep nginx
 
 # 安装指引， 并调用前面的函数
 # echo -e "\033[33m =============================\033[0m"
