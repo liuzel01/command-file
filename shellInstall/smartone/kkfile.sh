@@ -3,7 +3,7 @@
 # 参考官方 , for redhat, ubuntu的没拷过来
 # TODOList:
 # 1. 判断一下，如果存在相关的软件包，则不必执行， install_redhat
-
+# 2. 设置为开机自启
 # KKFILEVIEW_DIR=/opt/openoffice
 
 DIR_HOME=("/opt/openoffice.org3" "/opt/libreoffice" "/opt/openoffice4" "/usr/lib/openoffice" "/usr/lib/libreoffice")
@@ -53,6 +53,29 @@ else
   done
 fi
 
+# 设置开机自启
+autostart() {
+touch /etc/init.d/kkfile
+chmod +x /etc/init.d/kkfile
+cat > /etc/init.d/kkfile <<salute
+#!/bin/sh
+#
+# kkfile - this script starts and stops the kkfile daemon
+#
+# chkconfig:   - 85 15
+# description:  kkfile is 
+# processname: kkfile
+cd $KKFILEVIEW_BIN_FOLDER
+nohup java -Dfile.encoding=UTF-8 -Dsun.java2d.cmm=sun.java2d.cmm.kcms.KcmsServiceProvider -Dspring.config.location=../config/application.properties -jar $KKFILE_VER.jar > ../log/kkFileView.log 2>&1 &
+salute
+chkconfig --add kkfile &&\
+    chkconfig kkfile on
+chkconfig --list | grep kkfile &>/dev/null &&\
+    [ $? -eq 0 ] &&\
+    echo 'kkfile已设置为开机自启'
+}
+
+autostart
 # 开启端口， 8100
 open_port() {
 firewall-cmd --list-ports &>/dev/null
@@ -70,4 +93,4 @@ echo "Starting kkFileView..."
 # echo "If this project is helpful to you, please star it on https://gitee.com/kekingcn/file-online-preview/stargazers"
 echo 'startup启动脚本路径： '$KKFILEVIEW_BIN_FOLDER
 echo "Please execute ./showlog.sh to check log for more information"
-nohup java -Dfile.encoding=UTF-8 -Dsun.java2d.cmm=sun.java2d.cmm.kcms.KcmsServiceProvider -Dspring.config.location=../config/application.properties -jar $KKFILE_VER.jar > ../log/kkFileView.log 2>&1 &
+sh /etc/init.d/kkfile 
