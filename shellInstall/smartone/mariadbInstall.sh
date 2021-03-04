@@ -8,6 +8,7 @@
     # yum list installed | grep MariaDB
     # yum remove MariaDB -y
     # rm -rf /var/lib/mysql/*
+# 5. windows_64bit ,下载地址, https://downloads.mariadb.org/interstitial/mariadb-10.1.48/winx64-packages/mariadb-10.1.48-winx64.msi/from/https%3A//mirrors.ustc.edu.cn/mariadb/
 
 # 判断，mariadb.repo 是否存在
 MARI=`find . ! -name "." -type d -prune -o -type f -name "*.repo" -print | grep -i mariadb`
