@@ -462,7 +462,7 @@
         ...
         这是cgroup 对于docke资源的控制，在用户态是如何表现的。大佬画了一张图linux_os_cgroup_user
 
-        <img src="https://cdn.jsdelivr.net/gh/liuzel01/MyPicBed/data/linux_os_cgroup_user.png" alt="nouse_linux_os_cgroup_user" style="zoom:80%;" />
+       ![linux_os CGroup 流程](https://gitee.com/liuzel01/picbed/raw/master/data/linux_os_cgroup_user_docker.png)
 
     3. 接着是，在内核中cgruop 如何实现资源控制
 
@@ -478,9 +478,9 @@
 
 ---
 
-1. 6种命名空间
+### 命名空间
 
-    回到docker上，docker通过Libcontainer来做这。用户只需要使用docker api就可以优雅地创建一个容器，docker exec的底层实现就是上面提过的setns
+回到docker上，docker通过Libcontainer来做这。用户只需要使用docker api就可以优雅地创建一个容器，docker exec的底层实现就是上面提过的setns
 
 2. rootfs，代表一个docker容器启动时（非运行后），其内部进程可见的文件系统视角，或者叫docker容器的根目录
 
@@ -488,7 +488,7 @@
 
     在容器中修改用户视角下文件时，docker借助COW（copy-on-write）机制节省不必要的内存分配。
 
-3. 举个例子，
+2. 举个例子，
     unshare --pid --fork --mount-proc /bin/bash，                       linux中进程PID为1的，叫做system进程。执行命令后，bash成了1号进程，ps -ef 能看到进程信息很少了
 
     exit 退出
@@ -505,7 +505,7 @@
 
         unshare --net --fork /bin/bash
 
-4. 有关docker的深入研究，[参考](http://docker-saigon.github.io/post/Docker-Internals/)，
+3. 有关docker的深入研究，[参考](http://docker-saigon.github.io/post/Docker-Internals/)，
 
 ---
 
@@ -556,7 +556,7 @@
 
     4. docker inspect gitlab | grep -iC 10 devicename，                 查看容器对应的设备名称（挂载）
 
-        df -hT，                                                        查看对应的设备，所挂载的宿主机目录
+        df -hT，                                                        								  查看对应的设备，所挂载的宿主机目录
 
     5. ../shellInstall/modify_docker_disk.sh, 有个脚本，不过是 resize2fs ，**需要进行完善**
 
@@ -674,13 +674,93 @@
         1. 在容器化应用中,项目架构师及开发人员的作用贯穿整个开发/测试/生产三个环节.
         2. 场景示例::
 
-    3. 容器与生产环境
+        ![传统模式 vs 容器模式下的工作流程比较](https://gitee.com/liuzel01/picbed/raw/master/data/image-20210304115631723_docker.png)
+        
 
-        1. 在这里,是指企业运行其商业应用的IT环境, 是性对于开发环境/预发布环境和测试环境而言的
-        2. 在云上使用doker
-        3. 建议:
+3. 容器与生产环境
+   1. 在这里,是指企业运行其商业应用的IT环境, 是性对于开发环境/预发布环境和测试环境而言的
+   2. 在云上使用doker
+   3. 建议:
+      1. 如果docker出现了不可控风险,是否考虑了备选的解决方案
+      2. 是否需要对docker容器做资源限制,以及如何限制,如CPU/内存/网络/磁盘等
+      3. 是否做了对于数据的备份xxxxxxxx？
 
-            1. 如果docker出现了不可控风险,是否考虑了备选的解决方案
-            2. 是否需要对docker容器做资源限制,以及如何限制,如CPU/内存/网络/磁盘等
-            3. 是否做了对于数据的备份xxxxxxxx？
-**传统模式 vs 容器模式下的工作流程比较.png**
+## 核心实现技术
+
+1. 基本架构
+
+   1. CS架构，包括客户端、服务端，通过镜像仓库来存储镜像。客户端和服务端可以运行在一个机器上，也可通过socker 或者RESTful API 来通信
+
+      服务端主要包括四个组件
+
+   ![docker基础架构](https://gitee.com/liuzel01/picbed/raw/master/data/image-20210304140321534_docker.png)
+
+   2. dockerd， 为客户端提供RESTful API，相应来自客户端的请求。模块化结构，通过专门的engine模块来分发管理各个客户端的任务。可单独升级
+
+      1. docker-proxy， 是docker的紫禁城。 当需要容器端口映射时，docker-proxy 完成网络映射配置
+
+         用 ss, 就只能看到docker-proxy的进程，看不到具体的进程
+
+      2. containerd， 是docker的子进程。提供gRPC接口，响应来自 dockerd的请求，对下管理runC镜像和容器环境。 可单独升级
+      3. containerd-shim， 是containerd的子进程， 为runC 容器提供支持，同时作为容器内进程的根进程
+
+   3. `docker network ls ` 查看当前系统网桥
+
+      `brctl show ` 看到连接到网桥上的虚拟网口的信息， 并将dcker0的 ip地址设置为默认的网关。 容器的网络流量通过宿主机的iptables 进行转发
+
+---
+
+1. UnionFS 联合文件系统。 改变了一个docker 镜像，则会创建一个新的层（layer）， 因此不必替换整个原镜像或者重新建立，只需要添加新层即可。 用户分发镜像时，也只需分发被改动的新层部分（增量部分）。 所以docker 的镜像管理十分轻量和快速
+
+2. 对于IO敏感型应用，一般推荐将容器修改的数据通过volume 方式挂载，而不是直接修改镜像内数据
+
+---
+
+1. docker 的本地网络实现，是利用了linux 上的网络命名空间和虚拟网络设备（特别是 veth pair）
+
+2. 基本概念。
+
+   1. docker 中的网络接口默认都是虚拟接口。 最大优势是转发效率极高。如下
+
+   ![容器网络的基本原理](https://gitee.com/liuzel01/picbed/raw/master/data/image-20210304163949464_docker.png)
+
+   2. 创建过程：创建一对虚拟接口，分别放到本地主机和新容器的命名空间中；
+
+      本地主机一端的虚拟接口连接到默认的docker0网桥或者指定网桥上，并具有一个以 veth 开头的唯一名字；
+
+      容器一端的虚拟接口将放到新创建的容器中去，并修改名字为eth0。 这个接口只在容器的命名空间可见；
+
+      从网桥可用地址段中获取一个空闲地址分配给容器的 ethO（例如172.17.0.2/16），并配置默认路由网关为dockerO 网卡的内部接口dockerO 的IP地址（例如172.17.42.1/16）
+
+      至此， 容器就可使用它所能看到的eth0 虚拟网卡来连接其他容器和访问外部网络
+
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
