@@ -1,8 +1,6 @@
 #!/bin/bash
 # 源码安装jdk
 # TODOList:
-# 源码文件， jdk-8u221-linux-i586.tar.gz 应与脚本放置同一路径，
-    # 1. 可以上传到公司域名目录下， 再下载获取， 比如 http://meeting.sipingsoft.com/apk-static/
 # 2. 将 /etx/profile 文件中以前的配置jdk 删掉。 虽然 /etc/profile 是以追加在最后的内容 为准
 # 3. 判断默认安装的jdk，并卸载
     # # yum list installed | grep jdk  && yum remove java-1.8.0-openjdk*
@@ -19,7 +17,8 @@ if [ ! -n "$JAVA_HOME" ];then
     yum remove java-1.8.0-openjdk* 
     if [ ! -f $java_dir ];then 
         mkdir -p $java_dir &&\
-            tar -zxvf jdk-8u221-linux-i586.tar.gz -C $java_dir
+            wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp
+            tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $java_dir
     fi
 else
 # 还要将 /etc/profile 文件内 JAVA_HOME类似内容删掉

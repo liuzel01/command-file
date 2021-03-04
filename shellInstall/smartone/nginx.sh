@@ -30,13 +30,14 @@ create_source_storage_directory() {
 
 # 编译安装nginx
 compile_install_nginx() {
-        if [ ! -f packages/${Ngx_src} ];then
-                echo -e "\033[31m Nginx package is not download\033[0m"
+        if [ ! -f /tmp/${Ngx_src} ];then
+                echo -e "\033[31m Nginx package is downloading from \033[0m"
+                wget http://meeting.sipingsoft.com/smart/$Ngx_src -P /tmp
         else
-                if [ ! -d packages/${Ngx_bag} ];then
-                        tar -xzf packages/${Ngx_src} -C /usr/src/nginx/
+                if [ ! -d /tmp/${Ngx_bag} ];then
+                        tar -xzf /tmp/${Ngx_src} -C /usr/src/nginx/
                 else
-                        tar -xzf /packages/${Ngx_src} -C /usr/src/nginx/
+                        tar -xzf /tmp/${Ngx_src} -C /usr/src/nginx/
                 fi
                 cd /usr/src/nginx/${Ngx_bag}
                 ./configure --prefix=${Ngx_dir}
@@ -73,38 +74,36 @@ join_system_services_os7 &&\
         systemctl enable nginx &>/dev/null &&\
         echo '已设置为开机自启'
 
-# while true
-# do
-#         echo -e "\033[33m =============================\033[0m"
-#         echo -e "\033[36m 1)Install Nginx\033[0m"
-#         echo -e "\033[36m 2)Join system services of OS6\033[0m"
-#         echo -e "\033[36m 3)Join system services of OS7\033[0m"
-#         echo -e "\033[36m 0)Exit\033[0m"
-#         read -p "Please Input Number: " Num
-#         case $Num in
+# 安装指引， 并调用前面的函数
+# echo -e "\033[33m =============================\033[0m"
+# echo -e "\033[36m 1)Install Nginx\033[0m"
+# echo -e "\033[36m 2)Join system services of OS6\033[0m"
+# echo -e "\033[36m 3)Join system services of OS7\033[0m"
+# echo -e "\033[36m 0)Exit\033[0m"
+# read -p "Please Input Number: " Num
+# case $Num in
 # 
-#                         echo -e "\033[33m Nginx is already installed\033[0m"
-#                 else
-#                         install_depend_package
-#                         create_source_storage_directory
-#                         download_nginx_package
-#                         compile_install_nginx
-#                 fi
-#                 ;;
-#                 2)
-#                 join_system_services_os6
-#                 ;;
-#                 3)
-#                 join_system_services_os7
-#                 ;;
-#                 0)
-#                 exit
-#                 ;;
-#                 *)
-#                 echo -e "\033[31mInput error,Please re-enter\033[0m"
-#                 ;;
-#         esac
-# done
+#                 echo -e "\033[33m Nginx is already installed\033[0m"
+#         else
+#                 install_depend_package
+#                 create_source_storage_directory
+#                 download_nginx_package
+#                 compile_install_nginx
+#         fi
+#         ;;
+#         2)
+#         join_system_services_os6
+#         ;;
+#         3)
+#         join_system_services_os7
+#         ;;
+#         0)
+#         exit
+#         ;;
+#         *)
+#         echo -e "\033[31mInput error,Please re-enter\033[0m"
+#         ;;
+# esac
 
 # # centos6版本时，加入系统服务管理
 # function join_system_services_os6 {

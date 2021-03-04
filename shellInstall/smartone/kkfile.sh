@@ -16,8 +16,8 @@ install_redhat() {
     mkdir -p $OFFICE_HOME
     cd $OFFICE_HOME
     echo '正在下载wget... ' ;yum install -y wget &>/dev/null
-    echo '正在下载'$KKFILE_VER'.tar.gz' ;wget https://kkfileview.keking.cn/$KKFILE_VER.tar.gz &&\
-      echo '正在下载Apache_OpenOffice' ;wget https://kkfileview.keking.cn/Apache_OpenOffice_4.1.6_Linux_x86-64_install-rpm_zh-CN.tar.gz -cO openoffice_rpm.tar.gz &>/dev/null &&\
+    echo '正在下载'$KKFILE_VER'.tar.gz' ;wget http://meeting.sipingsoft.com/smart/$KKFILE_VER.tar.gz &&\
+      echo '正在下载Apache_OpenOffice' ;wget http://meeting.sipingsoft.com/smart/Apache_OpenOffice_4.1.5_Linux_x86-64_install-rpm_zh-CN.tar.gz  -cO openoffice_rpm.tar.gz &>/dev/null &&\
       tar -zxf $KKFILE_VER.tar.gz &&\
       tar zxf openoffice_rpm.tar.gz &&\
       cd ./zh-CN/RPMS
@@ -44,7 +44,7 @@ grep 'office\.home' $OFFICE_HOME/$KKFILE_VER/config/application.properties | gre
 if [ $? -eq 0 ]; then
   echo "Using customized office.home"
 else
- for i in ${DIR_HOME[@]}
+  for i in ${DIR_HOME[@]}
   do
     if [ -f $i"/program/soffice.bin" ]; then
       FLAG=true
@@ -53,9 +53,22 @@ else
     fi
   done
 fi
+
+# 开启端口， 8100
+open_port() {
+firewall-cmd --list-ports &>/dev/null
+[ $? -ne 0 ] && echo '请检查防火墙是否运行，再执行以下： ' &&\
+        echo 'firewall-cmd --zone=public --add-port=8100/tcp --permanent' &&\
+        echo 'firewall-cmd --reload' || firewall-cmd --zone=public --add-port=8100/tcp --permanent &>/dev/null &&\
+        firewall-cmd --reload &>/dev/null &&\
+        echo '检查端口是否添加成功： ' `firewall-cmd --zone=public --query-port=8100/tcp`
+}
+
+open_port
+
 echo "Starting kkFileView..."
-echo "Please execute ./showlog.sh to check log for more information"
 # echo "You can get help in our official homesite: https://kkFileView.keking.cn"
 # echo "If this project is helpful to you, please star it on https://gitee.com/kekingcn/file-online-preview/stargazers"
-echo 'startup启动脚本路径： '$KKFILEVIEW_BIN_FOLDER 
+echo 'startup启动脚本路径： '$KKFILEVIEW_BIN_FOLDER
+echo "Please execute ./showlog.sh to check log for more information"
 nohup java -Dfile.encoding=UTF-8 -Dsun.java2d.cmm=sun.java2d.cmm.kcms.KcmsServiceProvider -Dspring.config.location=../config/application.properties -jar $KKFILE_VER.jar > ../log/kkFileView.log 2>&1 &
