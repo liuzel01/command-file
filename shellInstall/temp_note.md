@@ -442,7 +442,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     style： 修改文本格式
     test： 用于xxxx相关测试
     perf： 增加用户交互选项
-        perf： 修改判断语句
+        perf： 优化判断语句
     fix：  xxx详情页面，展示不全，滚动条不能xxxx
     docs： 新增xxxx文档
     refactor： 修改网站名字为xxxx网
