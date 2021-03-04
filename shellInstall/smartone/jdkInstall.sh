@@ -11,20 +11,20 @@ bak_rq=`date +%Y%m%d%H%M%S`
 jdk_dir=jdk1.8.0_221
 JAVA_HOME=/usr/local/java/$jdk_dir
 
-yum install glibc.i686
+yum install -y glibc.i686
 
 if [ ! -n "$JAVA_HOME" ];then
-    yum remove java-1.8.0-openjdk* 
-    if [ ! -f $java_dir ];then 
-        mkdir -p $java_dir &&\
-            wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp
+    yum remove -y java-1.8.0-openjdk* 
+    mkdir -p $java_dir &&\
+            wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp &&\
             tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $java_dir
-    fi
 else
 # 还要将 /etc/profile 文件内 JAVA_HOME类似内容删掉
+# $JAVA_HOME 这个判断条件， 不标准
     mv $java_dir /usr/local/java_bak_$bak_rq 2>/dev/null
-    mkdir -p $java_dir
-    tar -zxvf jdk-8u221-linux-i586.tar.gz -C $java_dir
+    mkdir -p $java_dir &&\
+        wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp &&\
+        tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $java_dir
 fi
 
 # 添加变量到文件，使用追加， 并输出结果
