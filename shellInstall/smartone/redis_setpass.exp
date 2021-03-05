@@ -1,0 +1,17 @@
+#!/usr/bin/expect
+# todolist
+# 1. 让使用者，自定义密码
+
+set timeout -1
+set PASS 123456
+# read -p "Please enter a new password: " pass
+
+spawn redis-cli -h 127.0.0.1 -p 6379
+expect "127.0.0.1:6379> " { send "config set requirepass $PASS\r"; }
+expect "127.0.0.1:6379> " { send "auth $PASS\r"; }
+expect "127.0.0.1:6379> " { send "config get requirepass\r"; }
+
+send "exit \r"
+
+# expect eof
+# exit
