@@ -8,10 +8,13 @@ backup_dir="/mysqlbak"
 backuptime="$(date +"%Y%m%d%H")"
 #删除时间设置为当前时间前2周
 deletetime=`date -d "2 week ago" +"%Y%m%d%H"`
-rm -f /mysqlbak/mysqlbak_$deletetime.zip
+rm -f $backup_dir/mysqlbak_$deletetime.zip
 #进入mysql可执行文件目录，本人mysql安装在/usr/local/mysql
 cd /usr/local/mysql/bin
 #执行导出全库语句
-./mysqldump -u$username -p$password --all-databases> "$backup_dir"/mysql_"$backuptime.sql"
-zip -r /mysqlbak/mysqlbak_$backuptime.zip  /mysqlbak/*.sql
-rm -rf /mysqlbak/*.sql
+# ./mysqldump -u$username -p$password --all-databases> "$backup_dir"/mysql_"$backuptime.sql"
+# 一般的，如果数据库过多， 就需要单独备份，这样还原也好做
+./mysqldump -u$username -p$password  smartone_nacos --skip-lock-tables         > "$backup_dir"/smartone_nacos_"$backuptime.sql"
+
+zip -r $backup_dir/mysqlbak_$backuptime.zip  $backup_dir/*.sql
+[ $? -eq 0 ] && rm -rf $backup_dir/*.sql
