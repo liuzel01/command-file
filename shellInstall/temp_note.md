@@ -77,7 +77,7 @@ show grants for sks_sone;
 revoke all on *.* from dba@localhost;
     这样就保证了权限为 USAGE，也可执行以下指令
     GRANT USAGE ON *.* TO 'user01'@'localhost' IDENTIFIED BY'123456' WITH GRANT OPTION;
-    然后，主从要登录的是普通用户， 才会看到read-only 效果
+    然后，主从, 要登录的是普通用户， 才会看到read-only 效果
 # 查看数据库版本
 
 进入数据库，show version();
