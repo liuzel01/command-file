@@ -1,18 +1,20 @@
 #!/bin/bash
-# Function:  auto install the mariadb-10.1
+# Function:  auto install the mariadb-10.4及以上（环境需要）
 # TODOList:
 # 1. 将手动输入的maria_ver, 与官网比较，测验是否存在
 # 2. 测试，服务器上是否有安装mariadb
 # 3. 检测，安装前，需要的环境准备，或者说优化部分
 # 4. 判断是否有 mariadb 运行， 并备份后 卸载
-    # yum list installed | grep MariaDB
+    # yum list installed | grep MariaDB*
     # yum remove MariaDB -y
     # rm -rf /var/lib/mysql/*
-# 5. windows_64bit ,下载地址, https://downloads.mariadb.org/interstitial/mariadb-10.1.48/winx64-packages/mariadb-10.1.48-winx64.msi/from/https%3A//mirrors.ustc.edu.cn/mariadb/
-
+# 5. windows_64bit ,下载地址, https://downloads.mariadb.org/interstitial/mariadb-10.4.18/winx64-packages/mariadb-10.4.18-winx64.msi/from/https%3A//mirrors.ustc.edu.cn/mariadb/
 # 判断，mariadb.repo 是否存在
+# 在winserver上建议使用mariadbxxxx.zip, https://iso.mirrors.ustc.edu.cn/mariadb/mariadb-10.4.18/winx64-packages/mariadb-10.4.18-winx64.zip
+# 安装方法--待补充
 MARI=`find . ! -name "." -type d -prune -o -type f -name "*.repo" -print | grep -i mariadb`
-MARI_VER=10.1
+MARI_VER=10.4
+
 cd /etc/yum.repos.d
 if [ ! -f "$MARI" ];then
 	echo 'there is no mariadb.repo'
