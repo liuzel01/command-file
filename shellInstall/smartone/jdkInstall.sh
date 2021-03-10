@@ -1,4 +1,7 @@
 #!/bin/bash
+set -e
+# 作用是， 告诉bash，如果任何语句的执行结果不是true则应该退出。 好处是防止错误像滚雪球变大导致一个致命的错误。 也可 set -o errexit
+
 # 源码安装jdk
 # TODOList:
 # 1. 将 /etx/profile 文件中以前的配置jdk 删掉。 虽然 /etc/profile 是以追加在最后的内容 为准
@@ -13,8 +16,8 @@ JAVA_HOME=/usr/local/java/$jdk_dir
 
 yum install -y glibc.i686
 
-if [ ! -n "$JAVA_HOME" ];then
-    yum remove -y java-1.8.0-openjdk* 
+if [ ! -z "$JAVA_HOME" ];then
+    yum remove -y java-*-openjdk*
     mkdir -p $java_dir &&\
             wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp &&\
             tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $java_dir
