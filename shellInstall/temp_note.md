@@ -131,11 +131,27 @@ weekly：
 
 - 已完成：
 
+周二：
+
 1. 会议系统:
+    1. 人社局，部署会议系统
+    2. 教育局，部署v3.0版本会议系统，历史版本有问题。。数据未保留，人员信息由联通那边的人新建
+    3. 卫健委，重新部署，（可能需要，）
+周三：
+
+1. 倍智， windows-linux备份mysql数据
+2. 填写， 备案信息导入模板（开通80端口）
+3. 高新区工会综合管理系统， 备份、更新项目包ROOT.war
 
 ---
 
 - 其他：
+    1. 西藏服务器，221.236.26.68清理文件，
+        1. 是备份文件太频繁。现在改成每天备份一次，同时清理10天之前的数据
+        2. 是/var/lib/docker 占用空间较多(docker有一些是不再使用的服务，不知是否能清除)
+        3. home/fileServer, 备份在同一服务器的 / 目录，
+
+    2.
 
 - 未完成：
 
@@ -174,16 +190,39 @@ weekly：
 
 1. linux-secure-方法论,这块要深究的话,其实还有很多
     不过,从使用配置层面,也要先达到最低标准
-    另,从攻击角度来搞,或许能理解得更深, 你说呢
+    另,从攻击角度来搞,或许能理解得更深, ？？
 
 
 
 
 
 
+smartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmasmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartone
+
+1. 在导入数据库步骤中， 会出现导入smartone_common.sql 报错，据说是用navicat15 导出来的原因。下次， 可用命令行导入试试
+    `audit_date` date GENERATED ALWAYS AS (cast(`audit_time` as date)) STORED COMMENT '审核日期' NULL, 将最后的NULL 删除掉，再次导入就可了~
+    1. 在导入时，也会出现报错， 需要设置一下 参数log_bin_trust_function_creators
+    show variables like 'log_bin_trust_function%';
+    set global log_bin_trust_function_creators=1;
+    flush privileges;
+    在 my.cnf 文件中，[mysqld] 部分添加一行， log_bin_trust_function_creators=1
+    最后， systemctl restart mariadb, 检查下，
+        show variables like 'log_bin_trust_function%';
+
+2. 在登录页面，会出现验证码刷不出来 这种情况。 因为缺省的是装libgcc这个包。但java一般还是会用32 位的包，所以安装个32位即可。加上false ，因为多个库不能共存，可以安装时加上后面一句~
+    yum install libgcc.i686 --setopt=protected_multilib=false
+
+3. 首先确保 nacos启动成功， 包名： sone-register.jar
+
+4. 备份，linux- windows，使用rsync， systemctl start | enable rsyncd
+    windows 使用 cwRsync
+    rsync --list-only rsync@192.168.4.248::backup
 
 
+5. 要更改数据库内容，否则点击模块会跳转到test 测试环境去
+    update smartone_common.sys_busi_app set baack_host_url='http://192.168.4.248' where back_host_url='https://test.sipingsoft.com' 
 
+    jps， 查看正在运行的java项目
 minio:9000， 开机自启，
     AccessKey: minioadmin
     SecretKey: luhgft125td4s
@@ -198,6 +237,7 @@ redis，开机自启
     退出后，重新    redis-cli -h 192.168.0.133 -p 6379 -a vxqas168lta3p
         验证，  auth vxqas168lta3p
         config get requirepass
+        重启后失效，所以要写到配置去， redis.conf, 添加一行requirepass vxqas168lta3p
 
 
 
