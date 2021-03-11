@@ -71,24 +71,24 @@ create database smartone_license CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 grant all privileges on smartone_nacos.* to 'sks_sone'@'%' identified by 'sksHykf8gw6l8bfs3ef' with grant option;
 grant all privileges on smartone_license.* to 'sks_sone'@'%' identified by 'sksHykf8gw6l8bfs3ef' with grant option;
 
-# 查看用户的权限，及撤销权限
+- 查看用户的权限，及撤销权限
 
 show grants for sks_sone;
 revoke all on *.* from dba@localhost;
     这样就保证了权限为 USAGE，也可执行以下指令
     GRANT USAGE ON *.* TO 'user01'@'localhost' IDENTIFIED BY'123456' WITH GRANT OPTION;
     然后，主从, 要登录的是普通用户， 才会看到read-only 效果
-# 查看数据库版本
+- 查看数据库版本
 
-进入数据库，show version();
+  进入数据库，show version();
 
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+- 给文件中ip server，发送id_rsa.pub
 
-# 给文件中ip server，发送id_rsa.pub
-for i in `cat ip_sp.txt`;do ssh-copy-id -i ~/.ssh/id_rsa.pub root@$i;done
-#  显示过滤掉# 开头和空格后的配置信息
-grep -Ev "^$|^[#;]" redis.conf
-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  for i in `cat ip_sp.txt`;do ssh-copy-id -i ~/.ssh/id_rsa.pub root@$i;done
+
+- 显示过滤掉# 开头和空格后的配置信息
+
+`grep -Ev "^$|^[#;]" redis.conf`
 
 wget https://mirrors.tuna.tsinghua.edu.cn/mariadb//mariadb-10.4.6/bintar-linux-systemd-x86_64/mariadb-10.4.6-linux-systemd-x86_64.tar.gz
 mariadb密码，sks123.com
@@ -143,6 +143,8 @@ weekly：
 2. 填写， 备案信息导入模板（开通80端口）
 3. 高新区工会综合管理系统， 备份、更新项目包ROOT.war
 
+周四：
+
 ---
 
 - 其他：
@@ -164,8 +166,9 @@ weekly：
 - 进行中：
 
 1. centos，整理笔记
-    1. 用xmind整理下更好，梳理下
-
+   
+1. 用xmind整理下更好，梳理下
+   
 2. docker 技术入门到实践第3版,补充一下 docker_mk.txt 文档
     **最迟这周了！！！！！！！！！**
 
@@ -201,14 +204,15 @@ smartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartone
 
 1. 在导入数据库步骤中， 会出现导入smartone_common.sql 报错，据说是用navicat15 导出来的原因。下次， 可用命令行导入试试
     `audit_date` date GENERATED ALWAYS AS (cast(`audit_time` as date)) STORED COMMENT '审核日期' NULL, 将最后的NULL 删除掉，再次导入就可了~
+    
     1. 在导入时，也会出现报错， 需要设置一下 参数log_bin_trust_function_creators
     show variables like 'log_bin_trust_function%';
     set global log_bin_trust_function_creators=1;
     flush privileges;
     在 my.cnf 文件中，[mysqld] 部分添加一行， log_bin_trust_function_creators=1
     最后， systemctl restart mariadb, 检查下，
-        show variables like 'log_bin_trust_function%';
-
+    show variables like 'log_bin_trust_function%';
+    
 2. 在登录页面，会出现验证码刷不出来 这种情况。 因为缺省的是装libgcc这个包。但java一般还是会用32 位的包，所以安装个32位即可。加上false ，因为多个库不能共存，可以安装时加上后面一句~
     yum install libgcc.i686 --setopt=protected_multilib=false
 
@@ -218,9 +222,8 @@ smartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartone
     windows 使用 cwRsync
     rsync --list-only rsync@192.168.4.248::backup
 
-
 5. 要更改数据库内容，否则点击模块会跳转到test 测试环境去
-    update smartone_common.sys_busi_app set baack_host_url='http://192.168.4.248' where back_host_url='https://test.sipingsoft.com' 
+    update smartone_common.sys_busi_app set baack_host_url='http://192.168.4.248' where back_host_url='https://test.sipingsoft.com'
 
     jps， 查看正在运行的java项目
 minio:9000， 开机自启，
@@ -239,18 +242,66 @@ redis，开机自启
         config get requirepass
         重启后失效，所以要写到配置去， redis.conf, 添加一行requirepass vxqas168lta3p
 
+- 问题记录：
 
+1. rsync 实现linux-windows 文件同步，[参考](https://www.mekau.com/3773.html)
+    win客户端同步linux服务器上的文件夹（将linux服务器的文件夹内容， 同步到windows客户端主机）
+    倍智-192.168.4.247服务器， 可能由于不是管理员administrator；也可能由于是winserver服务器，暂时文件备份未成功；也可能由于win无创建ssh-keygen 秘钥导致的
 
+    1. 在我本机（win10）测试过，可以通过运行脚本同步文件夹（centos7.9）。再将脚本加入到win的计划定时任务，就可以实现定时同步linux上的数据文件了~
 
+    linux服务端，安装 `yum install -y rsync`， linux服务器地址，192.168.10.27，账户名： root，密码： 123456
 
+    ```
+    /etc/rsyncd.conf 
+    uid = root
+    gid = root
+    max connections = 4 
+    pid file = /var/run/rsyncd.pid
+    lock file = /var/run/rsync.lock
+    log file = /var/log/rsyncd.log
+    
+    #下面这个模块区域可以配置多个，每一个代表一个允许同步的path
+    [backup]
+    path = /home/lzl/bakup/
+    ignore errors
+    read only = no
+    list = true
+    auth user = root 
+    secrets file = /etc/rsyncd.pwd
+    
+    /etc/rsyncd.pwd
+    123456
+    ```
+
+    1. win客户端，下载[cwRsync_5.4.1_x86_Free.zip](https://download.cnet.com/cwRsync/3001-18511_4-75765181.html)，
+
+       在程序 rsync.exe 同级下创建backup.bat 即可，还有文件passwd.txt，和文件夹backback，内容如下
+
+    ```backup.bat
+    backup.bat
+    cd C:\Users\44362\Desktop\cwRsync_5.4.1_x86_Free
+    rsync -vzrtopg --password-file=passwd.txt root@192.168.10.27::backup /cygdrive/C/Users/44362/Desktop/cwRsync_5.4.1_x86_Free/backback
+    
+    pause
+    # 用于测试。 测试成功后，上一行可去掉，
+    ```
+
+    ```passwd.txt
+    passwd.txt
+    123456
+    ```
+
+    **最后，将bat 批处理文件加入到计划定时任务就好了~**
+
+    ![cwRsync-win10](https://gitee.com/liuzel01/picbed/raw/master/data/20210311163931.png)
 
 clouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclcloucloucloucloucloucloucloucloucloucloucloucloucl
+
 - 需求：
     1. 将云上环境与私网环境，统一管理起来
     2. 可将私网环境，打造成私有云，进行管理
         1. 做云的话，就是要实现虚拟化。
-    3. 
-    4. 
 - 概述：
     1. PAAS（平台即服务），是一种云计算产品。服务提供商，向客户提供平台，使他们能够开发/运行和管理业务应用程序，而无需构建和维护基础设施等软件开发过程
     2. 概念区分？？？
@@ -265,9 +316,9 @@ clouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclou
             3. 精简的文件系统可以小到100M以内。可以将容器看作是在内核上运行的独立代码单元，非常轻，因此占用的资源也少
             4. 优点：启动快，资源占用小，移植性好
                 1. 缺点：隔离性不好，共用宿主机的内核，底层能够访问。依赖宿主机内核所以容器的系统选择有限制。
-            5. 这部分可参考这里，https://www.cnblogs.com/goldsunshine/p/9872142.html
-                1. openstack与k8s融合架构下的实践，https://www.kubernetes.org.cn/2121.html
-                2. 基于docker与k8s技术构建容器云平台，https://www.huweihuang.com/kubernetes-notes/concepts/architecture/paas-based-on-docker-and-kubernetes.html
+            5. 这部分可参考[这里](https://www.cnblogs.com/goldsunshine/p/9872142.html)
+                1. openstack与k8s融合架构下的[实践](https://www.kubernetes.org.cn/2121.html)
+                2. 基于docker与k8s技术构建容器云[平台](https://www.huweihuang.com/kubernetes-notes/concepts/architecture/paas-based-on-docker-and-kubernetes.html)
                 3. openshift,redhat开源的，应该用不到
     3. 使用场景？？？
         1. openstack+KVM：
@@ -283,32 +334,8 @@ clouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclou
             微服务架构和API管理；服务拆分来抽象不同系统的权限控制和任务，以方便业务开发人员通过服务组合快速的创建企业应用。
     4. 阿里云  kubernetes，集群管理实践，（解决之道）
 
-
 - 总结：
     1. 从下而上搭建，如若要平滑过度（不影响现有环境），可以底层OS->>docker->>编排工具
-
-
-- 问题记录：
-
-1. 描述：启动docker报错，E: Sub-process /usr/bin/dpkg returned an error code (1)
-    systemd[1]: Failed to listen on Docker Socket for the API.
-    -- Subject: Unit docker.socket has failed
-2. 解决：在 /lib/systemd/system/docker.socket 里将SocketGroup=docker，改成root，
-    之后，root用户启动就成功了。
-    接着将用户加入到root用户组，或者是加入docker组，
-    sudo usermod -aG root lzl
-    检查，id lzl
-    另外，还可以设置主组，sudo usermod -g root lzl
-
-- 问题记录：
-
-1. 
-
-
-
-
-
-
 
 unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
@@ -317,14 +344,15 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 2. 192.168.10.62，还未拉取镜像，因为上面运行有其他mino 等容器。待确认后，再操作
 
 3. 要创建一个集群，则需要提供一台主机，用作执行命令，用来创建rancher-agent，rancher/rancher-agent:v2.5.3，就下面这个
-    sudo docker run -d --privileged --restart=unless-stopped --net=host -v /etc/kubernetes:/etc/kubernetes -v /var/run:/var/run registry.cn-hangzhou.aliyuncs.com/rancher/rancher-agent:v2.5.3 --server https://192.168.10.62 --token 2bpf9cfsfmdmh2n4pc555lntcrr2jx4ppmwkt5tc9b97zsv5pnmn42 --ca-checksum df3f8a359b9a6daf65468988b37cc689901ebe8637d2039349fcbbdd1c9a968e --etcd --controlplane --worker
-    1. 若不执行，你的集群就会提示，Waiting for etcd and controlplane nodes to be registered
-
-4. uname -r` ,`cat /etc/redhat-release
-    rpm -import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
-    rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm
+    `sudo docker run -d --privileged --restart=unless-stopped --net=host -v /etc/kubernetes:/etc/kubernetes -v /var/run:/var/run registry.cn-hangzhou.aliyuncs.com/rancher/rancher-agent:v2.5.3 --server https://192.168.10.62 --token 2bpf9cfsfmdmh2n4pc555lntcrr2jx4ppmwkt5tc9b97zsv5pnmn42 --ca-checksum df3f8a359b9a6daf65468988b37cc689901ebe8637d2039349fcbbdd1c9a968e --etcd --controlplane --worker`
+    
+1. 若不执行，你的集群就会提示，Waiting for etcd and controlplane nodes to be registered
+   
+4. `uname -r`,`cat /etc/redhat-release`
+    `rpm -import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org`
+    `rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-2.el7.elrepo.noarch.rpm`
     yum list installed | grep kernel*                   查看已安装的内核软件
-    tar -zxvf linux-5.5.9.tar.gz  -C /usr/local 
+    tar -zxvf linux-5.5.9.tar.gz  -C /usr/local
     yum install elfutils-libelf-devel bc ncurses-devel flex bison -y
 
     lspci -v                查看使用的网卡驱动（内核默认使用的网卡驱动r8169，但实际网卡是r8168）
@@ -352,12 +380,16 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         比如，sudo !!
         !10，执行第10条命令
 
-    4. cd !$，              !$得到上条命令的最后一位参数
+    4. 技巧
+
+        ```bash
+        cd !$，              !$得到上条命令的最后一位参数
         cd !^，             得到上条命令的第一个参数
         vim !:2             !:n，得到上条命令第n个参数
         vim !:1-2           !:x-y，得到上条命令从x到y的参数
         vim !:n*            !:n*,从n开始到最后的参数
         cp -r !*            !*,得到上条命令所有参数
+        ```
 
     5. !$:h,                  选取路径开头
         比如，ls /usr/share/fonts/urw-base35
@@ -365,13 +397,13 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
         1. !$:t,            选取路径结尾
             tar -zxvf !$:t,     会到，tar zxvf nginx-1.4.7.tar.gz
-            cd !$:r，           选取文件名，比如：unzip lzl01.zip,  cd !$:r 
+            cd !$:r，           选取文件名，比如：unzip lzl01.zip,  cd !$:r
 
         2. echo !$:e，          选取扩展名
 
     6. ctrl+w，             删除操作，光标前的一个单词（终端操作）
     7. cp lzl01.zip{,.bak}，创建备份文件，使用{} 构造字符串
-        touch {1..10..2}.txt 
+        touch {1..10..2}.txt
 
     8. 使用`` 或者 $() 做命令替换； 嵌套时，$()可读性更清晰
 
@@ -379,12 +411,12 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     1. cat /proc/cpuinfo  | grep processor | wc -l      4个CPU处理器
         cat /proc/cpuinfo | grep cores                  每个CPU含4个核心，所以是，16核处理器
         或者通过lscpu，CPU(s): 4,   Core(s) per socket: 4， Socket(s): 1，      所以，其逻辑CPU的数量就是Socket*core*thread  也就是threads
-    2. 
+    2.
 
 7. 通过端口查找进程PID，通过PID查找端口，就这几个命令
     ps -ef | grep 9090
     ss -tulnp | grep 9090
-    lsof -n -i :9090 | grep -i listen 
+    lsof -n -i :9090 | grep -i listen
     1. 为什么top 查出来的pid，用ss命令查找不到呢，查不到对应的进程，
         哦，用netstat 也是查不到的
         但是用ps，就能查找到，
@@ -452,40 +484,42 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
 15. 规范使用 git commit
 
-    ```text
-    type(必须)
-    用于说明git commit的类别，只允许使用下面的标识。
-    feat：新功能（feature）。
-    fix/to：修复bug，可以是QA发现的BUG，也可以是研发自己发现的BUG。
-        fix：产生diff并自动修复此问题。适合于一次提交直接修复问题
-        to：只产生diff不自动修复此问题。适合于多次提交。最终修复问题提交时使用fix
-    docs：文档（documentation）。
-    style：格式（不影响代码运行的变动）。
+     ```text
+     type(必须)
+     用于说明git commit的类别，只允许使用下面的标识。
+     feat：新功能（feature）。
+     fix/to：修复bug，可以是QA发现的BUG，也可以是研发自己发现的BUG。
+         fix：产生diff并自动修复此问题。适合于一次提交直接修复问题
+         to：只产生diff不自动修复此问题。适合于多次提交。最终修复问题提交时使用fix
+     docs：文档（documentation）。
+     style：格式（不影响代码运行的变动）。
+     
+     refactor：重构（即不是新增功能，也不是修改bug的代码变动）。
+     perf：优化相关，比如提升性能、体验。
+     test：增加测试。
+     chore：构建过程或辅助工具的变动。
+     revert：回滚到上一个版本。
+     merge：代码合并。
+     sync：同步主线或分支的Bug。
+     ```
 
-    refactor：重构（即不是新增功能，也不是修改bug的代码变动）。
-    perf：优化相关，比如提升性能、体验。
-    test：增加测试。
-    chore：构建过程或辅助工具的变动。
-    revert：回滚到上一个版本。
-    merge：代码合并。
-    sync：同步主线或分支的Bug。
-    ```
+     1. commit message 格式： <type>(<scope>): <subject>
+     2. 下面举几个例子： 按照使用频率排列
 
-    1. commit message 格式： <type>(<scope>): <subject>
-    2. 下面举几个例子： 按照使用频率排列
+     ```text
+     feat： 创建项目
+         feat： 添加数据页面xxxxxx
+     style： 修改文本格式
+     test： 用于xxxx相关测试
+     perf： 增加用户交互选项
+         perf： 优化判断语句
+     fix：  xxx详情页面，展示不全，滚动条不能xxxx
+     docs： 新增xxxx文档
+     refactor： 修改网站名字为xxxx网
+     ```
 
-    ```text
-    feat： 创建项目
-        feat： 添加数据页面xxxxxx
-    style： 修改文本格式
-    test： 用于xxxx相关测试
-    perf： 增加用户交互选项
-        perf： 优化判断语句
-    fix：  xxx详情页面，展示不全，滚动条不能xxxx
-    docs： 新增xxxx文档
-    refactor： 修改网站名字为xxxx网
-
-
+16. 删除 /data/lscgdj目录下， 10天之前的tar.gz 包
+    find /data/lscgdj -name "*-backup-onlywebinf.tar.gz" -a -mtime +10 -exec rm -rf {} \; &>/dev/null
 
 
 
@@ -579,3 +613,5 @@ name=nginx repo
 baseurl=http://nginx.org/packages/centos/7/$basearch/ 
 gpgcheck=0 
 enabled=1
+
+```
