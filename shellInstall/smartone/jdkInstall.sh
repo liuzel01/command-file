@@ -9,25 +9,25 @@ set -e
     # yum list installed | grep jdk  && yum remove java-1.8.0-openjdk*
 
 #变量
-java_dir="/usr/local/java"
+JAVA_DIR="/usr/local/java"
 bak_rq=`date +%Y%m%d%H%M%S`
-jdk_dir=jdk1.8.0_221
-JAVA_HOME=/usr/local/java/$jdk_dir
+JDK_DIR="jdk1.8.0_221"
+JAVA_HOME=/usr/local/java/$JDK_DIR
 
 yum install -y glibc.i686
 
 if [ ! -z "$JAVA_HOME" ];then
     yum remove -y java-*-openjdk*
-    mkdir -p $java_dir &&\
+    mkdir -p $JAVA_DIR &&\
             wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp &&\
-            tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $java_dir
+            tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $JAVA_DIR
 else
 # 还要将 /etc/profile 文件内 JAVA_HOME类似内容删掉
 # $JAVA_HOME 这个判断条件， 不标准
-    mv $java_dir /usr/local/java_bak_$bak_rq 2>/dev/null
-    mkdir -p $java_dir &&\
+    mv $JAVA_DIR /usr/local/java_bak_$bak_rq 2>/dev/null
+    mkdir -p $JAVA_DIR &&\
         wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp &&\
-        tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $java_dir
+        tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $JAVA_DIR
 fi
 
 # 添加变量到文件，使用追加， 并输出结果
