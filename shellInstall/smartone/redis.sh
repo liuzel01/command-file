@@ -7,6 +7,8 @@
 REDS_BAG=redis-5.0.5.tar.gz
 REDS_SRC=/usr/src/redis
 REDS_DIR=/usr/local/redis
+REDS_PASS=vxqas168lta3p
+
 #安装依赖库
 yum install -y cpp binutils glibc-kernheaders glibc-common glibc-devel gcc make wget &>/dev/null
 wget http://meeting.sipingsoft.com/smart/$REDS_BAG -P /tmp/  &>/dev/null
@@ -24,7 +26,8 @@ mkdir log
 mv $REDS_SRC/redis.conf $REDS_SRC/redis.conf.bak
 cp $REDS_SRC/redis.conf.bak redis.conf.bak
 sed -i 's/daemonize no/daemonize yes/' redis.conf.bak
-sed -i 's/#bind 127.0.0.1/bind 0.0.0.0/' redis.conf.bak
+sed -i 's/bind 127.0.0.1/bind 0.0.0.0/' redis.conf.bak
+sed -i 's/# requirepass foobared/requirepass '"$REDS_PASS"'/' redis.conf.bak
 
 grep -v '^#' redis.conf.bak | grep -v '^$' > redis.conf
 # sed -i '88s/protected-mode yes/protected-mode no/' $REDS_DIR/redis.conf
