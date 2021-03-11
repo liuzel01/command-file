@@ -10,7 +10,7 @@ set -e
 
 #变量
 JAVA_DIR="/usr/local/java"
-bak_rq=`date +%Y%m%d%H%M%S`
+BAK_RQ=`date +%Y%m%d%H%M%S`
 JDK_DIR="jdk1.8.0_221"
 JAVA_HOME=/usr/local/java/$JDK_DIR
 
@@ -24,7 +24,7 @@ if [ ! -z "$JAVA_HOME" ];then
 else
 # 还要将 /etc/profile 文件内 JAVA_HOME类似内容删掉
 # $JAVA_HOME 这个判断条件， 不标准
-    mv $JAVA_DIR /usr/local/java_bak_$bak_rq 2>/dev/null
+    mv $JAVA_DIR /usr/local/java_bak_$BAK_RQ 2>/dev/null
     mkdir -p $JAVA_DIR &&\
         wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp &&\
         tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $JAVA_DIR
