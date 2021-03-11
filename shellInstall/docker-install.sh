@@ -29,7 +29,7 @@ SCRIPT_COMMIT_SHA="${LOAD_SCRIPT_COMMIT_SHA}"
 #   * edge (deprecated)
 DEFAULT_CHANNEL_VALUE="stable"
 if [ -z "$CHANNEL" ]; then
-# 判断指定的变量值是否存在
+# -z 判断指定的变量值是否存在
 	CHANNEL=$DEFAULT_CHANNEL_VALUE
 fi
 
