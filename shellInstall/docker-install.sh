@@ -46,6 +46,7 @@ fi
 mirror=''
 DRY_RUN=${DRY_RUN:-}
 while [ $# -gt 0 ]; do
+# 当参数个数 大于0时,
 	case "$1" in
 		--mirror)
 			mirror="$2"
@@ -78,6 +79,9 @@ fi
 
 command_exists() {
 	command -v "$@" > /dev/null 2>&1
+# $@ 表示所有参数, 
+# command -v 可以判断一个命令是否支持. command -v docker && echo "docker yes!!" || echo "nooooo"
+# 2>&1 将标准错误输出定向到标准输出.前面标准输出已重定向到了 空, 所以标准错误也输出到了 空
 }
 
 is_dry_run() {
@@ -85,6 +89,7 @@ is_dry_run() {
 		return 1
 	else
 		return 0
+# 0 表示程序正常退出,1 表示异常退出
 	fi
 }
 
