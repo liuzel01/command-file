@@ -16,3 +16,4 @@ curl -u "bak_upload:abc123." ftp://192.168.10.25/$MONTIME/ -T "{$FILES,$SQLFILE}
 rm -rf  $SQLFILE $FILES
 
 echo "Backup completed."
+
