@@ -1,3 +1,4 @@
+#!/bin/bash
 #2018.06.09
 #定义用户名和密码
 MYSQL_USER="root"
@@ -16,13 +17,12 @@ FTP_DIR="mysqlbak"
 
 # 这个可能不太对
 # rm -f $BACKUP_DIR/mysqlbak_$DELETETIME.zip
-#进入mysql可执行文件目录，本人mysql安装在/usr/local/mysql
+#进入mysql可执行文件目录，服务器mysql安装在/usr/local/mysql
 bak_mysql() {
 cd /usr/bin
 # ./mysqldump -u$MYSQL_USER -p$MYSQL_PASS --all-databases> "$BACKUP_DIR"/mysql_"$TIME.sql"
 ./mysqldump -u$MYSQL_USER -p$MYSQL_PASS  smartone_common --skip-lock-tables         > "$BACKUP_DIR"/smartone_common_"$TIME.sql"
 ./mysqldump -u$MYSQL_USER -p$MYSQL_PASS  smartone_nacos --skip-lock-tables         > "$BACKUP_DIR"/smartone_nacos_"$TIME.sql"
-
 # 因为后面放到win2012上去，打成zip包
 zip -r $BACKUP_DIR/mysqlbak_$TIME.zip  $BACKUP_DIR/*.sql &>/dev/null
 [ $? -eq 0 ] && rm -rf $BACKUP_DIR/*.sql
