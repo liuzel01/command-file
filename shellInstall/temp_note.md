@@ -134,26 +134,10 @@ weekly：
 周二：
 
 1. 会议系统:
-    1. 人社局，部署会议系统
-    2. 教育局，部署v3.0版本会议系统，历史版本有问题。。数据未保留，人员信息由联通那边的人新建
-    3. 卫健委，重新部署，（可能需要，）
-周三：
-
-1. 倍智， windows-linux备份mysql数据
-2. 填写， 备案信息导入模板（开通80端口）
-3. 高新区工会综合管理系统， 备份、更新项目包ROOT.war
-
-周四：
 
 ---
 
 - 其他：
-    1. 西藏服务器，221.236.26.68清理文件，
-        1. 是备份文件太频繁。现在改成每天备份一次，同时清理10天之前的数据
-        2. 是/var/lib/docker 占用空间较多(docker有一些是不再使用的服务，不知是否能清除)
-        3. home/fileServer, 备份在同一服务器的 / 目录，
-
-    2.
 
 - 未完成：
 
@@ -166,9 +150,9 @@ weekly：
 - 进行中：
 
 1. centos，整理笔记
-   
+
 1. 用xmind整理下更好，梳理下
-   
+
 2. docker 技术入门到实践第3版,补充一下 docker_mk.txt 文档
     **最迟这周了！！！！！！！！！**
 
@@ -252,7 +236,7 @@ redis，开机自启
 
     linux服务端，安装 `yum install -y rsync`， linux服务器地址，192.168.10.27，账户名： root，密码： 123456
 
-    ```
+    ```bash
     /etc/rsyncd.conf 
     uid = root
     gid = root
@@ -390,6 +374,11 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         vim !:n*            !:n*,从n开始到最后的参数
         cp -r !*            !*,得到上条命令所有参数
         ```
+
+        1. vim 中，:s/Administrator/$FTP_USER/g                 替换当前行所有的
+                去掉g，就是替换当前行第一个
+            :19,21s/username/USERNAME/g                         替换19-21行所有的
+            :19,$s/username/USERNAME/g                          替换19-最后一行所有的
 
     5. !$:h,                  选取路径开头
         比如，ls /usr/share/fonts/urw-base35
@@ -601,7 +590,8 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
         1. 如果是我这种打了jar包，可以直接找到 对应的文件， vim修改内容并保存退出
 
 TODO：
-1. 可以自己列一个,  作息时刻表，这名不错。 作息时刻表
+
+2. 因为要喝中药，就有了“找个瓶子存储”的需求，并且喝的时候还要加热，买个微波炉算咯
 
 ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 去报工系统那个地址，添加自己的报销单。不过需要首先由PM将项目建立好~~
