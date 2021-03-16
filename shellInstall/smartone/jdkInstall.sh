@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 # 作用是， 告诉bash，如果任何语句的执行结果不是true则应该退出。 好处是防止错误像滚雪球变大导致一个致命的错误。 也可 set -o errexit
-
+#
 # 源码安装jdk
 # TODOList:
 # 1. 将 /etx/profile 文件中以前的配置jdk 删掉。 虽然 /etc/profile 是以追加在最后的内容 为准
@@ -15,18 +15,25 @@ JDK_DIR="jdk1.8.0_221"
 JAVA_HOME=/usr/local/java/$JDK_DIR
 
 yum install -y glibc.i686
+# 判断url是否存在，不存在或下载不了，有响应提示
+if_url_corr() {
+if ! wget http://meeting.sipingsoft.com/smart/nginxxxx-1.8.1.tar.gz -P /tmp/ &>/dev/null; then
+        echo "下载nginx源码包出错 ，请检查url是否正确"
+        exit 1
+fi
+}
 
 if [ ! -z "$JAVA_HOME" ];then
     yum remove -y java-*-openjdk*
     mkdir -p $JAVA_DIR &&\
-            wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp &&\
+            if_url_corr &&\
             tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $JAVA_DIR
 else
 # 还要将 /etc/profile 文件内 JAVA_HOME类似内容删掉
 # $JAVA_HOME 这个判断条件， 不标准
     mv $JAVA_DIR /usr/local/java_bak_$BAK_RQ 2>/dev/null
     mkdir -p $JAVA_DIR &&\
-        wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp &&\
+        if_url_corr &&\
         tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $JAVA_DIR
 fi
 
