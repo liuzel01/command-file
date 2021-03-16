@@ -13,7 +13,7 @@ cur_dir=/opt/unixbench
 
 # Install necessary libaries
 if [ "$os" == 'centos' ]; then
-    yum -y install make automake gcc autoconf gcc-c++ time perl-Time-HiRes
+    yum -y install wget make automake gcc autoconf gcc-c++ time perl-Time-HiRes
 else
     apt-get -y update
     apt-get -y install make automake gcc autoconf time perl
@@ -28,12 +28,14 @@ if [ -s UnixBench5.1.3.tgz ]; then
     echo "UnixBench5.1.3.tgz [found]"
 else
     echo "UnixBench5.1.3.tgz not found!!!download now..."
-    if ! wget -c https://raw.githubusercontent.com/xx/Command-file/master/src/UnixBench5.1.3.tgz; then
+#     if ! wget -c https://raw.githubusercontent.com/xx/Command-file/master/src/UnixBench5.1.3.tgz; then
+	if ! wget http://soft.laozuo.org/scripts/UnixBench5.1.3.tgz; then
         echo "Failed to download UnixBench5.1.3.tgz, please download it to ${cur_dir} directory manually and try again."
         exit 1
     fi
 fi
-tar -zxvf UnixBench5.1.3.tgz && rm -f UnixBench5.1.3.tgz
+
+tar -zxvf UnixBench5.1.3.tgz &>/dev/null && rm -f UnixBench5.1.3.tgz
 cd UnixBench/
 
 #Run unixbench
