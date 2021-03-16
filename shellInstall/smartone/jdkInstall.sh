@@ -8,19 +8,25 @@ set -e
 # 2. 判断默认安装的jdk，并卸载
     # yum list installed | grep jdk  && yum remove java-1.8.0-openjdk*
 
-#变量
 JAVA_DIR="/usr/local/java"
 BAK_RQ=`date +%Y%m%d%H%M%S`
 JDK_DIR="jdk1.8.0_221"
-JAVA_HOME=/usr/local/java/$JDK_DIR
+JAVA_HOME="/usr/local/java/$JDK_DIR"
+LOGFILE="jdkInstall.log"
 
 yum install -y glibc.i686
 # 判断url是否存在，不存在或下载不了，有响应提示
 if_url_corr() {
-if ! wget http://meeting.sipingsoft.com/smart/nginxxxx-1.8.1.tar.gz -P /tmp/ &>/dev/null; then
-        echo "下载nginx源码包出错 ，请检查url是否正确"
+if ! wget http://meeting.sipingsoft.com/smart/nginx-1.8.1.tar.gz -P /tmp/ &>/dev/null; then
+	log "下载nginx源码包出错 ，请检查url是否正确"
         exit 1
 fi
+}
+
+log() {
+# 打印日志并追加到日志文件
+    echo "$(date "+%Y-%m-%d %H:%M:%S")" "$1"
+    echo -e "$(date "+%Y-%m-%d %H:%M:%S")" "$1" >> ${LOGFILE}
 }
 
 if [ ! -z "$JAVA_HOME" ];then
@@ -37,7 +43,7 @@ else
         tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $JAVA_DIR
 fi
 
-# 添加变量到文件，使用追加， 并输出结果
+# 添加变量到文件，追加到系统配置，并输出结果
 cat >> /etc/profile << bb
 export JAVA_HOME=$JAVA_HOME
 export CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib
@@ -45,6 +51,6 @@ export PATH=$PATH:$JAVA_HOME/bin:$JAVA_HOME/jre/bin
 bb
 
 source /etc/profile &&\
-echo "jdk is installed !" &&\
-echo 'JAVA_HOME: '$JAVA_HOME &&\
+log "jdk is installed !" &&\
+log "JAVA_HOME: "$JAVA_HOME &&\
 java -version
