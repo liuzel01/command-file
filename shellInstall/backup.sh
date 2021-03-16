@@ -4,10 +4,10 @@
 # curl -X/--request 指定运行什么命令
 	# -T/--upload-file 上传文件
 
-TIME=`date +%Y-%m-%d_%H-%M-%S`
-MONTIME=`date +%Y-%m`
+TIME=$(date +%Y-%m-%d_%H-%M-%S)
+MONTIME=$(date +%Y-%m)
 SQLFILE='/tmp/192.168.10.107-db-'$TIME'.sql.gz'
-FILES='/tmp/192.168.10.107-files-'$TIME'.tar.gz'
+FILES="/tmp/192.168.10.107-files-"${TIME}".tar.gz"
 
 tar zcvf $FILES /home/fdfs_storage/data/
 mysqldump -usiping -pbackup.com sksdb_crm | gzip -c > $SQLFILE
