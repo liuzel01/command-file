@@ -453,10 +453,13 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 ```text
     alias cd='cdls'
     cdls() {
-            \cd $1 &&
-            ls
+            \cd $1 &&\
+                    ls
     }
 ```
+
+    `echo $0`           查看目前使用的终端
+    `showkey -a`        显示按键的ASCII码
 
 13. 反引号 `` 和 &()
     TIME=$(date +%Y-%m-%d_%H-%M-%S)
@@ -474,7 +477,11 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     :set ff         观察会弹出什么，fileformat=unix是正常的， =dos就不正确
     :set ff=unix    就将文件格式改变成了unix了
 
-12. Git， 七大基本原则
+14. printenv 查看全局环境变量
+    set, 显示特定进程的所有环境变量集.其中除了全局,还有本地环境变量
+    标准约定: 若要创建新环境变量,则建议使用小写字母.用于区分个人与系统环境变量
+
+15. Git， 七大基本原则
     1. 每次commit只做一件事。 linux中心原则是，所有更改都必须分解为小步骤进行。针对某一项单一任务的更改
     2. commit不能破坏构建。 不仅应该将所有更改分解为尽可能小的变量（上一条），而且不能破坏内核（就内核维护而言）。 即每个步骤都必须完全起作用，并且不引起退化。
     3. 所有代码都是二等分的。 二等分是一种操作，它使开发者可以找到所有发生错误的确切时间点。 只有在遵守上面的规则的情况下，才能很好起作用。开发者可以在十几次编译/测试中，从成千上万的可能 commit 中分离出导致问题出现的 commit 。Git 甚至可以通过 git bisect 功能帮助自动化该过程
