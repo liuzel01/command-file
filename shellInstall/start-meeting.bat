@@ -10,4 +10,6 @@ REM mshta vbscript:createobject("wscript.shell").run("%~nx0 h",0)(window.close)&
 REM :begin
 
 java "-Dthin.root=." "-Dthin.offline=true" -jar meeting-standard.jar
+:: java "-Dthin.root=." "-Dthin.offline=true" -Xdebug -Xrunjdwp:transport=dt_socket,suspend=n,server=y,address=8040 -jar meeting-standard.jar
+:: 加了一个远程断点的。 用于在，启用了远程调试支持的情况下，运行打包的应用程序
 pause
