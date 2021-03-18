@@ -462,8 +462,12 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     }
 ```
 
+    1.  要查看活动别名的列表,使用 `alias -p`
+    
+
     `echo $0`           查看目前使用的终端
     `showkey -a`        显示按键的ASCII码
+
 
 13. 反引号 `` 和 &()
     TIME=$(date +%Y-%m-%d_%H-%M-%S)
@@ -566,7 +570,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 # }
 ```
 
-
+1. `/usr/sbin/useradd -D` 能看到SKEL= ,意思是系统会将 /etc/skel 目录中的内容(可以看作模板)复制到用户的HOME 目录. 因此作为管理员可以自定义这些内容
 
 1. Git， 七大基本原则
 
