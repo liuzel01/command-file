@@ -11,7 +11,10 @@ REDS_PASS=vxqas168lta3p
 
 #安装依赖库
 yum install -y cpp binutils glibc-kernheaders glibc-common glibc-devel gcc make wget &>/dev/null
-wget http://meeting.sipingsoft.com/smart/$REDS_BAG -P /tmp/  &>/dev/null
+wget http://meeting.sipingsoft.com/smart/$REDS_BAG -P /tmp/  2>&1 >/dev/null
+# 将错误输出绑定到标准输出上，标准输出默认，所以输出到屏幕；然后，标准输出重定向到/dev/null
+# 不同于 >/dev/null 2>&1 标准输出和错误输出都丢弃
+# & 意为两个输出绑定在一起，作用是错误输出和标准输出同用一个文件描述符。两个输出输出到同一个地方
 
 [ ! -d  $REDS_DIR/bin ] && mkdir -p $REDS_DIR || echo $REDS_DIR'目录已存在'
 [ ! -d $REDS_SRC/src ] && mkdir -p $REDS_SRC &&\
