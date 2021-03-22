@@ -136,7 +136,8 @@ weekly：
 - 已完成：
 
 1. 会议系统:
-
+    1. 新津人大/双流永安镇政府,更新会议系统.整理需求,发邮件
+    2. 
 ---
 
 - 其他：
@@ -276,44 +277,9 @@ redis，开机自启
 
 clouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclcloucloucloucloucloucloucloucloucloucloucloucloucl
 
-- 需求：
-    1. 将云上环境与私网环境，统一管理起来
-    2. 可将私网环境，打造成私有云，进行管理
-        1. 做云的话，就是要实现虚拟化。
-- 概述：
-    1. PAAS（平台即服务），是一种云计算产品。服务提供商，向客户提供平台，使他们能够开发/运行和管理业务应用程序，而无需构建和维护基础设施等软件开发过程
-    2. 概念区分？？？
-        openstack,虚拟化。作为一个开源的云计算平台，利用虚拟化技术和底层存储服务，提供了可扩展/灵活/适应性强的云计算服务。
-            1. 一台物理机上跑多台虚拟机，虚拟机共享物理机的CPU/内存/IO硬件资源；但逻辑上虚拟机之间是相互隔离的。
-            2. 宿主机一般使用hypervisor实现硬件资源虚拟化。一般来讲，半虚拟化-KVM,是使用率最高的技术
-            3. 优点：隔离性强。所有虚拟机都有自己的协议栈，虚拟机之间底层相互隔离
-                1. 缺点：资源占用多。虚拟化技术本身占用资源，宿主机性能有10%左右消耗
-        k8s,docker。是容器管理编排引擎，其底层实现是容器技术。
-            1. write once, run anywhere，打包的app可以在几乎任何地方以相同的方式运行
-            2. 相比于KVM虚拟化技术，特点是启动快，资源占用小。虚拟化启动虚拟机是min级别，docker是s级别
-            3. 精简的文件系统可以小到100M以内。可以将容器看作是在内核上运行的独立代码单元，非常轻，因此占用的资源也少
-            4. 优点：启动快，资源占用小，移植性好
-                1. 缺点：隔离性不好，共用宿主机的内核，底层能够访问。依赖宿主机内核所以容器的系统选择有限制。
-            5. 这部分可参考[这里](https://www.cnblogs.com/goldsunshine/p/9872142.html)
-                1. openstack与k8s融合架构下的[实践](https://www.kubernetes.org.cn/2121.html)
-                2. 基于docker与k8s技术构建容器云[平台](https://www.huweihuang.com/kubernetes-notes/concepts/architecture/paas-based-on-docker-and-kubernetes.html)
-                3. openshift,redhat开源的，应该用不到
-    3. 使用场景？？？
-        1. openstack+KVM：
-            安全和隔离；
-            提供基础设施；如若在业务场景中，很依赖虚拟机，例如编译内核或驱动开发等
-            存储需求；存储和计算，存储需求很大的场景下，能提供高效安全的存储方案，所以电信行业看好openstack的原因
-            动态数据场景；即不需要反复创建和销毁这些服务的运行环境
-        2. k8s+（docker）：
-            业务变化快，业务量未知；
-            需要反复地创建和销毁这些服务的运行环境；其优势在于启动快速，消耗资源小
-            需要业务模块化和可伸缩性；容器可以很容易地将app的功能分解为单个组件，符合微服务架构的设计模式
-            应用云化；
-            微服务架构和API管理；服务拆分来抽象不同系统的权限控制和任务，以方便业务开发人员通过服务组合快速的创建企业应用。
-    4. 阿里云  kubernetes，集群管理实践，（解决之道）
-
-- 总结：
-    1. 从下而上搭建，如若要平滑过度（不影响现有环境），可以底层OS->>docker->>编排工具
+- 系统更新,要一个一个部门去更新,有点烦
+    1. 先不论内网部署的. 外网部署的各个部门,要保证版本是统一的
+    2. 每次遇到问题后,都是即时更新,没有新开一个分支.不知道版本是如何管理控制的
 
 unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
