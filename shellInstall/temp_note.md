@@ -469,7 +469,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 3. 拉取指定分支的代码，
 
    `git clone -b meeting_standard_v3.0 http://192.168.xx.xx:8000/meeting/meeting.git`
-
+    `git remote -v `  查看仓库的origin
 4. 规范使用 git commit
 
     ```text
