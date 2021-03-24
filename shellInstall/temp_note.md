@@ -137,7 +137,7 @@ weekly：
 
 1. 会议系统:
     1. 新津人大/双流永安镇政府,更新会议系统.整理需求,发邮件
-    2. 
+    2. 测试会议系统gy
 ---
 
 - 其他：
@@ -420,8 +420,6 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 ```
 
     1.  要查看活动别名的列表,使用 `alias -p`
-    
-
     `echo $0`           查看目前使用的终端
     `showkey -a`        显示按键的ASCII码
 
@@ -446,93 +444,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     set, 显示特定进程的所有环境变量集.其中除了全局,还有本地环境变量
     标准约定: 若要创建新环境变量,则建议使用小写字母.用于区分个人与系统环境变量
 
-16. 内网穿透~了解
-    lanproxy，代理，本质上是通过公网ip:端口，来访问到你的内网服务器上所映射端口，上的服务~
-    [可参考此](https://github.com/ffay/lanproxy)
-
-    目前，我是在xizang 所属服务器上搭建了Server 端；在内网linux搭建了client端。通过`ssh root@221.236.26.67 -p 5222` 来远程到内网linux
-
-    再一个client端，是部署在了win10工作机上，mstsc远程目的机即可。此过程使用的是，服务端所属服务器上的带宽。此方法比向日葵要稳定些。
-
-    <img src="https://gitee.com/liuzel01/picbed/raw/master/data/20210318115145_lanproxy_web_win.png" alt="image-20210318115145615" style="zoom:80%;" />
-
-    1. 比方说，以下，是我Server端（部署在公网服务器/云服务器）上的配置，proxy-server-0.1/conf/config.properties
-
-    ```latex
-    server.bind=0.0.0.0
-    # 与代理客户端通信端口
-    server.port=14900
-    
-    # ssl相关配置
-    server.ssl.enable=true
-    server.ssl.bind=0.0.0.0
-    server.ssl.port=14903
-    server.ssl.jksPath=test.jks
-    server.ssl.keyStorePassword=123456
-    server.ssl.keyManagerPassword=123456
-    # 配置可忽略
-    server.ssl.needsClientAuth=false
-    
-    # WEB在线配置管理相关信息
-    config.server.bind=0.0.0.0
-    config.server.port=18090
-    config.admin.username=admin
-    config.admin.password=admin123
-    ```
-
-    以下，是我client端（部署在内网服务器/目的机）的配置，proxy-client-0.1/conf/config.properties
-
-    ```latex
-    # client.key=client
-    # 在Server-WEB端-添加客户端-生成随机秘钥后，填写进配置文件
-    client.key=55154da57451494c9d81bad09f28416e
-    ssl.enable=true
-    ssl.jksPath=test.jks
-    ssl.keyStorePassword=123456
-    
-    # server.host=127.0.0.1
-    server.host=221.236.26.67
-    
-    # default ssl port is 4993
-    # 注意端口与服务端端口保持一致。 因为ssl.enable 都为true
-    server.port=14903
-    ```
-
-    1. 注意启动后，随时看日志，方便实时检查问题
-    2. 这是Server-WEB端截图
-       1. 客户端管理-客户端列表，注意“状态”一列，要为“在线”才可
-
-    <img src="https://gitee.com/liuzel01/picbed/raw/master/data/20210318101403_lanproxy_web.png" alt="image-20210318101403437" style="zoom:80%;" />
-
----
-
-**注：**
-
-1. 可用nginx配置反向代理，转发ssh服务。 使用stream模块，需要编译安装nginx时， --with-stream 
-2. 基本配置可参考，
-
-```reStructuredText
-# 需要stream 模块，要重新编译安装nginx
-# stream {
-# upstream ssh {
-# server 221.236.26.67:52115;
-# }
-# 
-# server {
-# 	listen 81;
-# 	proxy_pass ssh;
-# 	proxy_connect_timeout 1h;
-# 	proxy_timeout 1h;
-# }
-# }
-```
-
-<<<<<<< HEAD
-17. 检查服务器CPU、内存等并发送到邮件
-
-=======
 1. `/usr/sbin/useradd -D` 能看到SKEL= ,意思是系统会将 /etc/skel 目录中的内容(可以看作模板)复制到用户的HOME 目录. 因此作为管理员可以自定义这些内容
->>>>>>> aa5291cefc643e319630acf31718e46b0791918a
 
 1. Git， 七大基本原则
 
@@ -556,7 +468,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
 3. 拉取指定分支的代码，
 
-   `git clone -b meeting_standard_v3.0 http://192.168.10.68:8000/meeting/meeting.git`
+   `git clone -b meeting_standard_v3.0 http://192.168.xx.xx:8000/meeting/meeting.git`
 
 4. 规范使用 git commit
 
@@ -668,6 +580,54 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
     2. jar -cvfM0 meeting_lzl.jar meeting-stand/                    打包
 
         1. 如果是我这种打了jar包，可以直接找到 对应的文件， vim修改内容并保存退出
+
+- meeting项目包在10.68上不能打包，提示缺失的jar等依赖，都已从10.15服务器上scp 过来了，重启后，还是报错
+    1. 特别需要注意maven 的环境变量，
+    Dashboard-全局工具配置，“Maven配置”和 下面的“Maven”安装，注意指定 MAVEN_HOME，
+    即时跟踪检查日志。需要注意他调用的mvn 指向，以及调用的配置文件settings.xml
+    Executing Maven:  -B -f /var/jenkins_home/workspace/meeting-mvn/pom.xml -s /var/jenkins_home/apache-maven-3.6.3/conf/settings.xml -gs /var/jenkins_home/apache-maven-3.6.3/conf/settings.xml clean install
+    **不知道为什么which mvn,和此时调用的settings.xml文件，不属同一个mvn？？**
+    2. 解决方法： ...只是将他调用的配置文件，用修改之后的文件，强行替换了
+        根源还是没有修改！！！！
+---
+
+    1. gitlab+ jenkins 自动触发构建功能。webhooks
+        [gitlab webhook failed](https://github.com/jenkinsci/gitlab-plugin#gitlab-to-jenkins-authentication)
+
+    2. jenkins 运行job时间和系统时间不一致，在“系统管理”-“脚本命令行”，运行命令，
+    System.setProperty('org.apache.commons.jelly.tags.fmt.timeZone','Asia/Shanghai')
+
+curl --header "PRIVATE-TOKEN: kRFPDRmWNRp-kAoia74e" http://192.168.10.27:8000/api/v4/projects/2/releases/xinjinrenda
+curl --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: kRFPDRmWNRp-kAoia74e" \
+     --data '{ "name": 新津人大", "tag_name": "xinjinrenda", "description": "Super nice release-新津人大，修复了以下：...", "assets": { "links": [{ "name": "xinjinrenda_v3.0", "url": "http://meeting.sipingsoft.com", "filepath": "/apk/jiaoyu_apk_3.1.apk", "link_type":"other" }] } }' \
+     --request POST "http://192.168.10.27:8000/api/v4/projects/2/releases"
+
+https://zhuanlan.zhihu.com/p/109820989
+发布release版本，
+可以用API，看[官方API文档](https://docs.gitlab.com/ee/api/releases/#releases-api)，或是直接web页面上，
+参考官方文档， https://www.bookstack.cn/read/gitlab-doc-zh/269860#tag-name
+
+docker安装gitlab-runner, https://docs.gitlab.com/runner/install/docker.html#option-1-use-local-system-volume-mounts-to-start-the-runner-container
+docker安装gitlab-ce， https://docs.gitlab.com/omnibus/docker/#install-gitlab-using-docker-engine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 TODO：
 
