@@ -24,6 +24,23 @@
 `docker run --rm -d --privileged -p 10020:22 --name=centoslzl --hostname centoslzl -v /opt/vol/shell/:/opt/shell/ lzl_centos7 /usr/sbin/sshd -D`
     -v source:destination
 
+- docker,创建gitlab-ce
+sudo docker run --detach \
+  --hostname gitlab-l01 \
+  --publish 443:443 --publish 80:80 --publish 22:22 \
+  --name gitlab-l01 \
+  --restart always \
+  --volume /opt/gitlab/config:/etc/gitlab \
+  --volume /opt/gitlab/logs:/var/log/gitlab \
+  --volume /opt/gitlab/data:/var/opt/gitlab \
+  gitlab/gitlab-ce:latest
+
+- docker,创建gitlab-runner
+docker run -d --name gitlab-runner-l01 --restart always \
+    -v /srv/gitlab-runner/config:/etc/gitlab-runner \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    gitlab/gitlab-runner:latest
+
 ---
 
 - 应用容器化实践
