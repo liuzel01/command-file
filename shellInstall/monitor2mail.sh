@@ -1,8 +1,7 @@
 #!/bin/bash
-set -e
 # 一条命令，会收到一条关于所有事的邮件
 # df -Ph | sed s/%//g | awk '{ if($5 > 60) print $0;}' | mail -s "Disk Space Alert On $(hostname)" zelin.liu@sipingsofr
-
+set -e
 # 计算cpu使用率
 cpu_used_persent=$(top -b -n5 | fgrep "Cpu(s)" | tail -1 | awk -F'id,' '{split($1, vs, ","); v=vs[length(vs)]; sub(/\s+/, "", v);sub(/\s+/, "", v); printf "%d", 100-v;}')
 # 计算运存使用率
