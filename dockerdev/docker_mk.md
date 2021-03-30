@@ -36,7 +36,7 @@ sudo docker run --detach \
   gitlab/gitlab-ce:latest
 
 - docker,创建gitlab-runner
-docker run -d --name gitlab-runner-l01 --restart always \
+docker run -it --name gitlab-runner-l01 --restart always \
     -v /srv/gitlab-runner/config:/etc/gitlab-runner \
     -v /var/run/docker.sock:/var/run/docker.sock \
     gitlab/gitlab-runner:latest
