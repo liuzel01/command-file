@@ -453,6 +453,25 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     标准约定: 若要创建新环境变量,则建议使用小写字母.用于区分个人与系统环境变量
 
 1. `/usr/sbin/useradd -D` 能看到SKEL= ,意思是系统会将 /etc/skel 目录中的内容(可以看作模板)复制到用户的HOME 目录. 因此作为管理员可以自定义这些内容
+2. **隐藏进程信息（ps，top）,未配置成功！！！！**
+
+    ```TEXT
+    gcc -Wall -fPIC -shared -o libprocesshider.so processhider.c -ldl
+    ln -sf /opt/libprocesshider.so /usr/lib/
+    # echo /usr/lib/libprocesshider.so >> /etc/ld.so.conf.d/processhider.conf
+    OR echo "export LD_PRELOAD=/usr/lib/libprocesshider.so" >> /etc/profile
+    ldconfig 生效
+    ```
+
+    1. 项目实例，`git clone https://github.com/gianlucaborello/libprocesshider.git`
+
+    参考，[linux进程隐藏：中级篇](https://www.freebuf.com/articles/system/250714.html)
+        [基于centos7创建隐藏进程以及发现隐藏进程](https://my.oschina.net/kcw/blog/3209387)
+        [linux环境的LD_PRELOAD: 库预加载](https://rtoax.blog.csdn.net/article/details/108474167)
+        [hiding linux processes for fun + profit](https://sysdig.com/blog/hiding-linux-processes-for-fun-and-profit/)
+        [应急响应系列值linux库文件劫持技术分析](https://cloud.tencent.com/developer/article/1582075)
+        [应急响应之linux下进程隐藏](https://www.anquanke.com/post/id/226285)
+        [警惕利用linux预加载型恶意动态链接库的后门](https://www.freebuf.com/column/162604.html)， 有必要好好看看研究一下
 
 1. Git， 七大基本原则
 
