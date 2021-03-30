@@ -135,12 +135,18 @@ weekly：
 
 - 已完成：
 
-1. 会议系统:
-    1. 新津人大/双流永安镇政府,更新会议系统.整理需求,发邮件
-    2. 测试会议系统gy
+1. 
+
 ---
 
 - 其他：
+
+1. linux进程隐藏
+
+1. 精通docker，
+2. 了解存储（NAS）、备份、容灾等领域技术
+3. 有服务器、存储、云计算等知识
+这几点要补充上。after the firewall
 
 - 未完成：
 
@@ -377,6 +383,8 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     systemctl status 24045，                            提示，Failed to get unit for PID 24045: PID 24045 does not belong to any loaded unit.
     4.
 
+8. ll -ht | head -n 2， 查看结果中排在前面的
+
 8. centos7安装sql-server，
     [参考](https://blog.51cto.com/13770206/2429881)
 
@@ -470,6 +478,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
    `git clone -b meeting_standard_v3.0 http://192.168.xx.xx:8000/meeting/meeting.git`
     `git remote -v `  查看仓库的origin
+    `git remote rename origin old-origin`
     `git remote rm origin`
 4. 规范使用 git commit
 
@@ -575,6 +584,19 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
 - 解决：
     1. yum install glibc-static
 
+---
+
+- 在使用win10文件夹共享到linux上去时，git clone 下载了个仓库，而后就发现，怎么也删不掉了
+    1. 而且在文件夹路径下， .git/objects/pack/tmp_packxxxx 总会出现这个文件
+    2. 并且，在删除时，总提示，需要liuzel01 或是administrators的权限，改了好几遍所有者都不对
+
+- 解决：
+    1. 用火绒，右键对应的文件夹，“使用火绒安全粉碎文件”-“解除占用”，就好了。
+        再次删除，就很顺畅就可以删文件夹了
+    2. 总结：有系统占用。不过我在linux上 lsof /win10/siping/xxxx 并没有发现有什么占用。fuser -k /win10/siping/xxxx 也不管用...
+        思路是对的，不过问题出在win10这边。可能是因为用了samba 共享的缘故
+        所以，肯定是win10 的system把文件夹占用了
+
 - 前后端分项目，后端使用 spring-boot 的项目一般都打成了jar包，需要排查问题或是修改配置的时候需要解压和打包，
 
     1. unzip meeting-standard.jar  -d meeting-stand                 解压包，
@@ -611,8 +633,22 @@ https://zhuanlan.zhihu.com/p/109820989
 docker安装gitlab-runner, https://docs.gitlab.com/runner/install/docker.html#option-1-use-local-system-volume-mounts-to-start-the-runner-container
 docker安装gitlab-ce， https://docs.gitlab.com/omnibus/docker/#install-gitlab-using-docker-engine
 
+技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧
 
+- chrome tools，截长图
+    1. F12（或者快捷键Ctrl+Shift+i）调出开发者工具，快捷键Ctrl+Shift+p 召唤出工具箱，输入full（因为命令全称是，Capture full size screenshot）,ok然后就可以浏览器截图并保存到本地了~
+        Capture node screenshot, 对单个节点（单个节点也是可以长屏）进行截图，当然首先要选中你需要截图的node
+    2. 或是要对某个设备上来个截图，F12，然后改成iPad Pro，右上角有三个点，Capture screenshot（找screenshot），可对此时设备（iPad Pro）进行截图
+    3. **,真香。空了，把操作截图补上！！！**
 
+- 重启发起XHR请求，
+    1. F12，Network面板，选中其中一个请求，右键，用 "Replay XHR" 来重启发起请求，而不需要再填一次表单了
+- 修改网站上的内容，
+    1. F12,Console,type this "document.body.contentEditable="true"", just try on ur website
+- 快速调出需要的面板，
+    1. 快捷键，Ctrl+Shift+p, type this "show animations" OR "show coverage"
+- 快速找到网页上的图片，
+    1. F12, Network, Img, u can see the pics, click right, copy-copy link address
 
 
 
@@ -648,3 +684,5 @@ gpgcheck=0
 enabled=1
 
 ```
+
+对于k8s，helm，我认为使用起来不复杂。毕竟是工具，发布出来就是为了提升效率的，所以掌握了核心理解就ok
