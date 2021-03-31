@@ -90,6 +90,7 @@ revoke all on *.* from dba@localhost;
 - 显示过滤掉# 开头和空格后的配置信息
 
 `grep -Ev "^$|^[#;]" redis.conf`
+但是，这会把脚本开头那行也给注释了...
 
 `wget https://mirrors.tuna.tsinghua.edu.cn/mariadb//mariadb-10.4.6/bintar-linux-systemd-x86_64/mariadb-10.4.6-linux-systemd-x86_64.tar.gz`
 mariadb密码，sks123.com
@@ -149,6 +150,7 @@ weekly：
 这几点要补充上。after the firewall
 
 - 未完成：
+1. 下午，把笔记整一下
 
 ---
 
@@ -367,6 +369,8 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         cat /proc/cpuinfo | grep cores                  每个CPU含4个核心，所以是，16核处理器
         或者通过lscpu，CPU(s): 4,   Core(s) per socket: 4， Socket(s): 1，      所以，其逻辑CPU的数量就是Socket*core*thread  也就是threads
     2.
+6. echo ${BASH_SOURCE[0]}                               获取到脚本自身文件名
+    注意，不同的是，echo $0
 
 7. 通过端口查找进程PID，通过PID查找端口，就这几个命令
     ps -ef | grep 9090
@@ -419,7 +423,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
 12. 给cd 命名别名，目前操作办法，是在系统配置里写func： vim /etc/bashrc(因为使用的root用户，为了切换用户时仍可使用，就写在了系统配置里)
 
-```text
+```bash
     alias cd='cdls'
     cdls() {
             \cd $1 &&\
@@ -430,17 +434,15 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     1.  要查看活动别名的列表,使用 `alias -p`
     `echo $0`           查看目前使用的终端
     `showkey -a`        显示按键的ASCII码
-
+    2. 可能是因为cd 属于内置命令。意指，bash 自身提供的命令，而不是文件系统中的某个可执行文件。
+    type cd ;type ifconfig 来查看一条命令是否内建命令
+    xxx is a shell builtin
 
 13. 反引号 `` 和 &()
     TIME=$(date +%Y-%m-%d_%H-%M-%S)
     `cat /etc/issue | grep -w "\\\S" | wc -l`       反引号本身就对\ 做了一层转义，所以两个\\ 才是进行转义
     $(cat /etc/issue | grep -w "\\\S" | wc -l`)
     反引号是老的用法，$() 是新用法
-
-    1. 可能是因为cd 属于内置命令。意指，bash 自身提供的命令，而不是文件系统中的某个可执行文件。
-    type cd ;type ifconfig 来查看一条命令是否内建命令
-    xxx is a shell builtin
 
 13. 有时候，linux上的sh 脚本无法执行，原因可能是脚本内容是用dos 模式编辑的，
     `sed -i "s/\r//" jdkInstall.sh`  可以运行了
@@ -668,6 +670,32 @@ docker安装gitlab-ce， https://docs.gitlab.com/omnibus/docker/#install-gitlab-
     1. 快捷键，Ctrl+Shift+p, type this "show animations" OR "show coverage"
 - 快速找到网页上的图片，
     1. F12, Network, Img, u can see the pics, click right, copy-copy link address
+
+
+linux, mail, 
+221.236.26.68 发送不了邮件， 且无错误提示
+
+且，119.3.247.174 也发送不了。。。先把这台搞定，上面的理应同理
+经尝试，内网服务器和IDC托管的可以正常发送了。。云上的在下面有说到
+
+
+yum -y install mailx  postfix 
+记录下排查过程：
+OS为centos7， 6的话，可能还要安装另外...
+vim /var/logs/maillog 跟踪日志
+netstat -tlnp | grep :25
+nmap 127.0.0.1 -p 25 检查服务是否开启了
+which sendmail
+ll /usr/sbin/sendmail  接着一步一步，发现软链接指向的是 /usr/sbin/sendmail.postfix
+然后，发现 能正常发送邮件的机器上，postfix 服务正在默默的运行着...
+    systemctl status postfix
+再者，如若是云服务器（阿里云、华为云），/var/log/maillog 会提示 connect to mxbizl.qq.ccom[xxx] Connection timed out
+    很可能是因为25端口被运营商封禁了....可以申请、投诉。或是配置smtp 发送邮件
+
+
+/bin/bash /data/script/monitor2mail.sh | mail -s "Disk Space Alert On $(hostname): $(ips)" -r root@$(ips) $mail
+
+
 
 
 

@@ -12,7 +12,7 @@ disk_used_persent=$(df -THP | awk -F '[ ]+' 'NR!=1{print $1","$6}')
 create_ips() {
 # /usr/bin/fgrep -i "the func for getting ip of this Server." /etc/profile
 # 不知道为什么,条件写到外面来(上面一行),就运行不下去,会被bash 识别为运行无结果 的命令
-
+# 事实证明，函数ips还是写到 /etc/bashrc... 然鹅，你用普通用户登录后再切换root的时候就会有、问题
 if /usr/bin/fgrep -i "the func for getting ip of this Server." /etc/profile; then
 	exit 1
 else
