@@ -1,5 +1,6 @@
 # Docker image for multi stage build
 # VERSION 0.0.1
+
 ### 第一阶段，用maven镜像进行编译
 FROM maven:3.6.3 AS build_env
 LABEL maintainer zelin.liu@sipingsoft.com
