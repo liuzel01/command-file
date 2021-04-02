@@ -361,7 +361,7 @@ docker run -it --name gitlab-runner-l01 --restart always \
     alias dockerrm='docker rm -f -v'
     alias dockerexec='docker exec -it'
     alias dockerrmi='docker rmi'
-    dockerexec 16355 /bin/sh -c '/bin/ps -ef | grep gitlab'
+    dockerexec 16355 bash -c '/bin/ps -ef | grep gitlab'
     ```
 
 6. --restart=always                                                 使容器随着 docker daemon 的启动一同启动
@@ -783,14 +783,21 @@ docker run -it --name gitlab-runner-l01 --restart always \
 
 
 
+## 记录
 
+- `docker run -it -v /var/run/docker.sock:/var/run/docker.sock --name docker-l01 docker:19.03`
 
+1. docker images ,sort -n -t ' ' -k 5r,将输出结果按照镜像大小进行排序
 
+   docker images | sort -n -k 10r -t ' '
 
+2. 192.168.10.62，还未拉取镜像，因为上面运行有其他mino 等容器。待确认后，再操作
 
+3. 要创建一个集群，则需要提供一台主机，用作执行命令，用来创建rancher-agent，rancher/rancher-agent:v2.5.3，就下面这个
 
+  `sudo docker run -d --privileged --restart=unless-stopped --net=host -v /etc/kubernetes:/etc/kubernetes -v /var/run:/var/run registry.cn-hangzhou.aliyuncs.com/rancher/rancher-agent:v2.5.3 --server https://192.168.10.62 --token 2bpf9cfsfmdmh2n4pc555lntcrr2jx4ppmwkt5tc9b97zsv5pnmn42 --ca-checksum df3f8a359b9a6daf65468988b37cc689901ebe8637d2039349fcbbdd1c9a968e --etcd --controlplane --worker`
 
-
+1. 若不执行，你的集群就会提示，Waiting for etcd and controlplane nodes to be registered
 
 
 

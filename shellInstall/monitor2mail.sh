@@ -37,7 +37,7 @@ fi
 # 获取服务器ip地址， 写入系统配置文件，就可以全局调用了
 # ifconfig | grep -A1 "en" | grep 'inet' |awk -F ' ' '{print $2}'|awk '{print $1}'
 # cat /proc/net/dev | awk '{i++; if(i>2){print $1}}' | sed 's/^[\t]*//g' | sed 's/[:]*$//g'
-# sh ll.sh | mail -s "Disk Space Alert On $(hostname): $(ips)" $MAIL
+# /bin/bash /data/script/monitor2mail.sh | mail -s "Disk Space Alert On $(hostname): $(ips)" -r root@$(ips) $mail
 echo -e "\033[31m计算cpu使用率~: \n$cpu_used_persent"%"\033[0m"
 echo -e "\033[31m计算运存使用率~: \n$mem_used_persent"%"\033[0m"
 echo -e "\033[31m计算磁盘使用率~: \n$disk_used_persent"%"\033[0m"
