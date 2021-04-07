@@ -14,6 +14,8 @@ JDK_DIR="jdk1.8.0_221"
 JAVA_HOME="/usr/local/java/$JDK_DIR"
 LOGFILE="jdkInstall.log"
 
+[[ $EUID -ne 0 ]] && echo -e "\033[31mError: This script must be run as root!\033[0m" && exit 1
+
 yum install -y glibc.i686
 # 判断url是否存在，不存在或下载不了，有响应提示
 if_url_corr() {
@@ -31,26 +33,25 @@ log() {
 
 if [ ! -z "$JAVA_HOME" ];then
     yum remove -y java-*-openjdk*
-    mkdir -p $JAVA_DIR &&\
+    mkdir -p $JAVA_DIR 	&&\
             if_url_corr &&\
             tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $JAVA_DIR
 else
 # 还要将 /etc/profile 文件内 JAVA_HOME类似内容删掉
 # $JAVA_HOME 这个判断条件， 不标准
     mv $JAVA_DIR /usr/local/java_bak_$BAK_RQ 2>/dev/null
-    mkdir -p $JAVA_DIR &&\
-        if_url_corr &&\
+    mkdir -p $JAVA_DIR 	&&\
+        if_url_corr 	&&\
         tar -zxvf /tmp/jdk-8u221-linux-i586.tar.gz -C $JAVA_DIR
 fi
 
-# 添加变量到文件，追加到系统配置，并输出结果
 cat >> /etc/profile << bb
 export JAVA_HOME=$JAVA_HOME
 export CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib
 export PATH=$PATH:$JAVA_HOME/bin:$JAVA_HOME/jre/bin
 bb
 
-source /etc/profile &&\
-log "jdk is installed !" &&\
-log "JAVA_HOME: "$JAVA_HOME &&\
+source /etc/profile 		&&\
+log "jdk is installed !" 	&&\
+log "JAVA_HOME: "$JAVA_HOME 	&&\
 java -version
