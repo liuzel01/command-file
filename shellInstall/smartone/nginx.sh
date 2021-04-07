@@ -8,6 +8,8 @@ Ngx_bag="nginx-1.8.1"
 Ngx_src="${Ngx_bag}.tar.gz"
 Ngx_dir=/usr/local/nginx_18
 
+[[ $EUID -ne 0 ]] && echo -e "\033[31mError: This script must be run as root!\033[0m" && exit 1
+
 mkdir -p $Ngx_dir
 # 安装nginx依赖软件
 install_depend_package() {
@@ -64,11 +66,11 @@ WantedBy=multi-user.target
 install_depend_package
 create_source_storage_directory
 compile_install_nginx
-join_system_services_os7 &&\
+join_system_services_os7			&&\
 # 设置开机自启
-        systemctl enable nginx &>/dev/null &&\
-        echo '已设置为开机自启' &&\
-        systemctl start nginx &&\
+        systemctl enable nginx &>/dev/null	&&\
+        echo '已设置为开机自启'			&&\
+        systemctl start nginx			&&\
         ps -ef | grep nginx
 
 # 安装指引， 并调用前面的函数

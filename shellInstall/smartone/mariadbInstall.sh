@@ -14,6 +14,8 @@
 MARI=`find . ! -name "." -type d -prune -o -type f -name "*.repo" -print | grep -i mariadb`
 MARI_VER=10.4
 
+[[ $EUID -ne 0 ]] && echo -e "\033[31mError: This script must be run as root!\033[0m" && exit 1
+
 cd /etc/yum.repos.d
 if [ ! -f "$MARI" ];then
 	echo 'there is no mariadb.repo'
@@ -21,6 +23,7 @@ if [ ! -f "$MARI" ];then
 else
 	mv $MARI MariaDB.repo.bak 2>/dev/null
 fi
+
 # 修改repo，直接覆盖，因为上面已备份原文件了
 cat > /etc/yum.repos.d/MariaDB.repo << EOF
 [mariadb]
@@ -29,24 +32,25 @@ baseurl = http://mirrors.ustc.edu.cn/mariadb/yum/$MARI_VER/centos7-amd64/
 gpgkey = http://mirrors.ustc.edu.cn/mariadb/yum/RPM-GPG-KEY-MariaDB
 gpgcheck = 1
 EOF
+
 # 开始安装，repo中已指定版本，可修改 MARI_VER
 yum clean all
 yum install MariaDB-server MariaDB-client -y
 sleep 3
-systemctl enable mariadb &&\
-    echo '已设置开机自启' &&\
-    echo '检测是否安装成功' &&\
+systemctl enable mariadb 	&&\
+    echo '已设置开机自启' 	&&\
+    echo '检测是否安装成功' 	&&\
     systemctl start mariadb
 
 # 测试是否安装，并启动成功
 [ $? -eq 0 ] && echo 'mariadb 安装成功' || echo 'mariadb 安装失败'
-# 开启端口， 3306
+
 open_port() {
 firewall-cmd --list-ports &>/dev/null
-[ $? -ne 0 ] && echo '请检查防火墙是否运行，再执行以下： ' &&\
-        echo 'firewall-cmd --zone=public --add-port=3306/tcp --permanent' &&\
-        echo 'firewall-cmd --reload' || firewall-cmd --zone=public --add-port=3306/tcp --permanent &>/dev/null &&\
-        firewall-cmd --reload &>/dev/null &&\
+[ $? -ne 0 ] && echo '请检查防火墙是否运行，再执行以下： ' 							&&\
+        echo 'firewall-cmd --zone=public --add-port=3306/tcp --permanent' 					&&\
+        echo 'firewall-cmd --reload' || firewall-cmd --zone=public --add-port=3306/tcp --permanent &>/dev/null 	&&\
+        firewall-cmd --reload &>/dev/null 									&&\
         echo '检查端口是否添加成功： ' `firewall-cmd --zone=public --query-port=3306/tcp`
 }
 

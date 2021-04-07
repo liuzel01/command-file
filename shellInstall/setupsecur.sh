@@ -1,8 +1,8 @@
 #linux服务器安全加固shell脚本
 #!/bin/sh
 # desc: setup linux system security
-# author:skykws
-# version 0.1.2 written by 2014.10.28
+# version 0.1.2 written by 
+# author: 
 
 # 执行后的效果：
 #   无法直接用 root 登录远程服务器
