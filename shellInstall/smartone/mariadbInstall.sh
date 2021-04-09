@@ -13,8 +13,14 @@
 # 安装方法--待补充
 MARI=`find . ! -name "." -type d -prune -o -type f -name "*.repo" -print | grep -i mariadb`
 MARI_VER=10.4
+LOGFILE="mariInstall.log"
 
 [[ $EUID -ne 0 ]] && echo -e "\033[31mError: This script must be run as root!\033[0m" && exit 1
+
+log() {
+    echo "$(date "+%Y-%m-%d %H:%M:%S")" "$1"
+    echo -e "$(date "+%Y-%m-%d %H:%M:%S")" "$1" >> ${LOGFILE}
+}
 
 cd /etc/yum.repos.d
 if [ ! -f "$MARI" ];then
@@ -33,7 +39,6 @@ gpgkey = http://mirrors.ustc.edu.cn/mariadb/yum/RPM-GPG-KEY-MariaDB
 gpgcheck = 1
 EOF
 
-# 开始安装，repo中已指定版本，可修改 MARI_VER
 yum clean all
 yum install MariaDB-server MariaDB-client -y
 sleep 3
@@ -47,9 +52,9 @@ systemctl enable mariadb 	&&\
 
 open_port() {
 firewall-cmd --list-ports &>/dev/null
-[ $? -ne 0 ] && echo '请检查防火墙是否运行，再执行以下： ' 							&&\
+[ $? -ne 0 ] && log "请检查防火墙是否运行，再执行以下： " 							&&\
         echo 'firewall-cmd --zone=public --add-port=3306/tcp --permanent' 					&&\
-        echo 'firewall-cmd --reload' || firewall-cmd --zone=public --add-port=3306/tcp --permanent &>/dev/null 	&&\
+        echo 'firewall-cmd --reload' || firewall-cmd --zone=public --add-port=3306/tcp --permanent &>/dev/null  	&&\
         firewall-cmd --reload &>/dev/null 									&&\
         echo '检查端口是否添加成功： ' `firewall-cmd --zone=public --query-port=3306/tcp`
 }
