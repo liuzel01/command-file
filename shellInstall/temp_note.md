@@ -141,6 +141,7 @@ weekly：
 ---
 
 - 其他：
+公网ip:80 完成备案，和防火墙映射内网服务，访问地址 http://171.221.254.91/#/login
 
 1. linux进程隐藏
 
@@ -149,7 +150,6 @@ weekly：
 3. 有服务器、存储、云计算等知识
 
 - 未完成：
-1. 下午，把笔记整一下
 
 1. 接触新概念，dind (docker in docker)，需要多多看官方文档。
     1. ssh-private-key [demo](https://gitlab.com/gitlab-examples/ssh-private-key/-/jobs/376632425)
@@ -474,7 +474,17 @@ ll /usr/sbin/sendmail  接着一步一步，发现软链接指向的是 /usr/sbi
 再者，如若是云服务器（阿里云、华为云），/var/log/maillog 会提示 connect to mxbizl.qq.ccom[xxx] Connection timed out
     很可能是因为25端口被运营商封禁了....可以申请、投诉。或是配置smtp 发送邮件
 
+ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansible
 
+1. locate, 搜索包含关键字的所有文件和目录。后接需要查找的文件名，也可以用正则表达式
+    准确度依赖于系统上预建的文件索引数据库文件, ll /var/lib/mlocate/mlocate.db
+    1. locate qq.sh                     去文件数据库中查找命令，而不是全磁盘查找。因为刚创建的文件并不会更新进数据库，所以需要手动更新数据库
+        updatedb                        更新数据库
+    2. locate -r "\.sh$"                通过正则模式来匹配查找
+        locate -r "^/home/ch.*\.sh"     通过正则来匹配对应路径
+        locate -r "^/home/.*\.sh$"      查找目录 /home 下所有脚本
+    3. find /var/ -mtime -7 -not -user root -not -user postfix -ls      查找对应目录下近一周内其内容修改过，且属主不为root也不是postfix的文件
+        find /etc -size +1M -exec echo {} >> /tmp/etc.largefiles {} \;  查找目录下大于1M的文件，并将文件名写入文件中。 去一个中括号就对了
 
 
 

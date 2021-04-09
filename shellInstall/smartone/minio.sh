@@ -38,8 +38,8 @@ cd $MINIO_DIR ;nohup ./minio server $MINIO_DIR/data/ &
 salute
 chkconfig --add minio &&\
     chkconfig minio on
-chkconfig --list | grep minio &>/dev/null &&\
-    [ $? -eq 0 ] &&\
+chkconfig --list | grep minio &>/dev/null 	&&\
+    [ $? -eq 0 ] 				&&\
     echo 'minio已设置为开机自启'
 # 开启端口， 9000
 open_port() {
