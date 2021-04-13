@@ -138,12 +138,11 @@ weekly：
 
 1. 
 
+
 ---
 
 - 其他：
-公网ip:80 完成备案，和防火墙映射内网服务，访问地址 http://171.221.254.91/#/login
 
-1. linux进程隐藏
 
 1. 精通docker，
 2. 了解存储（NAS）、备份、容灾等领域技术
@@ -155,7 +154,7 @@ weekly：
     1. ssh-private-key [demo](https://gitlab.com/gitlab-examples/ssh-private-key/-/jobs/376632425)
     2. [gitlab ci/cd examples](https://docs.gitlab.com/ee/ci/examples/README.html)
         里面还有[Java with Maven](https://gitlab.com/gitlab-examples/maven/simple-maven-example)
-    3. 有空再试试，zjerlansou
+    3. 有空再试试，
 
 ---
 
@@ -283,6 +282,24 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         touch {1..10..2}.txt
 
     8. 使用`` 或者 $() 做命令替换； 嵌套时，$()可读性更清晰
+    9. readlink -f  /usr/bin/java                                  递归跟随符号链接以标注化。就是一直跟随符号链接，知道非符号链接的位置，限制是最后必须存在一个非符号链接的文件
+    10. /etc/bashrc 文件添加一行，export HISTTIMEFORMAT="”%F %T "   查看历史命令时看到具体时间
+    11. screen, 同屏操作，nice
+        screen -S l01 创建会话,  screen -x l01 加入会话， exit退出
+        两个终端加入到同一个会话中，就可实现共享
+        screen -ls 显示所有已打开的会话
+        ctrl+a,d    剥离当前screen会话
+        screen -r l01 恢复某screen会话                              可以用于在远程服务器上，登录后，创建一个自己的会话，退出时保存工作C+a,d，方便下次远程时连接入此会话
+        注意，这个时候exit 就是一个比较危险的操作了
+
+        常用操作二、让代码再后台运行。
+
+        Attached    已连接的，  Detached  分离的，                        注意看screen 后面的状态
+    12. whois 119.3.247.174                                         查询到域名的注册信息
+        whois qq.com
+
+
+
 
 6. 查看服务器CPU，运存情况
     1. cat /proc/cpuinfo  | grep processor | wc -l      4个CPU处理器
@@ -344,8 +361,11 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 1. Git， 七大基本原则
 3. 
 
-5. 删除 /data/lscgdj目录下， 10天之前的tar.gz 包
-   find /data/lscgdj -name "*-backup-onlywebinf.tar.gz" -a -mtime +10 -exec rm -rf {} \; &>/dev/null
+5. 删除 /data/lscgdj目录下， 10天之前修改过的tar.gz 包
+   find /data/lscgdj -name "*-backup-onlywebinf.tar.gz" -a -mtime +9 -exec rm -rf {} \; &>/dev/null
+   -atime +1             最后一次访问时间
+   -ctime +1             最后一次状态修改时间
+   -mtime                最后一次内容修改时间
 
 6. win10环境，使用 vscode remote ssh 远程连接服务器，免密连接
 
@@ -486,6 +506,9 @@ ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleans
     3. find /var/ -mtime -7 -not -user root -not -user postfix -ls      查找对应目录下近一周内其内容修改过，且属主不为root也不是postfix的文件
         find /etc -size +1M -exec echo {} >> /tmp/etc.largefiles {} \;  查找目录下大于1M的文件，并将文件名写入文件中。 去一个中括号就对了
 
+2. sed -n '/\文件/p' tmp_temp           查找并打印出，包括关键字"文件"所在所有行 ，使用反斜线屏蔽特殊含义
+    grep -w 服务器 tmp_temp             只匹配整个单词，而不是字符串的一部分。 -n 显示行号信息 -c 查找总行数
+    
 
 
 
