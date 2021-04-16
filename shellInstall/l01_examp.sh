@@ -27,13 +27,17 @@ select menu in 黄焖鸡 鱼香肉丝盖饭 烤肉饭 老碗面 招牌五谷渔�
 done
 }
 
+# 系统版本号
 os(){
     sed -r 's/.*[[:space:]]([0-9])\..*/\1/' /etc/redhat-release
 }
 
+# 获取系统的ip地址
 eth0ip(){
-    ifconfig wlp0s20f3 | grep netmask |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
+    devc=$(route -n | grep ^0.0.0.0 | awk '{print $NF}')
+    ifconfig $devc | grep -E "netmask|Mask" |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
 }
+# eth0ip
 
 red(){
     echo -e "\033[41m    \033[0m\c"
