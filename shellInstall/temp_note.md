@@ -81,7 +81,7 @@ revoke all on *.* from dba@localhost;
 
 - 查看数据库版本
 
-  进入数据库，show version();
+  进入数据库，show version();   select version();
 
 - 给文件中ip server，发送id_rsa.pub
 
@@ -592,6 +592,8 @@ http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libXtst-devel-1.2.3-
 
 报错：Could NOT find GnuTLS (missing: GNUTLS_LIBRARY GNUTLS_INCLUDE_DIR)
 
+- 报错，/lib/ld-linux.so.2: bad ELF interpreter问题
+是因为64位系统安装了32位程序 yum install glibc.i686
 
 
 
