@@ -138,7 +138,7 @@ weekly：
 
 1. 
 
-
+`
 ---
 
 - 其他：
@@ -155,6 +155,7 @@ weekly：
     2. [gitlab ci/cd examples](https://docs.gitlab.com/ee/ci/examples/README.html)
         里面还有[Java with Maven](https://gitlab.com/gitlab-examples/maven/simple-maven-example)
     3. 有空再试试，
+
 
 ---
 
@@ -291,6 +292,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         ctrl+a,d    剥离当前screen会话
         screen -r l01 恢复某screen会话                              可以用于在远程服务器上，登录后，创建一个自己的会话，退出时保存工作C+a,d，方便下次远程时连接入此会话
         注意，这个时候exit 就是一个比较危险的操作了
+        screen -X -S 19510 quit                                     不加入会话，在外部杀死一个screen
 
         常用操作二、让代码再后台运行。
 
@@ -322,6 +324,35 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     经发现，该容器映射的端口为，0.0.0.0:9090->9090/tcp，    这也说明以后尽量不要将容器内和映射端口搞成一致的。
     3. systemctl status 24010，                         显示Active: active(running)
     systemctl status 24045，                            提示，Failed to get unit for PID 24045: PID 24045 does not belong to any loaded unit.
+
+    systemctl list-units --type=target                  获取当前正在使用的运行目标
+    systemctl list-units --all --state=inactive         列出所有没有运行的Unit
+    systemctl list-units --failed                       列出所有加载失败的Unit
+    systemctl list-units -t service                 列出所有正在运行，类型为service 的Unit
+    systemctl cat nginx18.service                       查看Unit配置的内容
+
+    systemctl list-dependencies --all nginx18.service   列出一个Unit 所有依赖，包括target 类型
+    systemctl kill nginx.service                        立即杀死服务
+    systemctl daemon-reload                             将Unit 文件内容写到缓存中，所以Unit文件更新时，要systemd 重新读取
+    systemctl reset-failed                              移除标记为丢失的Unit文件
+    systemctl get-default                               查看启动时默认的Target，查看当前的运行级别
+    systemctl set-default multi-user.target             设置默认的
+    systemctl list-unit-files --type=target             查看系统的所有Target
+    systemctl list-dependencies multi-user.target       查看一个target包含的所有Unit
+    systemctl isolate multi-user.target                 关闭前一个Target里面所有不属于后一个Target的进程
+    systemctl -l| grep -v exited | less
+
+    journalctl -u nginx18.service                       查看指定服务的日志
+    journalctl -f                                       实时滚动最新日志
+        journalctl -u nginx18.service -f
+
+    systemctl reboot[poweroff|halt|suspend]                                     重启系统[切断电源|CPU停止工作|暂停系统]
+    systemd-analyze critical-chain nginx18.service      查看指定服务的启动流
+        systemd-analyze blame
+    timedatectl                                           查看当前时区设置
+        timedatectl list-timezones
+    loginctl show-user root
+
 
 8. ll -ht | head -n 2， 查看结果中排在前面的
 
@@ -511,6 +542,64 @@ ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleans
     
 
 
+3. 记一次centos7，离线安装软件包过程
+ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $8}') | grep netmask |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
+route -n | grep ^0.0.0.0 | awk '{print $8}'
+
+ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $8}')) | grep -E "netmask|Mask" |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
+# 获取系统的ip地址
+
+
+
+# ./configure --with-system-zlib --prefix=/user/gcc-4.4.7/gcc-4.4obj --enable-threads=posix --with-cpu=generic --enable--long-long --enable-languages=c,c++  --with-gmp=/user/gmp-6.1.0/gmp-6.1.0-obj --with-mpfr=/user/mpfr-3.1.6/mpfr-3.1.6-obj --build=x86_64-redhat-linux
+
+
+# mariadb
+cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql/ -DSYSCONFDIR=/etc -DWITHOUT_TOKUDB=1 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci
+# rpm包
+http://rpmfind.net/linux/rpm2html/search.php?query=ncurses-devel
+# cmake 编译安装
+https://github-releases.githubusercontent.com/537699/92110680-985a-11eb-9440-54a4374fc3b1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210416%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210416T060241Z&X-Amz-Expires=300&X-Amz-Signature=50ddbe5be397585b9003297e7dbd8d5506b5b481a9c9d4457b1d23c412f3894f&X-Amz-SignedHeaders=host&actor_id=26734740&key_id=0&repo_id=537699&response-content-disposition=attachment%3B%20filename%3Dcmake-3.20.1-linux-x86_64.tar.gz&response-content-type=application%2Foctet-stream
+# centos 离线安装gcc 环境
+https://my.oschina.net/u/4277371/blog/3225059
+# 离线安装ncurses-devel
+https://www.cnblogs.com/wuxun1997/p/11579310.html
+http://rpmfind.net/linux/rpm2html/search.php?query=ncurses-devel&submit=Search+...&system=&arch=
+# 下载安装m4
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/m4-1.4.16-10.el7.x86_64.rpm
+# 离线安装，
+http://download.savannah.gnu.org/releases/lzip/lzip-1.20.tar.gz
+https://gmplib.org/download/gmp/gmp-6.1.2.tar.lz
+https://ftp.gnu.org/gnu/nettle/nettle-3.4.tar.gz
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libcurl-devel-7.29.0-59.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/curl-7.29.0-59.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/git-1.8.3.1-23.el7_8.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/openssl-1.0.2k-19.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/openssl-devel-1.0.2k-19.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/krb5-devel-1.15.1-50.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/krb5-libs-1.15.1-50.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/openssl-libs-1.0.2k-19.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/zlib-devel-1.2.7-18.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/e2fsprogs-devel-1.42.9-19.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libcom_err-devel-1.42.9-19.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libcom_err-1.42.9-19.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libaio-devel-0.3.109-13.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/perl-5.16.3-297.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/perl-devel-5.16.3-297.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libXtst-1.2.3-1.el7.x86_64.rpm
+http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libXtst-devel-1.2.3-1.el7.x86_64.rpm
+
+
+报错：Could NOT find GnuTLS (missing: GNUTLS_LIBRARY GNUTLS_INCLUDE_DIR)
+
+
+
+
+
+
+# 离线安装bison
+http://rpmfind.net/linux/rpm2html/search.php?query=bison&submit=Search+...&system=&arch=
+rpm -ivh bison-3.0.4-2.el7.x86_64.rpm --nodeps --force
 
 
 TODO：
