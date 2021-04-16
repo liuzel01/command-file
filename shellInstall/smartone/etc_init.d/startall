@@ -1,0 +1,26 @@
+#!/bin/sh
+#
+# sone- this script starts and stops the nginx daemon
+#
+# chkconfig:   - 85 15
+# description: 
+#              
+# processname: sone
+
+# 启动redis
+nohup redis-server /usr/local/redis/redis.conf &
+
+# 启动minio
+cd /home/siping/minio ;nohup ./minio server /home/siping/minio/data/ &
+
+cd /home/sone;sh restart_nacos.sh start
+[ $? -eq 0 ] && sh restart_gateway.sh start
+
+# 开启其他jar
+dir=$(find /home/sone -maxdepth 1 -name "*.sh")
+for i in $dir
+do
+	cd /home/sone
+        nohup sh $i start &>/dev/null
+done
+[ $? -eq 0 ] && echo 'SUCCEED!!'
