@@ -30,6 +30,8 @@ topk(5,(irate(namedprocess_namegroup_cpu_seconds_total{groupname=~"$processes",i
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 mysql:
+cp  support-files/mysql.server /etc/init.d/mysqld
+
 select user,host,password from mysql.user;
 CREATE USER 'sks_sone'@'localhost' IDENTIFIED BY 'sksHykf8gw6l8bfs3ef';
 grant all privileges on *.* to 'sks_sone'@'%' identified by 'sksHykf8gw6l8bfs3ef' with grant option;
@@ -136,8 +138,6 @@ weekly：
 
 - 已完成：
 
-1. 
-
 `
 ---
 
@@ -192,6 +192,29 @@ weekly：
     另,从攻击角度来搞,或许能理解得更深, ？？
 
 smartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmasmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartone
+
+中车-测试环境，license好了
+    操作：连接进redis，执行：
+    license文件的目录结构如下：     /home/sone/license/license.key      此文件应是开发给
+        且，与jar项目包同级
+    auth crrc123.com
+    hset license "ipDPBdBfMPItM3ryw2uYLs91G0aVq5eo5HFpk16kFDznJc3i8N" "{\"initialTime\":1601534400000,\"expireTime\":null,\"ip\":\"127.0.0.1\",\"userNumber\":1000,\"productVersion\":\"portal/3.0,license/3.0,fi_cc_v2/3.0,crm_mobile/3.0,fi_ap/3.0,fi_ajs/3.0,fi_gl/3.0,fi_ar/3.0,crm/3.0,ps/3.0,fi_co/3.0,hr/3.0,fi_as/3.0,plm/3.0,erp/3.0,sys_mgt/3.0,adv_config/3.0\",\"isLocked\":0}"
+    测试一下，hget license "ipDPBdBfMPItM3ryw2uYLs91G0aVq5eo5HFpk16kFDznJc3i8N"
+    之后，重启，  sh restart_auth.sh restart  
+
+    minio 访问地址，http://192.168.10.26:9000/
+西加-启动好了。说是自启动脚本没生效？笑死根本没日志
+
+中车-车型车号项目，部署---明天部署
+    nginx,mariadb,jdk，已打包在邮件附件发送了~
+
+中车，内网开发环境。还剩授权。更新共享文档？？？
+    内网服务器10.26，装好c7后，连不到网络。检查路由，执行：
+    图形化界面也可以设置，不过自动获取没获取到。笑死
+    netstat -rn
+    route add  default gw 192.168.10.1      临时的
+    cat /etc/sysconfig/static-routes        永久的，内容如下any net default gw 192.168.10.1
+    systemctl restart network
 
 1. 在导入数据库步骤中， 会出现导入smartone_common.sql 报错，据说是用navicat15 导出来的原因。下次， 可用命令行导入试试
     `audit_date` date GENERATED ALWAYS AS (cast(`audit_time` as date)) STORED COMMENT '审核日期' NULL, 将最后的NULL 删除掉，再次导入就可了~
@@ -556,6 +579,7 @@ ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $8}')) | grep -E "netmask|Mask
 
 # mariadb
 cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql/ -DSYSCONFDIR=/etc -DWITHOUT_TOKUDB=1 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci
+
 # rpm包
 http://rpmfind.net/linux/rpm2html/search.php?query=ncurses-devel
 # cmake 编译安装
