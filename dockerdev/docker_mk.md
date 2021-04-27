@@ -41,6 +41,9 @@ docker run -it --name gitlab-runner-l01 --restart always \
     -v /var/run/docker.sock:/var/run/docker.sock \
     gitlab/gitlab-runner:latest
 
+**公司内网gitlab，创建指令**
+docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --publish 2222:22 --name gitlab-l01 --restart always -v /home/gitlab/data:/var/opt/gitlab -v /home/gitlab/config:/etc/gitlab -v /home/gitlab/logs:/var/log/gitlab beginor/gitlab-ce:11.1.4-ce.0
+
 ---
 
 - 应用容器化实践
@@ -261,15 +264,16 @@ docker run -it --name gitlab-runner-l01 --restart always \
 2. `docker system df -v`      进一步查看空间占用细节，以确定是哪个image、container或volume占用过高空间
 
 3. `docker system prune`          对占用空间自动清理
+
     1. -a   一并清除所有未被使用的image和悬空image，    -f          用以强制删除，不提示信息
     2. `docker image prune`       删除悬空image
     3. `docker container prune`   删除无用的container(this will remove all stopped containers)
         1. **默认会清理掉所有处于stopped状态的container**
         2. `docker container prune --filter "until=24h"`          但24h内创建的除外
-        3. docker [volume,network] prune                        删除无用的卷、网络
-
-    > 悬空镜像：未配置任何tag（也就是无法被引用）的镜像。通常是由于镜像编译过程中未指定 -t 参数配置tag导致的。
-
+    3. docker [volume,network] prune                        删除无用的卷、网络
+    
+> 悬空镜像：未配置任何tag（也就是无法被引用）的镜像。通常是由于镜像编译过程中未指定 -t 参数配置tag导致的。
+    
 4. 手动清除
     1. `docker rmi $(docker images -f "dangling=true" -q)`        删除所有悬空镜像，不删除未使用镜像
         -f filter
@@ -570,33 +574,34 @@ docker run -it --name gitlab-runner-l01 --restart always \
 
 3. 动态扩容docker磁盘容量，
     docker默认安装后磁盘容量是10G，若磁盘容量不够， 会导致集群节点unhealthy
-    1. dmsetup table                            查看正在运行的容器卷，记录下要扩展的容器，其中20971520 代表10G磁盘
 
+1. dmsetup table                            查看正在运行的容器卷，记录下要扩展的容器，其中20971520 代表10G磁盘
+    
         ```bash
         # docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de: 0 20971520 thin 253:3 63
         dmsetup table /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de     查看文件扇区信息
-        ```
-
-    2. echo $((50*1024*1024*1024/512))          计算要扩充的磁盘大小（20G）， 41943040, 将新的扇区大小写入，
-
+    ```
+    
+2. echo $((50*1024*1024*1024/512))          计算要扩充的磁盘大小（20G）， 41943040, 将新的扇区大小写入，
+    
         ```bash
         # dmsetup table docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de 0 20971520 thin 253:3 63
         echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
-        ```
-
+    ```
+    
     3. 现在再次检查表，仍然是相同的，所以新的table 需要激活
         dmsetup resume /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
-        再次检查，就拥有新的扇区数。不过，仍然需要调整文件系统的大小。 注意文件系统是xfs 还是其他的。其他的话，命令就不同了
-
+    再次检查，就拥有新的扇区数。不过，仍然需要调整文件系统的大小。 注意文件系统是xfs 还是其他的。其他的话，命令就不同了
+    
         ```bash
         # resize2fs /dev/mapper/docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
         xfs_growfs /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
-        ```
-
-    4. docker inspect gitlab | grep -iC 10 devicename，                 查看容器对应的设备名称（挂载）
-
-        df -hT，                                                        								  查看对应的设备，所挂载的宿主机目录
-
+    ```
+    
+4. docker inspect gitlab | grep -iC 10 devicename，                 查看容器对应的设备名称（挂载）
+    
+    df -hT，                                                        								  查看对应的设备，所挂载的宿主机目录
+    
     5. ../shellInstall/modify_docker_disk.sh, 有个脚本，不过是 resize2fs ，**需要进行完善**
 
 ## 入门与实践
@@ -799,13 +804,70 @@ docker run -it --name gitlab-runner-l01 --restart always \
 
 1. 若不执行，你的集群就会提示，Waiting for etcd and controlplane nodes to be registered
 
+---
 
+### 改变默认的存储
 
+- 因为docker刚安装上，其默认的路径是 /var/lib/docker/
 
+1. 举个例子，我这台服务器 / 根目录只有50G，/home 目录有500G，所以要将docker默认存储从 /var/lib/docker 迁移到 /home/docker/lib 下
 
+- `locate docker.service`， 修改docker.service 文件，增加一句：指定存储路径
 
+![image-20210426142409425](https://gitee.com/liuzel01/picbed/raw/master/data/20210426142409_docker_default_graph.png)
 
+2. 将docker服务完全关闭。
+3. 清理docker镜像、磁盘、数据卷和网络等无用的文件（上面有-"磁盘占用那节"）
+4. 将 /var/lib/docker/ 目录下的文件mv 到 /home/dokcer/lib/  下，
 
+5. `systemctl daemon-reload ` `systemctl start docker` 
+6. `docker info | grep -iC5 \/home\/docker` 检查一下
+   1. 然后，你新键一个container，df -hT 查看存储情况，也能看到
+7. <font color=#EF000>**不过，我启动docker之后，之前的images 和 container 并没有了。。。**</font>
+   1. <font color=red>**不过，诶，笑死我了根本红不了，这就是橘色**</font>
+
+---
+
+- 再者，对于要迁移的数据过多的情况，~~可以选择挂载或软链接~~
+
+1. 或是增加原container 默认的存储10G大小奥，挺悲惨昂
+2. 可动态扩容，（见上面 "动态扩容docker磁盘容量")，前提是contianer要能够运行，你不能start都不行了，这种肯定扩容不容易成功
+   1. 优点：不需修改docker启动参数，重启docker
+      1. 不用重新pull镜像，针对单个容器，控制灵活
+   2. 缺点：只能用于storage driver是 devicemapper 的docker
+      1. 只能扩容，不能缩减
+3. `docker info | grep -i "Base Device Size"`查看到默认的存储大小
+   1. `docker info | grep -i "storage driver"`
+4. `vim /etc/docker/daemon.json`
+
+![image-20210426150016605](https://gitee.com/liuzel01/picbed/raw/master/data/20210426150016_docker_devicemapper_default50.png)
+
+1. 缺点：非动态更改，改完后还需要重新启动docker
+   1. 更改后，镜像需要重新pull下来，
+   2. 只能扩容不能缩减	
+
+---
+
+- 当然，你可以更直接将storage driver 从devicemapper 更改为 overlay2
+
+- 下面我先看看，这两种应该挺好转的
+
+1. /etc/docker/daemon.json 文件中，添加
+
+```
+{
+  "storage-opts": [
+    "overlay2.override_kernel_check=true",
+    "overlay2.size=10G"
+  ],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m"
+  }
+}
+```
+
+2. 还未尝试
 
 
 
