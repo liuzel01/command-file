@@ -273,7 +273,7 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
     3. docker [volume,network] prune                        删除无用的卷、网络
     
 > 悬空镜像：未配置任何tag（也就是无法被引用）的镜像。通常是由于镜像编译过程中未指定 -t 参数配置tag导致的。
-    
+
 4. 手动清除
     1. `docker rmi $(docker images -f "dangling=true" -q)`        删除所有悬空镜像，不删除未使用镜像
         -f filter
@@ -576,14 +576,16 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
     docker默认安装后磁盘容量是10G，若磁盘容量不够， 会导致集群节点unhealthy
 
 1. dmsetup table                            查看正在运行的容器卷，记录下要扩展的容器，其中20971520 代表10G磁盘
-    
+   
         ```bash
         # docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de: 0 20971520 thin 253:3 63
         dmsetup table /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de     查看文件扇区信息
     ```
     
-2. echo $((50*1024*1024*1024/512))          计算要扩充的磁盘大小（20G）， 41943040, 将新的扇区大小写入，
+    ```
     
+2. echo $((50*1024*1024*1024/512))          计算要扩充的磁盘大小（20G）， 41943040, 将新的扇区大小写入，
+   
         ```bash
         # dmsetup table docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de 0 20971520 thin 253:3 63
         echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
@@ -599,7 +601,7 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
     ```
     
 4. docker inspect gitlab | grep -iC 10 devicename，                 查看容器对应的设备名称（挂载）
-    
+   
     df -hT，                                                        								  查看对应的设备，所挂载的宿主机目录
     
     5. ../shellInstall/modify_docker_disk.sh, 有个脚本，不过是 resize2fs ，**需要进行完善**
@@ -823,7 +825,7 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
 5. `systemctl daemon-reload ` `systemctl start docker` 
 6. `docker info | grep -iC5 \/home\/docker` 检查一下
    1. 然后，你新键一个container，df -hT 查看存储情况，也能看到
-7. <font color=#EF000>**不过，我启动docker之后，之前的images 和 container 并没有了。。。**</font>
+7. <font color=#EF000>**不过，我启动docker之后，之前的images 和 container 并没有了！！！**</font> 
    1. <font color=red>**不过，诶，笑死我了根本红不了，这就是橘色**</font>
 
 ---
@@ -867,7 +869,8 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
 }
 ```
 
-2. 还未尝试
+2. 参考，[关于overlay2存储驱动的磁盘配额](https://blog.sealyun.com/views/container/2019/docker-oerlay2.html#%E7%9B%91%E6%8E%A7)
+3. 还未尝试，这个不敢搞。。
 
 
 
