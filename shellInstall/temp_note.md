@@ -94,9 +94,6 @@ revoke all on *.* from dba@localhost;
 `grep -Ev "^$|^[#;]" redis.conf`
 但是，这会把脚本开头那行也给注释了...
 
-`wget https://mirrors.tuna.tsinghua.edu.cn/mariadb//mariadb-10.4.6/bintar-linux-systemd-x86_64/mariadb-10.4.6-linux-systemd-x86_64.tar.gz`
-mariadb密码，sks123.com
-
 微信公众号-与开发者模式绑定，因此要用到接口去配置，比如说菜单...
 微信接口调试页面，[前往](https://mp.weixin.qq.com/debug?token=980797293&lang=zh_CN)
 appid+secret，拼接的[地址为](https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxdf1ad0c1c7590f4e&secret=bc8310072386062e0ddf5fea6ff60b42)
@@ -123,12 +120,6 @@ appid+secret，拼接的[地址为](https://api.weixin.qq.com/cgi-bin/token?gran
     1. package-cleanup --cleandupes
     2. 可以只升级某一个软件包，，  yum update -y docker-ce
 
-- 更换jenkins的源,编辑 /home/jenkins_home/updates/default.json
-
-1. `sed -i 's#http:\/\/updates.jekins-ci.org\/download#https:\/\/mirrors.ustc.edu.cn\/jenkins#g' default.json && sed -i '#/http:\/\/www.google.com#https:\/\/www.baidu.com#g' default.json`
-    输入这个[地址](https://mirrors.ustc.edu.cn/jenkins/updates/update-center.json)
-2. 中文社区,[镜像地址](https://jenkins-zh.cn/tutorial/management/plugin/update-center/)
-
 - 获取结果的最后一列, 例如  docker ps -a | awk '{print $NF}'
 
 - 哦，remote-ssh连接上后，打开文件夹，之后再开终端才会是你写代码的那个路径
@@ -138,7 +129,8 @@ weekly：
 
 - 已完成：
 
-`
+
+5. 
 ---
 
 - 其他：
@@ -205,13 +197,10 @@ smartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartone
     minio 访问地址，http://192.168.10.26:9000/
 西加-启动好了。说是自启动脚本没生效？笑死根本没日志
 
-中车-车型车号项目，部署---明天部署
-    nginx,mariadb,jdk，已打包在邮件附件发送了~
-
 中车，内网开发环境。还剩授权。更新共享文档？？？
     内网服务器10.26，装好c7后，连不到网络。检查路由，执行：
     图形化界面也可以设置，不过自动获取没获取到。笑死
-    netstat -rn
+    netstat -rn                             查看到服务器路由表， Kernel IP routing table
     route add  default gw 192.168.10.1      临时的
     cat /etc/sysconfig/static-routes        永久的，内容如下any net default gw 192.168.10.1
     systemctl restart network
@@ -412,9 +401,6 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         [应急响应之linux下进程隐藏](https://www.anquanke.com/post/id/226285)
         [警惕利用linux预加载型恶意动态链接库的后门](https://www.freebuf.com/column/162604.html)， 有必要好好看看研究一下
 
-1. Git， 七大基本原则
-3. 
-
 5. 删除 /data/lscgdj目录下， 10天之前修改过的tar.gz 包
    find /data/lscgdj -name "*-backup-onlywebinf.tar.gz" -a -mtime +9 -exec rm -rf {} \; &>/dev/null
    -atime +1             最后一次访问时间
@@ -428,8 +414,6 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
        cat id_rsa.pub  >> authorized_keys
 
    本来，试讲win10上面的资料mount 挂载到虚拟机 centos7mini 上去的。 现在发现，用远程服务器可以同样实现，大功告成。 不过这样的话，虽然本地资源压力减轻，但是安全性就没了。
-
-7. [ ! -n "$JAVA_HOME" ] && echo 'is null'             判断一个变量是否为空
 
 8. 条理清晰，有理有据
 
@@ -490,45 +474,9 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
         思路是对的，不过问题出在win10这边。可能是因为用了samba 共享的缘故
         所以，肯定是win10 的system把文件夹占用了
 
-- 前后端分项目，后端使用 spring-boot 的项目一般都打成了jar包，需要排查问题或是修改配置的时候需要解压和打包，
-
-    1. unzip meeting-standard.jar  -d meeting-stand                 解压包，
-    2. jar -cvfM0 meeting_lzl.jar meeting-stand/                    打包
-
-        1. 如果是我这种打了jar包，可以直接找到 对应的文件， vim修改内容并保存退出
-
-- meeting项目包在10.68上不能打包，提示缺失的jar等依赖，都已从10.15服务器上scp 过来了，重启后，还是报错
-    1. 特别需要注意maven 的环境变量，
-    Dashboard-全局工具配置，“Maven配置”和 下面的“Maven”安装，注意指定 MAVEN_HOME，
-    即时跟踪检查日志。需要注意他调用的mvn 指向，以及调用的配置文件settings.xml
-    Executing Maven:  -B -f /var/jenkins_home/workspace/meeting-mvn/pom.xml -s /var/jenkins_home/apache-maven-3.6.3/conf/settings.xml -gs /var/jenkins_home/apache-maven-3.6.3/conf/settings.xml clean install
-    **不知道为什么which mvn,和此时调用的settings.xml文件，不属同一个mvn？？**
-    2. 解决方法： ...只是将他调用的配置文件，用修改之后的文件，强行替换了
-        根源还是没有修改！！！！
----
-
-    2. jenkins 运行job时间和系统时间不一致，在“系统管理”-“脚本命令行”，运行命令，
-    System.setProperty('org.apache.commons.jelly.tags.fmt.timeZone','Asia/Shanghai')
-
 技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧
 
-- chrome tools，截长图
-    1. F12（或者快捷键Ctrl+Shift+i）调出开发者工具，快捷键Ctrl+Shift+p 召唤出工具箱，输入full（因为命令全称是，Capture full size screenshot）,ok然后就可以浏览器截图并保存到本地了~
-        Capture node screenshot, 对单个节点（单个节点也是可以长屏）进行截图，当然首先要选中你需要截图的node
-    2. 或是要对某个设备上来个截图，F12，然后改成iPad Pro，右上角有三个点，Capture screenshot（找screenshot），可对此时设备（iPad Pro）进行截图
-    3. **,真香。空了，把操作截图补上！！！**
-
-- 重启发起XHR请求，
-    1. F12，Network面板，选中其中一个请求，右键，用 "Replay XHR" 来重启发起请求，而不需要再填一次表单了
-- 修改网站上的内容，
-    1. F12,Console,type this "document.body.contentEditable="true"", just try on ur website
-- 快速调出需要的面板，
-    1. 快捷键，Ctrl+Shift+p, type this "show animations" OR "show coverage"
-- 快速找到网页上的图片，
-    1. F12, Network, Img, u can see the pics, click right, copy-copy link address
-
-
-linux, mail, 
+linux, mail,
 221.236.26.68 发送不了邮件， 且无错误提示
 
 且，119.3.247.174 也发送不了。。。先把这台搞定，上面的理应同理
@@ -550,7 +498,7 @@ ll /usr/sbin/sendmail  接着一步一步，发现软链接指向的是 /usr/sbi
 
 ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansible
 
-1. locate, 搜索包含关键字的所有文件和目录。后接需要查找的文件名，也可以用正则表达式
+1. locate, 搜索包含关键字的所有文件和目录。后接需要查找的文件名，也可以用正则表达式     `yum install mlocate`
     准确度依赖于系统上预建的文件索引数据库文件, ll /var/lib/mlocate/mlocate.db
     1. locate qq.sh                     去文件数据库中查找命令，而不是全磁盘查找。因为刚创建的文件并不会更新进数据库，所以需要手动更新数据库
         updatedb                        更新数据库
@@ -562,70 +510,14 @@ ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleans
 
 2. sed -n '/\文件/p' tmp_temp           查找并打印出，包括关键字"文件"所在所有行 ，使用反斜线屏蔽特殊含义
     grep -w 服务器 tmp_temp             只匹配整个单词，而不是字符串的一部分。 -n 显示行号信息 -c 查找总行数
-    
 
 
-3. 记一次centos7，离线安装软件包过程
-ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $8}') | grep netmask |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
-route -n | grep ^0.0.0.0 | awk '{print $8}'
-
-ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $8}')) | grep -E "netmask|Mask" |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
-# 获取系统的ip地址
-
-
-
-# ./configure --with-system-zlib --prefix=/user/gcc-4.4.7/gcc-4.4obj --enable-threads=posix --with-cpu=generic --enable--long-long --enable-languages=c,c++  --with-gmp=/user/gmp-6.1.0/gmp-6.1.0-obj --with-mpfr=/user/mpfr-3.1.6/mpfr-3.1.6-obj --build=x86_64-redhat-linux
-
-
-# mariadb
-cmake . -DCMAKE_INSTALL_PREFIX=/usr/local/mysql -DMYSQL_DATADIR=/data/mysql/ -DSYSCONFDIR=/etc -DWITHOUT_TOKUDB=1 -DMYSQL_UNIX_ADDR=/tmp/mysql.sock -DDEFAULT_CHARSET=utf8 -DDEFAULT_COLLATION=utf8_general_ci
-
-# rpm包
-http://rpmfind.net/linux/rpm2html/search.php?query=ncurses-devel
-# cmake 编译安装
-https://github-releases.githubusercontent.com/537699/92110680-985a-11eb-9440-54a4374fc3b1?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A%2F20210416%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20210416T060241Z&X-Amz-Expires=300&X-Amz-Signature=50ddbe5be397585b9003297e7dbd8d5506b5b481a9c9d4457b1d23c412f3894f&X-Amz-SignedHeaders=host&actor_id=26734740&key_id=0&repo_id=537699&response-content-disposition=attachment%3B%20filename%3Dcmake-3.20.1-linux-x86_64.tar.gz&response-content-type=application%2Foctet-stream
-# centos 离线安装gcc 环境
-https://my.oschina.net/u/4277371/blog/3225059
-# 离线安装ncurses-devel
-https://www.cnblogs.com/wuxun1997/p/11579310.html
-http://rpmfind.net/linux/rpm2html/search.php?query=ncurses-devel&submit=Search+...&system=&arch=
-# 下载安装m4
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/m4-1.4.16-10.el7.x86_64.rpm
-# 离线安装，
-http://download.savannah.gnu.org/releases/lzip/lzip-1.20.tar.gz
-https://gmplib.org/download/gmp/gmp-6.1.2.tar.lz
-https://ftp.gnu.org/gnu/nettle/nettle-3.4.tar.gz
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libcurl-devel-7.29.0-59.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/curl-7.29.0-59.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/git-1.8.3.1-23.el7_8.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/openssl-1.0.2k-19.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/openssl-devel-1.0.2k-19.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/krb5-devel-1.15.1-50.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/krb5-libs-1.15.1-50.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/openssl-libs-1.0.2k-19.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/zlib-devel-1.2.7-18.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/e2fsprogs-devel-1.42.9-19.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libcom_err-devel-1.42.9-19.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libcom_err-1.42.9-19.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libaio-devel-0.3.109-13.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/perl-5.16.3-297.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/perl-devel-5.16.3-297.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libXtst-1.2.3-1.el7.x86_64.rpm
-http://rpmfind.net/linux/centos/7.9.2009/os/x86_64/Packages/libXtst-devel-1.2.3-1.el7.x86_64.rpm
-
-
-报错：Could NOT find GnuTLS (missing: GNUTLS_LIBRARY GNUTLS_INCLUDE_DIR)
-
-- 报错，/lib/ld-linux.so.2: bad ELF interpreter问题
-是因为64位系统安装了32位程序 yum install glibc.i686
-
-
-
-
-
-# 离线安装bison
-http://rpmfind.net/linux/rpm2html/search.php?query=bison&submit=Search+...&system=&arch=
-rpm -ivh bison-3.0.4-2.el7.x86_64.rpm --nodeps --force
+## 获取系统的ip地址
+ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $8}') | grep -E "netmask|Mask" |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
+---
+释放服务器buff/cache 中的内存，
+    sync
+    echo 1 > /proc/sys/vm/drop_caches
 
 
 TODO：
@@ -634,7 +526,6 @@ TODO：
 2. 可以买几个闹铃。从桌边一直到卫生间，且每隔1分钟就定一个闹钟，肯定得劲
 
 ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-去报工系统那个地址，添加自己的报销单。不过需要首先由PM将项目建立好~~
 
 ```bash
 export JAVA_HOME=/usr/java/jdk1.8.0_271\n export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar \nexport PATH=$PATH:$JAVA_HOME/bin
