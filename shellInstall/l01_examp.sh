@@ -1,4 +1,5 @@
 #!/bin/bash
+# 此脚本记录，常用到的结构、套路等基操
 
 for ((i=1;i<=100;i++));do
     let sum+=i
@@ -78,3 +79,28 @@ fact(){
 fact_prin
 
 # https://blog.51cto.com/u_12948961/2161449
+
+# 打印日志并追加到日志文件
+log() {
+    echo "$(date "+%Y-%m-%d %H:%M:%S")" "$1"
+    echo -e "$(date "+%Y-%m-%d %H:%M:%S")" "$1" >> ${LOGFILE}
+}
+# log "下载nginx源码包出错 ，请检查url是否正确"
+
+# check Jenkins in docker is running or not
+check_gitlab() {
+    if ! systemctl status docker ;then
+        log "The Service docker not running~~" &&\
+            systemctl restart docker
+        exit 1
+    fi
+    if ! docker ps | grep c904f95c7495 ;then
+        log "The Jenkins in docker not running~~" &&\
+            docker restart c904f95c7495
+        exit 1
+    fi
+}
+check_gitlab
+
+# 判断一个变量是否为空
+[ ! -n "$JAVA_HOME" ] && echo 'is null'
