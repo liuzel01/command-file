@@ -822,10 +822,11 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
 3. 清理docker镜像、磁盘、数据卷和网络等无用的文件（上面有-"磁盘占用那节"）
 4. 将 /var/lib/docker/ 目录下的文件mv 到 /home/dokcer/lib/  下，
 
-5. `systemctl daemon-reload ` `systemctl start docker` 
+5. `systemctl daemon-reload ` `systemctl start docker`
 6. `docker info | grep -iC5 \/home\/docker` 检查一下
    1. 然后，你新键一个container，df -hT 查看存储情况，也能看到
-7. <font color=#EF000>**不过，我启动docker之后，之前的images 和 container 并没有了！！！**</font> 
+
+7. <font color=#EF000>**不过，我启动docker之后，之前的images 和 container 并没有了！！！**</font>
    1. <font color=red>**不过，诶，笑死我了根本红不了，这就是橘色**</font>
 
 ---
@@ -846,7 +847,7 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
 
 1. 缺点：非动态更改，改完后还需要重新启动docker
    1. 更改后，镜像需要重新pull下来，
-   2. 只能扩容不能缩减	
+   2. 只能扩容不能缩减
 
 ---
 
@@ -856,7 +857,7 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
 
 1. /etc/docker/daemon.json 文件中，添加
 
-```
+```text
 {
   "storage-opts": [
     "overlay2.override_kernel_check=true",
@@ -871,13 +872,3 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
 
 2. 参考，[关于overlay2存储驱动的磁盘配额](https://blog.sealyun.com/views/container/2019/docker-oerlay2.html#%E7%9B%91%E6%8E%A7)
 3. 还未尝试，这个不敢搞。。
-
-
-
-
-
-
-
-
-
-
