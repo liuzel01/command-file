@@ -104,3 +104,6 @@ check_gitlab
 
 # 判断一个变量是否为空
 [ ! -n "$JAVA_HOME" ] && echo 'is null'
+
+# $() 放的是命令，比如eth0ip 是函数， echo "服务器的信息: $(eth0ip)"
+# ${} 放的是变量，比如q=$(/usr/bin/cat /etc/redhat-release)， echo "操作系统版本: ${SYSTEM_VERSION}"
