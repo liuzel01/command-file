@@ -194,17 +194,6 @@ smartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartone
     测试一下，hget license "ipDPBdBfMPItM3ryw2uYLs91G0aVq5eo5HFpk16kFDznJc3i8N"
     之后，重启，  sh restart_auth.sh restart  
 
-    minio 访问地址，http://192.168.10.26:9000/
-西加-启动好了。说是自启动脚本没生效？笑死根本没日志
-
-中车，内网开发环境。还剩授权。更新共享文档？？？
-    内网服务器10.26，装好c7后，连不到网络。检查路由，执行：
-    图形化界面也可以设置，不过自动获取没获取到。笑死
-    netstat -rn                             查看到服务器路由表， Kernel IP routing table
-    route add  default gw 192.168.10.1      临时的
-    cat /etc/sysconfig/static-routes        永久的，内容如下any net default gw 192.168.10.1
-    systemctl restart network
-
 1. 在导入数据库步骤中， 会出现导入smartone_common.sql 报错，据说是用navicat15 导出来的原因。下次， 可用命令行导入试试
     `audit_date` date GENERATED ALWAYS AS (cast(`audit_time` as date)) STORED COMMENT '审核日期' NULL, 将最后的NULL 删除掉，再次导入就可了~
 
@@ -513,7 +502,7 @@ ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleans
 
 
 ## 获取系统的ip地址
-ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $8}') | grep -E "netmask|Mask" |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
+ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $NF}') | grep -E "netmask|Mask" |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
 ---
 释放服务器buff/cache 中的内存，
     sync
