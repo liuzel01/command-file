@@ -203,20 +203,21 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
 
 ---
 
-## 创建运行jenkins
+## ~~创建运行jenkins~~，劝你还是看jenkins.md文件
 
 - `docker run -p 8080:8080 -p 50000:5000 --name jenkins -u root -v /etc/localtime:/etc/localtime -v /home/jenkins_home:/var/jenkins_home --privileged=true -e Java_OPTS=-Duser.timezone=Asia/Shanghai -d jenkins/jenkins:lts`
 
-1. 使用jenkins/jenkins:lts，~~因为此版本jenkins较新~~  
+1. ~~使用jenkins/jenkins:lts，因为此版本jenkins较新~~
 2. 注意将之前使用的jenkins的数据存储（比如/var/lib/jenkins），迁移到现服务器上；然后添加映射到容器内
 
 - 关于docer 多阶构建 multi-stage build
 
 1. `docker build -t lzl_meet_nginx  .  -f meeting_nginx.dockerfile`                     创建项目所用nginx image
+   
     1. `docker build -t lzl_meet . -f meet.dockerfile`                                  创建项目所用后台  image
     2. `docker run -itd --name lzl_meet  -p 8090:8080 lzl_meet`
-        `docker run -itd --name lzl_meet_nginx  -p 80:80 lzl_meet_nginx`
-
+    `docker run -itd --name lzl_meet_nginx  -p 80:80 lzl_meet_nginx`
+    
 2. dockerfile 部署会议系统，
     1. docker多阶段构建,（优化，降低images的体积）
     2. 多阶段构建meeting会议系统，需要两个容器（镜像），如下
@@ -553,6 +554,7 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
 ---
 
 1. 在内核态，最重要的四种硬件资源是CPU、内存、存储和网络
+
 2. 对应到数据中心，我们也需要一个调度器，将运维人员从指定物理机或虚拟机的痛苦中解放出来，实现对于物理资源的统一管理，这就是k8s
     要通过文件系统保持持久化的数据并且实现共享，在数据中心里面也需要一个这样的基础设施。
 
@@ -560,51 +562,61 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
         对象存储
         分布式文件系统
         分布式块存储。云硬盘，也即存储虚拟化的方式
-
-    2. k8s有自己的网络模型。
+2. k8s有自己的网络模型。
         1. 至此，k8s作为数据中心的操作系统，内核问题解决了
-
     3. 接着是用户态的工具问题。
-        1. 交互式命令行
+    1. 交互式命令行
         2. nohup长期运行的进程
         3. 系统服务
         4. 周期性进程，CrontabJob
-
     4. 有了k8s我们就能像管理一台linux服务器那样，去管理数据中心了。
 
-3. 动态扩容docker磁盘容量，
-    docker默认安装后磁盘容量是10G，若磁盘容量不够， 会导致集群节点unhealthy
+---
 
-1. dmsetup table                            查看正在运行的容器卷，记录下要扩展的容器，其中20971520 代表10G磁盘
-   
-        ```bash
-        # docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de: 0 20971520 thin 253:3 63
-        dmsetup table /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de     查看文件扇区信息
-    ```
-    
-    ```
-    
-2. echo $((50*1024*1024*1024/512))          计算要扩充的磁盘大小（20G）， 41943040, 将新的扇区大小写入，
-   
-        ```bash
-        # dmsetup table docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de 0 20971520 thin 253:3 63
-        echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
-    ```
-    
-    3. 现在再次检查表，仍然是相同的，所以新的table 需要激活
-        dmsetup resume /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
-    再次检查，就拥有新的扇区数。不过，仍然需要调整文件系统的大小。 注意文件系统是xfs 还是其他的。其他的话，命令就不同了
-    
-        ```bash
-        # resize2fs /dev/mapper/docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
-        xfs_growfs /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
-    ```
-    
-4. docker inspect gitlab | grep -iC 10 devicename，                 查看容器对应的设备名称（挂载）
-   
+### 动态扩容docker磁盘容量
+
+1. docker默认安装后磁盘容量是10G，若磁盘容量不够， 会导致集群节点unhealthy
+
+2. df -hT , dmsetup table                            查看正在运行的容器卷，记录下要扩展的容器，其中20971520 代表10G磁盘
+
+```bash
+# docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de: 0 20971520 thin 253:3 63
+dmsetup table /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de     查看文件扇区信息
+
+2. echo $((50*1024*1024*1024/512))          计算要扩充的磁盘大小（50G）， 41943040, 将新的扇区大小写入，
+# dmsetup table docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de 0 20971520 thin 253:3 63
+echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
+
+3. 现在再次检查表，仍然是相同的，所以新的table 需要激活
+    dmsetup resume /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
+再次检查，就拥有新的扇区数。不过，仍然需要调整文件系统的大小。 注意文件系统是xfs 还是其他的。其他的话，命令就不同了
+
+    ```bash
+    # resize2fs /dev/mapper/docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
+    xfs_growfs /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
+4. 血的教训。。在扩容完成后，某次停止容器了，再次启动就不行了。需要进行
+    docker stop 
+    echo ...
+    dmsetup resume ...
+    xfs_growfs ...
+    docker start 这之后，就相当于dm 认同了设备块大小为扩容之后的大小，让其先生成dm文件即可修改成功。
+```
+
+1. docker inspect gitlab | grep -iC 10 devicename，                 查看容器对应的设备名称（挂载）
+
     df -hT，                                                        								  查看对应的设备，所挂载的宿主机目录
-    
-    5. ../shellInstall/modify_docker_disk.sh, 有个脚本，不过是 resize2fs ，**需要进行完善**
+
+2. ../shellInstall/modify_docker_disk.sh, 有个脚本，不过是 resize2fs ，**需要进行完善**
+
+---
+
+- 还有一种观点，docker默认空间大小分两个，一个是池空间大小，另一个是容器空间大小
+  - 池空间大小默认：100G
+  - 容器控件大小默认：10G
+  - 可参考，[Docker修改空间大小](https://blog.csdn.net/chengxuyuanyonghu/article/details/76560166)
+
+1. 查看池空间，`docker info  | grep -i space` 
+2. <font color=orange>留白</font>
 
 ## 入门与实践
 
