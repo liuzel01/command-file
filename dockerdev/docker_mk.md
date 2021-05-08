@@ -30,9 +30,9 @@ sudo docker run --detach \
   --publish 443:443 --publish 80:80 --publish 22:22 \
   --name gitlab-l01 \
   --restart always \
-  --volume /opt/gitlab/config:/etc/gitlab \
-  --volume /opt/gitlab/logs:/var/log/gitlab \
-  --volume /opt/gitlab/data:/var/opt/gitlab \
+  -v /opt/gitlab/config:/etc/gitlab \
+  -v /opt/gitlab/logs:/var/log/gitlab \
+  -v /opt/gitlab/data:/var/opt/gitlab \
   gitlab/gitlab-ce:latest
 
 - docker,创建gitlab-runner
@@ -590,8 +590,6 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 3. 现在再次检查表，仍然是相同的，所以新的table 需要激活
     dmsetup resume /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
 再次检查，就拥有新的扇区数。不过，仍然需要调整文件系统的大小。 注意文件系统是xfs 还是其他的。其他的话，命令就不同了
-
-    ```bash
     # resize2fs /dev/mapper/docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
     xfs_growfs /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
 4. 血的教训。。在扩容完成后，某次停止容器了，再次启动就不行了。需要进行
@@ -599,14 +597,16 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
     echo ...
     dmsetup resume ...
     xfs_growfs ...
-    docker start 这之后，就相当于dm 认同了设备块大小为扩容之后的大小，让其先生成dm文件即可修改成功。
+    docker start 这之后，就相当于dm 认同了设备块大小为扩容之后的大小，让其先生成dm文件，即可修改成功
 ```
 
 1. docker inspect gitlab | grep -iC 10 devicename，                 查看容器对应的设备名称（挂载）
 
     df -hT，                                                        								  查看对应的设备，所挂载的宿主机目录
 
-2. ../shellInstall/modify_docker_disk.sh, 有个脚本，不过是 resize2fs ，**需要进行完善**
+2. ../shellInstall/modify_docker_disk.sh, 有个脚本，不过是 resize2fs ，**需要进行完善？？？**
+
+- <font color=red>**需要先看，是否有新增的挂载的磁盘。有的话，就可以直接扩容/ 根，从而达到扩容 /var/lib/ 的效果**</font>
 
 ---
 
@@ -820,9 +820,9 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 
 ---
 
-### 改变默认的存储
+### 改变docker默认的存储
 
-- 因为docker刚安装上，其默认的路径是 /var/lib/docker/
+- 因为docker刚安装上，默认的路径一般是 /var/lib/docker/
 
 1. 举个例子，我这台服务器 / 根目录只有50G，/home 目录有500G，所以要将docker默认存储从 /var/lib/docker 迁移到 /home/docker/lib 下
 
@@ -847,10 +847,10 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 
 1. 或是增加原container 默认的存储10G大小奥，挺悲惨昂
 2. 可动态扩容，（见上面 "动态扩容docker磁盘容量")，前提是contianer要能够运行，你不能start都不行了，这种肯定扩容不容易成功
-   1. 优点：不需修改docker启动参数，重启docker
+   1. ~~优点：不需修改docker启动参数，重启docker~~
       1. 不用重新pull镜像，针对单个容器，控制灵活
-   2. 缺点：只能用于storage driver是 devicemapper 的docker
-      1. 只能扩容，不能缩减
+   2. ~~缺点：只能用于storage driver是 devicemapper 的docker~~  而且我这台服务器，根本就用不到，直接用的就是/ 根的存储空间。因为新的driver就是 overlay2
+      1. ~~只能扩容，不能缩减~~
 3. `docker info | grep -i "Base Device Size"`查看到默认的存储大小
    1. `docker info | grep -i "storage driver"`
 4. `vim /etc/docker/daemon.json`
@@ -863,24 +863,27 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 
 ---
 
-- 当然，你可以更直接将storage driver 从devicemapper 更改为 overlay2
-
-- 下面我先看看，这两种应该挺好转的
+- **当然，你可以更直接将storage driver 从devicemapper 更改为 overlay2**
+- 后面我先看看，这两种应该挺好转的
+- 操作之前要注意⚠️：之前 docker images 会丢失，之前运行的 docker 容器服务会丢失（docker ps），进行下面步骤之前请做好数据的备份！！！
 
 1. /etc/docker/daemon.json 文件中，添加
 
-```text
+```json
 {
-  "storage-opts": [
+	"storage-driver": "overlay2",
+    "storage-opts": [
     "overlay2.override_kernel_check=true",
-    "overlay2.size=10G"
+//    "overlay2.size=10G"
   ],
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "10m"
-  }
+//"log-driver": "json-file",
+//"log-opts": {
+//	"max-size": "10m"
+//  }
 }
 ```
 
-2. 参考，[关于overlay2存储驱动的磁盘配额](https://blog.sealyun.com/views/container/2019/docker-oerlay2.html#%E7%9B%91%E6%8E%A7)
+2. 参考，[关于overlay2存储驱动的磁盘配额](https://blog.sealyun.com/views/container/2019/docker-oerlay2.html#%E7%9B%91%E6%8E%A7)，[存储驱动由overlay更改为overlay2](https://www.huaweicloud.com/articles/f5783fd2f89211a698592a51c27f0c94.html)，[修改存储驱动VFS to overlay2](https://www.jianshu.com/p/ef01d7faec74)，
+   1. [配置overlay2存储驱动](https://www.bookstack.cn/read/openeuler-1.0-base/Container-%E9%85%8D%E7%BD%AEoverlay2%E5%AD%98%E5%82%A8%E9%A9%B1%E5%8A%A8.md)
 3. 还未尝试，这个不敢搞。。
+
