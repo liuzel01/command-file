@@ -2,6 +2,8 @@
 # 检测服务是否有在运行，没有的话就执行脚本重启
 # v1.1,精简版检测服务脚本，
 # 因为是定时运行脚本，所以将需要检测的服务都写在下面
+# restart_$i.sh 可参考同目录下 restart_admin.sh
+
 APP_NAME=(register auth gateway admin erp crm)
 
 TIME=$(date +%Y-%m-%d)
