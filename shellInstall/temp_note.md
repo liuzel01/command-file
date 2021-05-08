@@ -487,7 +487,7 @@ ll /usr/sbin/sendmail  接着一步一步，发现软链接指向的是 /usr/sbi
 
 ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansible
 
-1. locate, 搜索包含关键字的所有文件和目录。后接需要查找的文件名，也可以用正则表达式     `yum install mlocate`
+1. locate, 搜索包含关键字的所有文件和目录。后接需要查找的文件名，也可以用正则表达式     `yum install -y mlocate`
     准确度依赖于系统上预建的文件索引数据库文件, ll /var/lib/mlocate/mlocate.db
     1. locate qq.sh                     去文件数据库中查找命令，而不是全磁盘查找。因为刚创建的文件并不会更新进数据库，所以需要手动更新数据库
         updatedb                        更新数据库
