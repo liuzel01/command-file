@@ -11,11 +11,12 @@
 # 导入系统变量
 #############################################################################################
 # set -e 
-if ls -l /etc/init.d/functions ;then
+if (ls -l /etc/init.d/functions &>/dev/null);then
     . /etc/init.d/functions
-    exit 1
+#     exit 1
 fi
 source /etc/profile
+#############################################################################################
 # 基本不变
 PRIVATE_TOKEN="d-swU128VWosJySssz7u"
 LK_TYPE="other"
@@ -31,7 +32,7 @@ LK_NAME=""
 LK_URL=""
 
 
-CHK_RELES_NAME(){
+chk_reles_name(){
 read -p "当前release_name为 "$RELES_NAME_DEF" ，是否更改（直接输入，否则回车下一步）: " RELES_NAME
 [ -z $RELES_NAME ] &&\
     RELES_NAME=${RELES_NAME_DEF}
@@ -39,44 +40,59 @@ read -p "当前release_name为 "$RELES_NAME_DEF" ，是否更改（直接输入�
 # ||  echo "修改后的release_name为: "${RELES_NAME}
 }
 
-CHK_RELES_NAME
+chk_reles_name
 read -p "确认release_name为： "${RELES_NAME}" （默认 y）? [y/n]: " RELES_CHOIC
 case ${RELES_CHOIC} in
     n|N)
-        CHK_RELES_NAME
+        chk_reles_name
     ;;
     *)
-#         echo ${RELES_NAME}
 #         exit 1
 # 这里如果用了exit 会报错
 esac
 echo ${RELES_NAME}
 
-CHK_RELES_REF(){
+# 检查RELES_REF，并且一次修改的机会，以下的就同理了
+#############################################################################################
+chk_reles_ref(){
 read -p "当前release_ref为 "$RELES_REF_DEF" ，是否更改（直接输入，否则回车下一步）: " RELES_REF
 [ -z $RELES_REF ] &&\
     RELES_REF=${RELES_REF_DEF}
 # && echo "修改后的release_name为: "${RELES_REF_DEF}
 # ||  echo "修改后的release_name为: "${RELES_REF}
 }
-CHK_RELES_REF
+chk_reles_ref
 echo ${RELES_REF}
 
-# 以下的同理
-# read -p ": " RELES_REF
-# read -p ": " LK_FILEPATH
-# read -p ": " POST_URL
-# 
-# read -p "" TAG_NAME
-# read -p "" RELES_DESCRIP
-# read -p "" LK_NAME
-# read -p "" LK_URL
+#############################################################################################
+chk_lk_filepath(){
+read -p "当前link_filepath为 "$LK_FILEPATH_DEF" ，是否更改（直接输入，否则回车下一步）: " LK_FILEPATH
+[ -z $LK_FILEPATH ] &&\
+    LK_FILEPATH=${LK_FILEPATH_DEF}
+}
+chk_lk_filepath
+echo ${LK_FILEPATH}
+
+#############################################################################################
+chk_post_url(){
+read -p "当前release_ref为 "$POST_URL_DEF" ，是否更改（直接输入，否则回车下一步）: " POST_URL
+[ -z $POST_URL ] &&\
+    POST_URL=${POST_URL_DEF}
+}
+chk_post_url
+echo ${POST_URL}
+
+read -p "请输入本次发布的tag_name（必填）： " TAG_NAME
+read -p "请输入本次发布的reles_description（必填，支持markdown）： " RELES_DESCRIP
+read -p "请输入本次发布的link_name（必填）： " LK_NAME
+read -p "请输入本次发布的link_url（必填）： " LK_URL
 
 
 # 此脚本就一个命令，所以也没必要写成函数
-# curl --header 'Content-Type: application/json' --header "PRIVATE-TOKEN: ${PRIVATE_TOKEN}" \
-#     --data '{ "name": "${RELES_NAME}", "tag_name": "${TAG_NAME}", "ref":"RELES_REF",\
-#     "description": "${RELES_DESCRIP}", \
-#     "assets": { "links": [{ "name": "${LK_NAME}", "url": "${LK_URL}", "filepath": "${LK_FILEPATH}", "link_type":"${LK_TYPE}"  }] }}'\
-#     --request POST "${POST_URL}"
+echo \
+curl --header 'Content-Type: application/json\' --header \"PRIVATE-TOKEN: ${PRIVATE_TOKEN}\" \
+    --data \'{ \"name\": \"${RELES_NAME}\", \"tag_name\": \"${TAG_NAME}\", \"ref\":\"${RELES_REF}\",\
+    \"description\": \"${RELES_DESCRIP}\", \
+    \"assets\": { \"links\": [{ \"name\": \"${LK_NAME}\", \"url\": \"${LK_URL}\", \"filepath\": \"${LK_FILEPATH}\", \"link_type\": \"${LK_TYPE}\"  }] }}\' \
+    --request POST \"${POST_URL}\"
 
