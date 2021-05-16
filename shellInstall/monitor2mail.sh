@@ -19,7 +19,7 @@ else
 	cat >> /etc/profile << salute
 
 # 小写, 用于和系统变量区分
-mail="zelin.liu@sipingsoft.com"
+export mail="zelin.liu@sipingsoft.com"
 # the func for getting ip of this Server.
 ips(){
     local nics=\$(route -n | grep ^0.0.0.0 | awk '{print \$8}')
