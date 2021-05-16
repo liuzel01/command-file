@@ -41,6 +41,23 @@ docker run -it --name gitlab-runner-l01 --restart always \
     -v /var/run/docker.sock:/var/run/docker.sock \
     gitlab/gitlab-runner:latest
 
+- docker, 创建netdata，监控单个服务器。  可以加上时间，-v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime
+docker run -d --name=netdata \
+  --hostname=netdata \
+  -p 19999:19999 \
+  -v /home/netdata/netdataconfig:/etc/netdata:ro \
+  -v netdatalib:/var/lib/netdata \
+  -v netdatacache:/var/cache/netdata \
+  -v /etc/passwd:/host/etc/passwd:ro \
+  -v /etc/group:/host/etc/group:ro \
+  -v /proc:/host/proc:ro \
+  -v /sys:/host/sys:ro \
+  -v /etc/os-release:/host/etc/os-release:ro \
+  --restart unless-stopped \
+  --cap-add SYS_PTRACE \
+  --security-opt apparmor=unconfined \
+  netdata/netdata
+
 **公司内网gitlab，创建指令**
 docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --publish 2222:22 --name gitlab-l01 --restart always -v /home/gitlab/data:/var/opt/gitlab -v /home/gitlab/config:/etc/gitlab -v /home/gitlab/logs:/var/log/gitlab beginor/gitlab-ce:11.1.4-ce.0
 
@@ -402,6 +419,14 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
    检查，id lzl
 
    另外，还可以设置主组，sudo usermod -g root lzl
+
+3. 取消容器的自启动
+
+`docker update --restart=always <CONTAINER D>`
+
+`docker update --restart=no <CONTAINER ID>` 
+
+
 
 ## contain
 
