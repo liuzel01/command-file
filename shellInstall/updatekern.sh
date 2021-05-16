@@ -8,13 +8,14 @@
 # 导入系统变量
 #############################################################################################
 # set -e 
-. /etc/init.d/functions
+(ls -l /etc/init.d/functions &>/dev/null) && . /etc/init.d/functions 
+# || echo "false"
 source /etc/profile
 
 #############################################################################################
 # 服务变量定义
 #############################################################################################
-# 线条
+# 分割线
 LINE='---------------------------------------------------------------------------------------'
 
 # 进程用户
@@ -23,59 +24,59 @@ USER_PROCESS='root'
 #############################################################################################
 # 颜色输出函数
 #############################################################################################
-FUNC_COLOR_TEXT() {
+func_color_text() {
   echo -e " \e[0;$2m$1\e[0m"
 }
 
-FUNC_ECHO_RED() {
-  echo $(FUNC_COLOR_TEXT "$1" "31")
+func_echo_red() {
+  echo $(func_color_text "$1" "31")
 }
 
-FUNC_ECHO_GREEN() {
-  echo $(FUNC_COLOR_TEXT "$1" "32")
+func_echo_green() {
+  echo $(func_color_text "$1" "32")
 }
 
-FUNC_ECHO_YELLOW() {
-  echo $(FUNC_COLOR_TEXT "$1" "33")
+func_echo_yellow() {
+  echo $(func_color_text "$1" "33")
 }
 
-FUNC_ECHO_BLUE() {
-  echo $(FUNC_COLOR_TEXT "$1" "34")
+func_echo_blue() {
+  echo $(func_color_text "$1" "34")
 }
 
 #############################################################################################
 # 颜色通知输出函数
 #############################################################################################
 # 通知信息
-FUNC_ECHO_INFO() {
-  echo $(FUNC_COLOR_TEXT "${LINE}" "33")
-  echo $(FUNC_COLOR_TEXT "$1" "33")
-  echo $(FUNC_COLOR_TEXT "${LINE}" "33")
+func_echo_info() {
+  echo $(func_color_text "${LINE}" "33")
+  echo $(func_color_text "$1" "33")
+  echo $(func_color_text "${LINE}" "33")
 }
 
 # 完成信息
-FUNC_ECHO_SUCCESS() {
-  echo $(FUNC_COLOR_TEXT "${LINE}" "32")
-  echo $(FUNC_COLOR_TEXT "$1" "32")
-  echo $(FUNC_COLOR_TEXT "${LINE}" "32")
+func_echo_success() {
+  echo $(func_color_text "${LINE}" "32")
+  echo $(func_color_text "$1" "32")
+  echo $(func_color_text "${LINE}" "32")
 }
 
 # 错误信息
-FUNC_ECHO_ERROR() {
-  echo $(FUNC_COLOR_TEXT "${LINE}" "31")
-  echo $(FUNC_COLOR_TEXT "$1" "31")
-  echo $(FUNC_COLOR_TEXT "${LINE}" "31")
+func_echo_error() {
+  echo $(func_color_text "${LINE}" "31")
+  echo $(func_color_text "$1" "31")
+  echo $(func_color_text "${LINE}" "31")
 }
 
 #############################################################################################
 # check OS
 #############################################################################################
-FUNC_SYSTEM_CHECK() {
+func_system_check() {
 #    VAR_SYSTEM_FLAG=$(/usr/bin/cat /etc/redhat-release | grep 'CentOS' | grep '7' | wc -l)
     source /etc/os-release
 
     if [[ ${VERSION_ID} -ne 7 ]];then
-    FUNC_ECHO_ERROR '本脚本基于 [ CentOS 7 ] 编写，目前暂不支持其他版本系统！'
+    func_echo_error '本脚本基于 [ CentOS 7 ] 编写，目前暂不支持其他版本系统！'
     exit 1001
   fi
 }
@@ -83,10 +84,10 @@ FUNC_SYSTEM_CHECK() {
 #############################################################################################
 # check user
 #############################################################################################
-FUNC_USER_CHECK() {
+func_user_check() {
   VAR_USER=$(/usr/bin/whoami)
   if [[ ${VAR_USER} != 'root' ]];then
-    FUNC_ECHO_ERROR '脚本目前只支持 [ root ] 用户执行，请先切换用户...'
+    func_echo_error '脚本目前只支持 [ root ] 用户执行，请先切换用户...'
     exit 1002
   fi
 }
@@ -94,9 +95,9 @@ FUNC_USER_CHECK() {
 #############################################################################################
 # check network
 #############################################################################################
-FUNC_NETWORK_CHECK() {
+func_network_check() {
   if ! (/usr/bin/ping -c 1 www.baidu.com &>/dev/null) ;then
-    FUNC_ECHO_ERROR '网络连接失败，请先配置好网络连接...'
+    func_echo_error '网络连接失败，请先配置好网络连接...'
     exit 1003
   fi
 }
@@ -111,7 +112,7 @@ eth0ip(){
     ifconfig $DEVC | grep -E "netmask|Mask" |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
 }
 
-FUNC_PRINT_SYSTEM_INFO() {
+func_print_system_info() {
   # 获取系统信息
   SYSTEM_DATE=$(/usr/bin/date)
   SYSTEM_VERSION=$(/usr/bin/cat /etc/redhat-release)
@@ -121,26 +122,26 @@ FUNC_PRINT_SYSTEM_INFO() {
 #   SYSTEM_IPADDR=$(/usr/sbin/ip addr | grep inet | grep -vE 'inet6|127.0.0.1' | awk '{print $2}')
     
   # 打印系统信息
-  FUNC_ECHO_YELLOW ${LINE}
+  func_echo_yellow ${LINE}
   echo "服务器的信息: $(eth0ip)"
-  FUNC_ECHO_YELLOW ${LINE}
+  func_echo_yellow ${LINE}
   echo "操作系统版本: ${SYSTEM_VERSION}"
   echo "系统内核版本: ${SYSTEM_KERNEL}"
   echo "处理器的型号: ${SYSTEM_CPU}"
   echo "处理器的核数: ${SYSTEM_CPU_NUMS}"
   echo "系统当前时间: ${SYSTEM_DATE}"
-  FUNC_ECHO_YELLOW ${LINE}
+  func_echo_yellow ${LINE}
 }
 
 #############################################################################################
 # update kernel
 #############################################################################################
-FUNC_UPDATE_KERNEL() {
+func_update_kernel() {
     rpm --import https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
 #     rpm -Uvh http://www.elrepo.org/elrepo-release-7.0-3.el7.elrepo.noarch.rpm
 
     if ! (yum install https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm);then
-	FUNC_ECHO_ERROR "EL 源安装失败，请检查是否存在问题！"
+	func_echo_error "EL 源安装失败，请检查是否存在问题！"
 #       exit 1004
 	sleep 10
     fi
@@ -154,15 +155,15 @@ FUNC_UPDATE_KERNEL() {
         VAR_KERNEL_NAME="kernel-ml"
     fi
     
-    FUNC_ECHO_INFO "本次选择升级的版本为：${VAR_KERNEL_NAME}"
+    func_echo_info "本次选择升级的版本为：${VAR_KERNEL_NAME}"
 
     if ! (yum --enablerepo=elrepo-kernel install ${VAR_KERNEL_NAME} &>/dev/null) ;then
-      FUNC_ECHO_ERROR "内核升级失败，请根据报错检查是否存在问题！"
+      func_echo_error "内核升级失败，请根据报错检查是否存在问题！"
       exit 1005
     fi
     
     # 查看目前版本
-    FUNC_ECHO_INFO "系统当前所安装的内核版本如下："
+    func_echo_info "系统当前所安装的内核版本如下："
     awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg
     
     # 选择默认内核版本
@@ -173,7 +174,7 @@ FUNC_UPDATE_KERNEL() {
             VAR_NUM_CHOICE=0
         fi
     else
-        FUNC_ECHO_INFO "输入有误，将以默认配置执行..."
+        func_echo_info "输入有误，将以默认配置执行..."
         VAR_NUM_CHOICE=0
     fi
         
@@ -182,43 +183,43 @@ FUNC_UPDATE_KERNEL() {
     
     sed -i "s#^GRUB_DEFAULT=.*#GRUB_DEFAULT=${VAR_NUM_CHOICE}#g" /etc/default/grub
     if [[ $? -ne 0 ]];then
-      FUNC_ECHO_ERROR "默认内核配置失败，可以手动配置/etc/default/grub文件中：GRUB_DEFAULT参数为指定内核索引！"
+      func_echo_error "默认内核配置失败，可以手动配置/etc/default/grub文件中：GRUB_DEFAULT参数为指定内核索引！"
     fi
 }
 
 #############################################################################################
 # remove kernel by hand
 #############################################################################################
-FUNC_UNINSTALL_KERNEL() {
+func_uninstall_kernel() {
     # 显示内核版本
-    FUNC_ECHO_INFO "系统当前所安装的内核版本如下："
+    func_echo_info "系统当前所安装的内核版本如下："
     rpm -qa | grep kernel
     
     # 提示卸载
-    FUNC_ECHO_INFO "你可以手动卸载旧版本：yum -y remove 包名字，然后重启使用：uname -sr 查看升级结果"
+    func_echo_info "你可以手动卸载旧版本：yum -y remove 包名字，然后重启使用：uname -sr 查看升级结果"
 }
 
 #############################################################################################
 # check system
-FUNC_SYSTEM_CHECK
+func_system_check
 # check user
-FUNC_USER_CHECK
+func_user_check
 # check network 
-FUNC_NETWORK_CHECK
+func_network_check
 # system info
-FUNC_PRINT_SYSTEM_INFO
+func_print_system_info
 
 read -p "是否继续安装升级（默认 y） [y/n]: " VAR_CHOICE
 case ${VAR_CHOICE} in
   [yY][eE][sS]|[yY])
-    FUNC_UPDATE_KERNEL
-    FUNC_UNINSTALL_KERNEL
+    func_update_kernel
+    func_uninstall_kernel
   ;;
   [nN][oO]|[nN])
-    FUNC_ECHO_YELLOW "安装升级即将终止..."
+    func_echo_yellow "安装升级即将终止..."
     exit
   ;;
   *)
-    FUNC_UPDATE_KERNEL
-    FUNC_UNINSTALL_KERNEL
+    func_update_kernel
+    func_uninstall_kernel
 esac
