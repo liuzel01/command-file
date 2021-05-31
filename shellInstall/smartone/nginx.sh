@@ -37,7 +37,7 @@ compile_install_nginx() {
                 wget http://meeting.sipingsoft.com/smart/$Ngx_src -P /tmp &&\
                 tar -xzf /tmp/${Ngx_src} -C /usr/src/nginx/ &&\
                 cd /usr/src/nginx/${Ngx_bag} &&\
-                ./configure --prefix=${Ngx_dir} &&\
+                ./configure --prefix=${Ngx_dir} --with-http_gzip_static_module &&\
                 make && make install || echo '已存在 '${Ngx_src}
 
 }
