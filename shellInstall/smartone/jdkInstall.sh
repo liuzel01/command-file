@@ -19,7 +19,7 @@ LOGFILE="jdkInstall.log"
 yum install -y glibc.i686
 # 判断url是否存在，不存在或下载不了，有响应提示
 if_url_corr() {
-if ! wget http://meeting.sipingsoft.com/smart/nginx-1.8.1.tar.gz -P /tmp/ &>/dev/null; then
+if ! wget http://meeting.sipingsoft.com/smart/jdk-8u221-linux-i586.tar.gz -P /tmp/ &>/dev/null; then
 	log "下载nginx源码包出错 ，请检查url是否正确"
         exit 1
 fi
@@ -47,8 +47,8 @@ fi
 
 cat >> /etc/profile << bb
 export JAVA_HOME=$JAVA_HOME
-export CLASSPATH=.:$JAVA_HOME/lib:$JAVA_HOME/jre/lib
-export PATH=$PATH:$JAVA_HOME/bin:$JAVA_HOME/jre/bin
+export CLASSPATH=.:\$JAVA_HOME/lib:\$JAVA_HOME/jre/lib
+export PATH=\$PATH:\$JAVA_HOME/bin:\$JAVA_HOME/jre/bin
 bb
 
 source /etc/profile 		&&\
