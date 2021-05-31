@@ -72,6 +72,9 @@ create database smartone_nacos CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 create database smartone_license CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
 grant all privileges on smartone_nacos.* to 'sks_sone'@'%' identified by 'sksHykf8gw6l8bfs3ef' with grant option;
 grant all privileges on smartone_license.* to 'sks_sone'@'%' identified by 'sksHykf8gw6l8bfs3ef' with grant option;
+set password for 'root'@'localhost'=password('jzbio123.com')
+update user set password=password(‘123’) where user=’root’ and host=’localhost’;
+
 
 - 查看用户的权限，及撤销权限
 
