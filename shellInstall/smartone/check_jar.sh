@@ -14,13 +14,19 @@ log() {
 }
 
 checkup(){
-for i in ${APP_NAME[@]}
+for i in "${APP_NAME[@]}"
 do
-    echo $i
-    ps -ef | grep $i | grep -v grep &>/dev/null
-	[ $? -ne 0 ] &&\
-		cd /home/sone &&\
-		sh restart_$i.sh restart
+    echo ${i}
+    ps -ef | grep ${i} | grep -v grep &>/dev/null
+    [ $? -ne 0 ] &&\
+	case "$i" in
+	    "register")
+	    cd /home/sone|| sh restart_nacos.sh restart
+	    ;;
+	    *)
+	    cd /home/sone|| sh restart_${i}.sh restart
+	    ;;
+	esac
 done
 }
 checkup
