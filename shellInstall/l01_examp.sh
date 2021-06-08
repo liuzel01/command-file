@@ -21,7 +21,7 @@ select menu in 黄焖鸡 鱼香肉丝盖饭 烤肉饭 老碗面 招牌五谷渔�
             echo "老碗面 9元";;
         5)
             echo "招牌五谷渔粉  12元";;
-        6)
+        *)
             echo "欢迎下次光临";
             break
         esac
