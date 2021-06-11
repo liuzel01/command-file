@@ -5,8 +5,8 @@
 #     可以搭配crond 实现每天早上定时执行,手动强制刷新easyconnect保持时间
 
 PASS_VPN="yk123456"
-MOUSE_X=552
-MOUSE_Y=359
+MOUSE_X=548
+MOUSE_Y=360
 
 killall EasyConnect
 sleep 1

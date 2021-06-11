@@ -11,7 +11,7 @@ REDS_PASS=vxqas168lta3p
 
 #安装依赖库
 yum install -y cpp binutils glibc-kernheaders glibc-common glibc-devel gcc make wget &>/dev/null
-wget http://meeting.sipingsoft.com/smart/$REDS_BAG -P /tmp/  2>&1 >/dev/null
+wget http://meeting.sipingsoft.com/smart/$REDS_BAG -P /tmp/  2>&1
 # 将错误输出绑定到标准输出上，标准输出默认，所以输出到屏幕；然后，标准输出重定向到/dev/null
 # 不同于 >/dev/null 2>&1 标准输出和错误输出都丢弃
 # & 意为两个输出绑定在一起，作用是错误输出和标准输出同用一个文件描述符。两个输出输出到同一个地方
@@ -24,10 +24,12 @@ wget http://meeting.sipingsoft.com/smart/$REDS_BAG -P /tmp/  2>&1 >/dev/null
     make install PREFIX=$REDS_DIR || echo $REDS_SRC'目录已存在'
 
 #(编辑redis服务配置文件,修改其中配置)
-cd $REDS_DIR
-mkdir log
+cd ${REDS_DIR} && mkdir log || exit 1
+
 mv $REDS_SRC/redis.conf $REDS_SRC/redis.conf.bak
+
 cp $REDS_SRC/redis.conf.bak redis.conf.bak
+
 sed -i 's/daemonize no/daemonize yes/' redis.conf.bak
 sed -i 's/bind 127.0.0.1/bind 0.0.0.0/' redis.conf.bak
 sed -i 's/# requirepass foobared/requirepass '"$REDS_PASS"'/' redis.conf.bak
@@ -58,9 +60,10 @@ nohup redis-server /usr/local/redis/redis.conf &
 salute
 chkconfig --add redis &&\
     chkconfig redis on
-chkconfig --list | grep redis &>/dev/null &&\
+if chkconfig --list | grep redis &>/dev/null; then
     [ $? -eq 0 ] &&\
     echo 'redis已设置为开机自启'
+fi
 
 echo "Redis 部署完成！"
 echo " "
@@ -69,9 +72,11 @@ echo "firewall-cmd --zone=public --add-port=6379/tcp --permanent"
 echo "firewall-cmd --reload"
 echo "firewall-cmd --zone=public --query-port=6379/tcp"
 # 开启端口， 6379
-firewall-cmd --list-ports &>/dev/null
-[ $? -ne 0 ] && echo '请检查防火墙是否运行，再执行以下： ' &&\
-        echo 'firewall-cmd --zone=public --add-port=6379/tcp --permanent' &&\
-        echo 'firewall-cmd --reload' || firewall-cmd --zone=public --add-port=6379/tcp --permanent &>/dev/null &&\
+if ! firewall-cmd --list-ports &>/dev/null; then
+    echo '请检查防火墙是否运行，再执行以下： ' &&\
+    echo 'firewall-cmd --zone=public --add-port=6379/tcp --permanent' &&\
+    echo 'firewall-cmd --reload'
+else  firewall-cmd --zone=public --add-port=6379/tcp --permanent &>/dev/null &&\
         firewall-cmd --reload &>/dev/null &&\
-        echo '检查端口是否添加成功： ' `firewall-cmd --zone=public --query-port=6379/tcp`
+        echo "检查端口是否添加成功：  $(firewall-cmd --zone=public --query-port=6379/tcp)"
+fi

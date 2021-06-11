@@ -14,14 +14,13 @@ chmod +x $MINIO_DIR/mc $MINIO_DIR/minio
 touch $MINIO_DIR/minio.log
 
 # 添加进环境变量
-cat >> /etc/profile <<eof
+cat >> /etc/profile.d/minio.sh << eof
 # minio server
 export MINIO_ACCESS_KEY=minioadmin
 export MINIO_SECRET_KEY=luhgft125td4s
 eof
 # 后台指定参数运行
-cd $MINIO_DIR
-source /etc/profile
+cd ${MINIO_DIR} && source /etc/profile || exit 1
 # 设置成开机自启
 touch /etc/init.d/minio
 chmod +x /etc/init.d/minio
@@ -48,7 +47,7 @@ firewall-cmd --list-ports &>/dev/null
         echo 'firewall-cmd --zone=public --add-port=9000/tcp --permanent' &&\
         echo 'firewall-cmd --reload' || firewall-cmd --zone=public --add-port=9000/tcp --permanent &>/dev/null &&\
         firewall-cmd --reload &>/dev/null &&\
-        echo '检查端口是否添加成功： ' `firewall-cmd --zone=public --query-port=9000/tcp`
+        echo "检查端口是否添加成功： $(firewall-cmd --zone=public --query-port=9000/tcp)"
 }
 open_port
 
