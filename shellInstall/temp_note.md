@@ -475,7 +475,7 @@ linux, mail,
 经尝试，内网服务器和IDC托管的可以正常发送了。。云上的在下面有说到
 
 
-yum -y install mailx  postfix 
+yum -y install mailx  postfix
 记录下排查过程：
 OS为centos7， 6的话，可能还要安装另外...
 vim /var/logs/maillog 跟踪日志
@@ -505,17 +505,12 @@ ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleans
 
 
 ## 获取系统的ip地址
-ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $NF}') | grep -E "netmask|Mask" |tr -s ' '|cut -d' ' -f3 |cut -d: -f2
----
-释放服务器buff/cache 中的内存，
+
+`ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $NF}') | grep -E "netmask|Mask" |tr -s ' '|cut -d' ' -f3 |cut -d: -f2`
+
+- 释放服务器buff/cache 中的内存，
     sync
     echo 1 > /proc/sys/vm/drop_caches
-
-
-TODO：
-
-1. 因为要喝中药，就有了“找个瓶子存储”的需求，并且喝的时候还要加热，买个微波炉算咯
-2. 可以买几个闹铃。从桌边一直到卫生间，且每隔1分钟就定一个闹钟，肯定得劲
 
 ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
 
@@ -529,5 +524,22 @@ enabled=1
 
 ```
 
-对于k8s，helm，我认为使用起来不复杂。毕竟是工具，发布出来就是为了提升效率的，所以掌握了核心理解就ok
-后面，可以yangkang，搞个代理，google
+pgrep -l java
+虽然相对 jps 不好用，不过pgrep 在查看其余进程信息，并与kill命令连用时较为方便
+
+[此网站不错](https://www.shellcheck.net/#)，可以作为检查shell 脚本标准，来测试
+
+在用vpn连接到内网服务器，scp 传输文件会一直卡住。 有一个解决方案：在指令中添加 -l 81920， 表示scp会话带宽限制高达 81920kbit/s
+
+##### /etc/profile，/etc/bashrc，login shell， nologin shell 的区别
+
+/etc/profile.d 此目录，同样可以设置环境变量，且方便维护，不需像 /etc/profile 还要改动文件。
+    例如，java.sh，path.sh
+    ```bash
+    export PATH="/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/nginx/sbin:/usr/local/php/bin:/usr/local/php/sbin:/usr/local/mysql/bin:/usr/local/redis/bin:/usr/local/daemontools/bin:/usr/local/daemontools/sbin:/usr/local/percona-xtrabackup/bin"
+    ```
+
+之后，安装了新软件，就可直接修改此文件，而不需在多个地方重复添加
+/etc/profile 是交互式， /etc/bashrc 是非交互式，所以可知jenkins 上有的job需 source /etc/profile 方可正常运行
+    同理，crontab 设置的定时任务启动的shell都是非login 的，因此也不会载入 /etc/profile 中的变量
+可参考，[对linux的profile.d目录的使用](https://www.a-programmer.top/2018/06/21/Linux%E9%85%8D%E7%BD%AE%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%EF%BC%8Cprofile.d%E6%96%87%E4%BB%B6%E5%A4%B9%E7%9A%84%E4%BD%BF%E7%94%A8/)
