@@ -4,7 +4,7 @@
 # 1. 判断之前，有无安装 nginx， 版本是否一致，并备份后， 卸载
 # 2. 
 
-Ngx_bag="nginx-1.8.1"
+Ngx_bag="nginx-1.20.1"
 Ngx_src="${Ngx_bag}.tar.gz"
 Ngx_dir=/usr/local/nginx_18
 
