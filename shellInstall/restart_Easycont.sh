@@ -25,18 +25,18 @@ if ! which xdotool &>/denull;then
   yum install xdotool
 fi
 
-sleep 5
+sleep 20
 xdotool mousemove ${MOUSE_X} ${MOUSE_Y}
-sleep 3
+sleep 20
 xdotool click 1 
-sleep 3
+sleep 5
 xdotool type "${PASS_VPN}"
 xdotool key Return
-sleep 10
 }
 
 restart_vpn 
 
+sleep 10
 if pgrep EasyConnect &>/dev/null && docker exec -it jenkins-l01 ssh root@10.0.3.218 &>/dev/null; then
     exit 1
 else
