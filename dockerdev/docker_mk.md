@@ -637,7 +637,7 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 
 ---
 
-- 还有一种观点，docker默认空间大小分两个，一个是池空间大小，另一个是容器空间大小
+- 还有一种看法，docker默认空间大小分两个，一个是池空间大小，另一个是容器空间大小
   - 池空间大小默认：100G
   - 容器控件大小默认：10G
   - 可参考，[Docker修改空间大小](https://blog.csdn.net/chengxuyuanyonghu/article/details/76560166)
@@ -866,7 +866,8 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
    1. 然后，你新键一个container，df -hT 查看存储情况，也能看到
 
 7. <font color=#EF000>**不过，我启动docker之后，之前的images 和 container 并没有了！！！**</font>
-   1. <font color=red>**不过，诶，笑死我了根本红不了，这就是橘色**</font>
+   1. <font color=red>**不过，**</font>
+   2. 特别注意，需要将之前的images 删除，重新下载，才会生效
 
 ---
 
@@ -900,7 +901,7 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 {
 	"storage-driver": "overlay2",
     "storage-opts": [
-    "overlay2.override_kernel_check=true",
+    "overlay2.override_kernel_check=true"
 //    "overlay2.size=10G"
   ],
 //"log-driver": "json-file",
@@ -912,5 +913,6 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 
 2. 参考，[关于overlay2存储驱动的磁盘配额](https://blog.sealyun.com/views/container/2019/docker-oerlay2.html#%E7%9B%91%E6%8E%A7)，[存储驱动由overlay更改为overlay2](https://www.huaweicloud.com/articles/f5783fd2f89211a698592a51c27f0c94.html)，[修改存储驱动VFS to overlay2](https://www.jianshu.com/p/ef01d7faec74)，
    1. [配置overlay2存储驱动](https://www.bookstack.cn/read/openeuler-1.0-base/Container-%E9%85%8D%E7%BD%AEoverlay2%E5%AD%98%E5%82%A8%E9%A9%B1%E5%8A%A8.md)
-3. 还未尝试，这个不敢搞。。
+3. 有的磁盘已有在存储数据了，但是类型又不支持就很[尴尬](https://www.cnblogs.com/zhangeamon/p/7918567.html)，
+4. 还未尝试，这个不敢搞。。
 
