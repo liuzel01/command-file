@@ -186,51 +186,6 @@ weekly：
     不过,从使用配置层面,也要先达到最低标准
     另,从攻击角度来搞,或许能理解得更深, ？？
 
-smartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartonesmasmartonesmartonesmartonesmartonesmartonesmartonesmartonesmartone
-
-中车-测试环境，license好了
-    操作：连接进redis，执行：
-    license文件的目录结构如下：     /home/sone/license/license.key      此文件应是开发给
-        且，与jar项目包同级
-    auth crrc123.com
-    hset license "ipDPBdBfMPItM3ryw2uYLs91G0aVq5eo5HFpk16kFDznJc3i8N" "{\"initialTime\":1601534400000,\"expireTime\":null,\"ip\":\"127.0.0.1\",\"userNumber\":1000,\"productVersion\":\"portal/3.0,license/3.0,fi_cc_v2/3.0,crm_mobile/3.0,fi_ap/3.0,fi_ajs/3.0,fi_gl/3.0,fi_ar/3.0,crm/3.0,ps/3.0,fi_co/3.0,hr/3.0,fi_as/3.0,plm/3.0,erp/3.0,sys_mgt/3.0,adv_config/3.0\",\"isLocked\":0}"
-    测试一下，hget license "ipDPBdBfMPItM3ryw2uYLs91G0aVq5eo5HFpk16kFDznJc3i8N"
-    之后，重启，  sh restart_auth.sh restart  
-
-1. 在导入数据库步骤中， 会出现导入smartone_common.sql 报错，据说是用navicat15 导出来的原因。下次， 可用命令行导入试试
-    `audit_date` date GENERATED ALWAYS AS (cast(`audit_time` as date)) STORED COMMENT '审核日期' NULL, 将最后的NULL 删除掉，再次导入就可了~
-
-    1. 在导入时，也会出现报错， 需要设置一下 参数log_bin_trust_function_creators
-    show variables like 'log_bin_trust_function%';
-    set global log_bin_trust_function_creators=1;
-    flush privileges;
-    在 my.cnf 文件中，[mysqld] 部分添加一行， log_bin_trust_function_creators=1
-    最后， systemctl restart mariadb, 检查下，
-    show variables like 'log_bin_trust_function%';
-
-2. 在登录页面，会出现验证码刷不出来 这种情况。 因为缺省的是装libgcc这个包。但java一般还是会用32 位的包，所以安装个32位即可。加上false ，因为多个库不能共存，可以安装时加上后面一句~
-    yum install libgcc.i686 --setopt=protected_multilib=false
-
-3. 首先确保 nacos启动成功， 包名： sone-register.jar
-
-5. 要更改数据库内容，否则点击模块会跳转到test 测试环境去
-    update smartone_common.sys_busi_app set baack_host_url='http://192.168.4.248' where back_host_url='https://test.sipingsoft.com'
-
-minio:9000， 开机自启，
-    AccessKey: minioadmin
-    SecretKey: luhgft125td4s
-    export MINIO_ACCESS_KEY=minioadmin
-    export MINIO_SECRET_KEY=luhgft125td4s
-
-redis，开机自启
-    设置密码，
-    redis-cli -h 192.168.0.133 -p 6379
-    config get requirepass
-    config set requirepass "vxqas168lta3p"                  设置密码
-    退出后，重新    redis-cli -h 192.168.0.133 -p 6379 -a vxqas168lta3p
-        验证，  auth vxqas168lta3p
-        config get requirepass
-        重启后失效，所以要写到配置去， redis.conf, 添加一行requirepass vxqas168lta3p
 
 clouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclcloucloucloucloucloucloucloucloucloucloucloucloucl
 
@@ -518,8 +473,8 @@ ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleans
 export JAVA_HOME=/usr/java/jdk1.8.0_271\n export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar \nexport PATH=$PATH:$JAVA_HOME/bin
 [nginx] 
 name=nginx repo 
-baseurl=http://nginx.org/packages/centos/7/$basearch/ 
-gpgcheck=0 
+baseurl=http://nginx.org/packages/centos/7/$basearch/
+gpgcheck=0
 enabled=1
 
 ```
@@ -531,15 +486,15 @@ pgrep -l java
 
 在用vpn连接到内网服务器，scp 传输文件会一直卡住。 有一个解决方案：在指令中添加 -l 81920， 表示scp会话带宽限制高达 81920kbit/s
 
-##### /etc/profile，/etc/bashrc，login shell， nologin shell 的区别
+## nmap 探索
 
-/etc/profile.d 此目录，同样可以设置环境变量，且方便维护，不需像 /etc/profile 还要改动文件。
-    例如，java.sh，path.sh
-    ```bash
-    export PATH="/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/sbin:/usr/local/nginx/sbin:/usr/local/php/bin:/usr/local/php/sbin:/usr/local/mysql/bin:/usr/local/redis/bin:/usr/local/daemontools/bin:/usr/local/daemontools/sbin:/usr/local/percona-xtrabackup/bin"
-    ```
+1. nmap -p 80,443,4455-5555 -n 140.246.90.106  -n不做DNS反解
 
-之后，安装了新软件，就可直接修改此文件，而不需在多个地方重复添加
-/etc/profile 是交互式， /etc/bashrc 是非交互式，所以可知jenkins 上有的job需 source /etc/profile 方可正常运行
-    同理，crontab 设置的定时任务启动的shell都是非login 的，因此也不会载入 /etc/profile 中的变量
-可参考，[对linux的profile.d目录的使用](https://www.a-programmer.top/2018/06/21/Linux%E9%85%8D%E7%BD%AE%E6%89%80%E6%9C%89%E7%94%A8%E6%88%B7%E7%9A%84%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%EF%BC%8Cprofile.d%E6%96%87%E4%BB%B6%E5%A4%B9%E7%9A%84%E4%BD%BF%E7%94%A8/)
+---
+1. nmap 的6中端口状态
+    open                开放
+    closed              关闭状态。但是，不排除对方系统做了一定的安全防护
+    filtered            被过滤。对方主机可能存在防火墙设备将nmap包阻隔，也可能是网络拥塞造成。建议在不同时段再次扫描
+    unfiltered          未被过滤。证明端口可访问，但无法判断open还是closed。使用ACK扫描会出现此，建议换一种扫描方式
+    open|filtered       不确定态。可能收到专业设备阻挡，nmap发出去的报文未得到响应。更换扫描方式再次尝试。
+    closed|filtered     不确定是关闭还是被过滤，不常用
