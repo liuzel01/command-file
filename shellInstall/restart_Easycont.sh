@@ -37,7 +37,7 @@ xdotool key Return
 restart_vpn 
 
 sleep 10
-if pgrep EasyConnect &>/dev/null && docker exec -it jenkins-l01 ssh root@10.0.3.218 &>/dev/null; then
+if pgrep EasyConnect &>/dev/null && docker exec -it jenkins-l01 ssh -o ConnectTimeout=60 root@10.0.3.218 &>/dev/null; then
     exit 1
 else
     restart_vpn
