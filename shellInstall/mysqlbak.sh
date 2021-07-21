@@ -22,7 +22,7 @@ cd /usr/bin
 # ./mysqldump -u$MYSQL_USER -p$MYSQL_PASS --all-databases> "$BACKUP_DIR"/mysql_"$TIME.sql"
 ./mysqldump -u$MYSQL_USER -p$MYSQL_PASS  smartone_common --skip-lock-tables         > "$BACKUP_DIR"/smartone_common_"$TIME.sql"
 ./mysqldump -u$MYSQL_USER -p$MYSQL_PASS  smartone_nacos --skip-lock-tables         > "$BACKUP_DIR"/smartone_nacos_"$TIME.sql"
-# 因为后面放到win2012上去，这里打成zip包
+
 zip -r $BACKUP_DIR/mysqlbak_$TIME.zip  $BACKUP_DIR/*.sql &>/dev/null
 [ $? -eq 0 ] && rm -rf $BACKUP_DIR/*.sql
 }
