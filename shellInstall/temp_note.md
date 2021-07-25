@@ -537,3 +537,34 @@ find . -mtime +10 -type f -name "*" -size 0c | xargs -n 1 rm -f
 
 sudo tcpdump -i eth0 -n port 5601 -vv
     可观察到当前机器和外部网络的所有流量交互
+
+
+
+
+pacman 安装包，提示missing dependencies,但是我明明已经下载，并加入到环境变量里了。
+    有点僵硬
+
+makepkg -si
+
+pacman 安装包，下载地址，https://sources.archlinux.org/other/pacman/
+    安装步骤，$ meson build
+            $ ninja -C build
+            # ninja -C build install
+        地址， https://archlinux.org/pacman/#_releases
+
+Downloads
+
+yay 安装包，及步骤， https://github.com/Jguer/yay
+    pacman -S --needed git base-devel
+    git clone https://aur.archlinux.org/yay.git
+    cd yay
+    makepkg -si
+/home/liuzel01/yay
+
+
+问题描述， Pacman sync databases, unrecognized archive format
+    解决参考， https://www.reddit.com/r/archlinux/comments/oon3sx/pacman_sync_databases_unrecognized_archive_format/
+
+
+archlinuxcn, mirrorlist-repo  https://github.com/archlinuxcn/mirrorlist-repo
+
