@@ -169,17 +169,11 @@ scp root@192.168.10.27:/home/lzl/command-file/shellInstall/smartone/etc_init.d/s
 
   yum install libgcc.i686 --setopt=protected_multilib=false
 
-
-
 3. 首先确保 nacos启动成功， 包名： sone-register.jar
-
-
 
 5. 要更改数据库内容，否则点击模块会跳转到test 测试环境去
 
   update smartone_common.sys_busi_app set baack_host_url='http://192.168.4.248' where back_host_url='https://test.sipingsoft.com'
-
-
 
 minio:9000， 开机自启，
 
@@ -190,8 +184,6 @@ minio:9000， 开机自启，
   export MINIO_ACCESS_KEY=minioadmin
 
   export MINIO_SECRET_KEY=luhgft125td4s
-
-
 
 redis，开机自启
 
@@ -209,4 +201,4 @@ redis，开机自启
 
 ​    config get requirepass
 
-​    重启后失效，所以要写到配置去， redis.conf, 添加一行requirepass vxqas168lta3p
+重启后失效，所以要写到配置去， redis.conf, 添加一行requirepass vxqas168lta3p

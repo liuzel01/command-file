@@ -41,14 +41,3 @@ checkup
 #     return 0
 #   fi
 # }
-
-# check sone-register is running ?
-# ps -ef |grep sone-register | grep -v grep
-# [ $? -ne 0 ] && log "Service sone-register not running~~" &&\
-# 	cd /home/sone &&\
-# 	sh restart_nacos.sh restart
-# # check sone-auth is running ?
-# ps -ef |grep sone-auth | grep -v grep
-# [ $? -ne 0 ] && log "Service sone-auth not running~~" &&\
-# 	cd /opt/sone &&\
-# 	sh restart_auth.sh restart
