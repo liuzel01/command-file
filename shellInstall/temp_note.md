@@ -327,7 +327,8 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     $(cat /etc/issue | grep -w "\\\S" | wc -l`)
     反引号是老的用法，$() 是新用法
 
-1. `/usr/sbin/useradd -D` 能看到SKEL= ,意思是系统会将 /etc/skel 目录中的内容(可以看作模板)复制到用户的HOME 目录. 因此作为管理员可以自定义这些内容
+13. `/usr/sbin/useradd -D` 能看到SKEL= ,意思是系统会将 /etc/skel 目录中的内容(可以看作模板)复制到用户的HOME 目录. 因此作为管理员可以自定义这些内容
+
 2. **隐藏进程信息（ps，top）,未配置成功！！！！**
 
     ```TEXT
@@ -354,15 +355,15 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
    -ctime +1             最后一次状态修改时间
    -mtime                最后一次内容修改时间
 
-6. win10环境，使用 vscode remote ssh 远程连接服务器，免密连接
+16. win10环境，使用 vscode remote ssh 远程连接服务器，免密连接
 
-   cmd, ssh-keygen -t rsa,                             生成秘钥
-   将win10 上的 用户/user01/.ssh/id_rsa.pub 上传到服务器的 /root/.ssh/  目录下，
-       cat id_rsa.pub  >> authorized_keys
+    cmd, ssh-keygen -t rsa,                             生成秘钥
+    将win10 上的 用户/user01/.ssh/id_rsa.pub 上传到服务器的 /root/.ssh/  目录下，
+        cat id_rsa.pub  >> authorized_keys
 
-   本来，试讲win10上面的资料mount 挂载到虚拟机 centos7mini 上去的。 现在发现，用远程服务器可以同样实现，大功告成。 不过这样的话，虽然本地资源压力减轻，但是安全性就没了。
+    ​    ssh-copy-id -i ~/.ssh/id_rsa.pub root@$i  还是要看这个~
 
-8. 条理清晰，有理有据
+    本来，试讲win10上面的资料mount 挂载到虚拟机 centos7mini 上去的。 现在发现，用远程服务器可以同样实现，大功告成。 不过这样的话，虽然本地资源压力减轻，但是安全性就没了。
 
 9. suid 提权示例，
    1. 比如cp
@@ -429,7 +430,6 @@ linux, mail,
 且，119.3.247.174 也发送不了。。。先把这台搞定，上面的理应同理
 经尝试，内网服务器和IDC托管的可以正常发送了。。云上的在下面有说到
 
-
 yum -y install mailx  postfix
 记录下排查过程：
 OS为centos7， 6的话，可能还要安装另外...
@@ -462,22 +462,14 @@ ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleans
 ## 获取系统的ip地址
 
 `ifconfig $(route -n | grep ^0.0.0.0 | awk '{print $NF}') | grep -E "netmask|Mask" |tr -s ' '|cut -d' ' -f3 |cut -d: -f2`
+    tr -s ' '  将多个空格压缩成一个
+    用于转换或删除文件中的字符，从标准输入设备读取数据，经过字符串转译后，将结果输出到标准输出设备
 
 - 释放服务器buff/cache 中的内存，
     sync
     echo 1 > /proc/sys/vm/drop_caches
 
 ！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
-
-```bash
-export JAVA_HOME=/usr/java/jdk1.8.0_271\n export CLASSPATH=.:$JAVA_HOME/jre/lib/rt.jar:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar \nexport PATH=$PATH:$JAVA_HOME/bin
-[nginx] 
-name=nginx repo 
-baseurl=http://nginx.org/packages/centos/7/$basearch/
-gpgcheck=0
-enabled=1
-
-```
 
 pgrep -l java
 虽然相对 jps 不好用，不过pgrep 在查看其余进程信息，并与kill命令连用时较为方便
@@ -498,3 +490,50 @@ pgrep -l java
     unfiltered          未被过滤。证明端口可访问，但无法判断open还是closed。使用ACK扫描会出现此，建议换一种扫描方式
     open|filtered       不确定态。可能收到专业设备阻挡，nmap发出去的报文未得到响应。更换扫描方式再次尝试。
     closed|filtered     不确定是关闭还是被过滤，不常用
+
+
+
+## 小记
+
+1. docker 容器动态扩容
+想把整个过程自动化起来？当然没问题。
+
+CID=$(docker run -d ubuntu df -h /) 
+DEV=$(basename $(echo /dev/mapper/docker-*-$CID)) 
+dmsetup table $DEV | sed "s/0 [0-9]* thin/0 $((42*1024*1024*1024/512)) thin/" | dmsetup load $DEV 
+dmsetup resume $DEV 
+resize2fs /dev/mapper/$DEV 
+docker start $CID 
+docker logs $CID 
+扩容镜像
+
+2. 
+很多东西（教程），生搬是硬套不进去的，往往是学习他的思路，他的思考方向。
+
+1. [linux Root的哪些事儿](https://evilpan.com/2020/12/06/android-rooting/#%E6%80%BB%E7%BB%93)
+ACL: 实现，控制某个文件，可以让用户A访问而不让用户B访问
+通过文件权限码可以实现一定程度上的自主访问控制，但是对于多用户系统而言只能通过用户组去管理，无法控制某个文件可以让用户A访问而不让用户B访问。
+例如，单独给某用户添加文件的读权限：
+    setfacl -m u:l01:w /etc/passwd
+    getfacl /etc/passwd
+    这个小知识，不常用，但是很好用
+    移除： setfacl -x u:l01 /etc/passwd
+        setfacl -b /etc/passwd 移除所有
+
+2. 手动设置ssh 连接超时时间，
+docker exec -it jenkins ssh  -o ConnectTimeout=10 root@10.0.3.218 ping -c1 10.0.3.218
+这样，也方便测试能否远程服务器了~
+
+
+查找当前目录下，相关log文件，并列出来
+find . -name "*log*" -exec ls -l {} \;
+查找当前目录下，相关log文件，且时间在10之前的，列出来
+find . -mtime +10 -type f -name "*log*" -exec ls -l {} \;
+查找当前目录下，空目录，并删除
+find . -mtime +10 -type d -empty | xargs -n 1 rm -rf
+查找当前目录下，文件大小为0的文件，并删除
+find . -mtime +10 -type f -name "*" -size 0c | xargs -n 1 rm -f
+
+
+sudo tcpdump -i eth0 -n port 5601 -vv
+    可观察到当前机器和外部网络的所有流量交互
