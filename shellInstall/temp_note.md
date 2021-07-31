@@ -329,25 +329,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
 13. `/usr/sbin/useradd -D` 能看到SKEL= ,意思是系统会将 /etc/skel 目录中的内容(可以看作模板)复制到用户的HOME 目录. 因此作为管理员可以自定义这些内容
 
-2. **隐藏进程信息（ps，top）,未配置成功！！！！**
-
-    ```TEXT
-    gcc -Wall -fPIC -shared -o libprocesshider.so processhider.c -ldl
-    ln -sf /opt/libprocesshider.so /usr/lib/
-    # echo /usr/lib/libprocesshider.so >> /etc/ld.so.conf.d/processhider.conf
-    OR echo "export LD_PRELOAD=/usr/lib/libprocesshider.so" >> /etc/profile
-    ldconfig 生效
-    ```
-
-    1. 项目实例，`git clone https://github.com/gianlucaborello/libprocesshider.git`
-
-    参考，[linux进程隐藏：中级篇](https://www.freebuf.com/articles/system/250714.html)
-        [基于centos7创建隐藏进程以及发现隐藏进程](https://my.oschina.net/kcw/blog/3209387)
-        [linux环境的LD_PRELOAD: 库预加载](https://rtoax.blog.csdn.net/article/details/108474167)
-        [hiding linux processes for fun + profit](https://sysdig.com/blog/hiding-linux-processes-for-fun-and-profit/)
-        [应急响应系列值linux库文件劫持技术分析](https://cloud.tencent.com/developer/article/1582075)
-        [应急响应之linux下进程隐藏](https://www.anquanke.com/post/id/226285)
-        [警惕利用linux预加载型恶意动态链接库的后门](https://www.freebuf.com/column/162604.html)， 有必要好好看看研究一下
+2. 
 
 5. 删除 /data/lscgdj目录下， 10天之前修改过的tar.gz 包
    find /data/lscgdj -name "*-backup-onlywebinf.tar.gz" -a -mtime +9 -exec rm -rf {} \; &>/dev/null
@@ -548,9 +530,12 @@ makepkg -si
 
 pacman 安装包，下载地址，https://sources.archlinux.org/other/pacman/
     安装步骤，$ meson build
-            $ ninja -C build
-            # ninja -C build install
-        地址， https://archlinux.org/pacman/#_releases
+
+​			$ ninja -C build
+
+​			$ ninja -C build install
+
+​        地址， https://archlinux.org/pacman/#_releases
 
 Downloads
 
@@ -561,10 +546,46 @@ yay 安装包，及步骤， https://github.com/Jguer/yay
     makepkg -si
 /home/liuzel01/yay
 
-
 问题描述， Pacman sync databases, unrecognized archive format
     解决参考， https://www.reddit.com/r/archlinux/comments/oon3sx/pacman_sync_databases_unrecognized_archive_format/
 
 
 archlinuxcn, mirrorlist-repo  https://github.com/archlinuxcn/mirrorlist-repo
+
+
+
+- 技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧
+
+ll sd_files/xz_web_检测网站.yml
+
+cat !$  查看上面那个文件，注意有个空格
+- mv /home/qq.sh{,.bak}  将文件重命名为 /home/qq.sh.bak
+
+- 在终端，前往命令最前 ctrl+a, 前往命令末尾 ctrl+e
+
+- use alias to fix typos ，使用别名来修复拼写错误， e.g. alias gerp=grep
+
+- yes | command_or_script 运行脚本并确定每次询问都是yes，
+
+- > filename ,只需要清空文件内容，而不删除他
+
+- grep -irP 'done' qq.sh ,查找文件内是否包含特定文本
+
+- echo admin:`openssl passwd -crypt admin` > .htpasswd_grafana ,nginx 基础认证，在登录其代理的网站时，要输入密码，
+
+    - sudo htpasswd -c /usr/local/nginx/.htpasswd admin
+
+- 将上一条命令的执行结果，作为此条命令的参数，
+    - locate nginx.service
+    - cat `!!`  可达到效果~
+
+- journalctl -b -r -1 ，逆序展示上次开机的日志，-1 表示偏差值为1， -b表示开机至今的日志， -r逆序
+
+- 如果你的shell是 zsh，在终端输入bash 回车，就可临时切换到bash环境
+
+---
+
+- docker stats， 查看容器所占用CPU, MEM等资源信息
+
+---
 
