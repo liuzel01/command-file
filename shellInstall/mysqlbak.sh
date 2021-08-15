@@ -18,6 +18,9 @@ FTP_DIR="mysqlbak"
 [[ $EUID -ne 0 ]] && echo -e "\033[31mError: This script must be run as root!\033[0m" && exit 1
 #进入mysql可执行文件目录，服务器mysql安装在/usr/local/mysql
 bak_mysql() {
+# # 检查mysql.sock 是否存在，否则无法连接到mysql
+# [ ! -e /tmp/mysql.sock ] && ln -sf /data/mysql/mysql.sock /tmp/
+
 cd /usr/bin
 # ./mysqldump -u$MYSQL_USER -p$MYSQL_PASS --all-databases> "$BACKUP_DIR"/mysql_"$TIME.sql"
 ./mysqldump -u$MYSQL_USER -p$MYSQL_PASS  smartone_common --skip-lock-tables         > "$BACKUP_DIR"/smartone_common_"$TIME.sql"
