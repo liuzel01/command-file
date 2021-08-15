@@ -616,13 +616,13 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
     dmsetup resume /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
 再次检查，就拥有新的扇区数。不过，仍然需要调整文件系统的大小。 注意文件系统是xfs 还是其他的。其他的话，命令就不同了
     # resize2fs /dev/mapper/docker-253:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
-    xfs_growfs /dev/mapper/docker-253\:2-3222704835-96ecec2cac5594a03ade95580fb11d682f4eadf85adc7081ff2e587f095859de
+    xfs_growfs 
 4. 血的教训。。在扩容完成后，某次停止容器了，再次启动就不行了。需要进行
     docker stop 
     echo ...
     dmsetup resume ...
-    xfs_growfs ...
-    	这里，新版的xfs_growfs 后面跟的是挂载点即可。。。很可能是因为这个，之前搞过的gitlab-430报错了（再重启后，无法启动）。。。
+    xfs_growfs /home/docker/lib/devicemapper/mnt/c7847c9fa0de22757ee36b6f998b9d1036e3ad2b69275c4d855159ea24901c60
+    这里，新版的xfs_growfs 后面跟的是挂载点即可。。。很可能是因为这个，之前搞过的gitlab-430报错了（再重启后，无法启动）。。。
     	否则的话，会提示你，xxxxxxx is not a mounted XFS filesystem
     docker start 这之后，就相当于dm 认同了设备块大小为扩容之后的大小，让其先生成dm文件，即可修改成功
 ```
@@ -643,7 +643,27 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
   - 可参考，[Docker修改空间大小](https://blog.csdn.net/chengxuyuanyonghu/article/details/76560166)
 
 1. 查看池空间，`docker info  | grep -i space` 
-2. <font color=orange>留白</font>
+2. 
+
+## docker volume创建和管理卷
+
+- 创建、查询、移除、备份、还原
+
+1. docker volume create l01
+2. d volume ls 
+3. d volume inspect l01 
+   1. 能看到卷l01 的挂载点，类似于： "Mountpoint": "/home/docker/lib/volumes/l01/_data",
+4. docker run --rm -it -v l01:/dbdata --name dbstore redis:latest /bin/bash
+   1. 创建容器，并将卷挂载到容器内文件夹上
+5. docker run --rm --volumes-from dbstore -v /opt/data:/backup redis  tar czvpf /backup/backup.tar.gz /dbdata
+   1. 启动新容器并挂载容器 dbstore；挂载本地文件夹到容器目录 /backup/；将 /dbdata 目录打包到 /backup/back.tar.gz  
+6. 可参考，[创建和管理卷](https://containerization-automation.readthedocs.io/zh_CN/latest/docker/storage/[docker%20volume]%E5%88%9B%E5%BB%BA%E5%92%8C%E7%AE%A1%E7%90%86%E5%8D%B7/#_5) 
+
+
+
+
+
+
 
 ## 入门与实践
 
@@ -916,3 +936,12 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 3. 有的磁盘已有在存储数据了，但是类型又不支持就很[尴尬](https://www.cnblogs.com/zhangeamon/p/7918567.html)，
 4. 还未尝试，这个不敢搞。。
 
+### 更新所使用的镜像
+
+- 最开始，我就想(其实是运维的docker项目有点破了)，能否更新docker容器所使用的镜像版本，
+  - 答案是否，docker对于容器的版本更新，是<font color=orange>“停止旧容器，启动新容器”</font>的方式。
+
+1. 首先明确，docker旨在快速构建应用环境，应用的“配置”“文档”类似持久化数据，都应映射到宿主机目录。
+   1. 所以，容器本身是无状态的 。因此就是全量替换
+   2. 所以，流程就是  停止旧容器--更新镜像(版本)--启动新容器
+2. 参考，[更新docker容器所使用镜像版本](https://blog.jimmytinsley.com/2020/07/28/%E5%9C%A8docker%E4%B8%AD%E6%9B%B4%E6%96%B0%E5%AE%B9%E5%99%A8%E4%BD%BF%E7%94%A8%E7%9A%84%E9%95%9C%E5%83%8F%E7%89%88%E6%9C%AC/)，
