@@ -212,6 +212,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         !10，执行第10条命令
 
     4. 技巧
+        [这个牛逼](http://www.rayninfo.co.uk/vimtips.html) 
 
         ```bash
         cd !$，              !$得到上条命令的最后一位参数
@@ -223,19 +224,31 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         ```
 
         1. vim 中，:s/Administrator/$FTP_USER/g                 替换当前行所有的
-                去掉g，就是替换当前行第一个
-            :19,21s/username/USERNAME/g                         替换19-21行所有的
-            :19,$s/username/USERNAME/g                          替换19-最后一行所有的
+                去掉g，就是替换光标所在行的，第一个
+            :19,21s/username/USERNAME/                         替换19-21行所有的
+            :19,$s/username/USERNAME/                          替换19-最后一行所有的
 
     5. !$:h,                  选取路径开头
         比如，ls /usr/share/fonts/urw-base35
             cd !$:h,    会到，cd /usr/share/fonts
 
-        1. !$:t,            选取路径结尾
-            tar -zxvf !$:t,     会到，tar zxvf nginx-1.4.7.tar.gz
-            cd !$:r，           选取文件名，比如：unzip lzl01.zip,  cd !$:r
+        1. !$:t,                选取路径结尾
+            tar -zxvf !$:t,     会到，tar zxvf nginx-1.4.7.tar.gz  这里直接用 tar !$ 就完事了
+            cd !$:r，           选取到文件名，比如：unzip lzl01.zip,  cd !$:r
 
         2. echo !$:e，          选取扩展名
+    6. vim                      进入文件，选中字符或行， ~  可转换大小写，大写的小写小写的大写
+    7. ddp                      将光标所在行，剪切，然后粘贴到光标的下一行
+        yyp, 则是复制，粘贴到光标的下一行
+    8. ^ w e $ 行首（行的字符的首位）、下一个单词词首、下一个单词词尾、行尾
+    9. /relabel_configs/e       加上 /e 表示光标为匹配结束位（词尾）
+        1. 3/relabel_configs/e+3   第三个匹配位置，且光标位于匹配结束为（词尾）的后3个位置
+        2. /address/s-3             匹配开始位（词首），前三个位置
+    10. d/someword/                 适用于光标之后（一行内使用比较多），匹配到 "soneword"字符的，前面内容全部删除
+        1. y/domeword/              复制
+    
+
+
 
     6. ctrl+w，             删除操作，光标前的一个单词（终端操作）
     7. cp lzl01.zip{,.bak}，创建备份文件，使用{} 构造字符串
@@ -506,7 +519,6 @@ ACL: 实现，控制某个文件，可以让用户A访问而不让用户B访问
 docker exec -it jenkins ssh  -o ConnectTimeout=10 root@10.0.3.218 ping -c1 10.0.3.218
 这样，也方便测试能否远程服务器了~
 
-
 查找当前目录下，相关log文件，并列出来
 find . -name "*log*" -exec ls -l {} \;
 查找当前目录下，相关log文件，且时间在10之前的，列出来
@@ -518,13 +530,10 @@ find . -mtime +10 -type f -name "*" -size 0c | xargs -n 1 rm -f
 
 
 sudo tcpdump -i eth0 -n port 5601 -vv
-    可观察到当前机器和外部网络的所有流量交互
+    可观察到当前机器指定端口，和外部网络的所有流量交互
 
-
-
-
-pacman 安装包，提示missing dependencies,但是我明明已经下载，并加入到环境变量里了。
-    有点僵硬
+ss -tlnp | grep 9090  | awk -F ',' '{print $2}' | awk -F '=' '{print $2}'
+    查看指定端口的PID
 
 makepkg -si
 
@@ -569,7 +578,9 @@ cat !$  查看上面那个文件，注意有个空格
 
 - > filename ,只需要清空文件内容，而不删除他
 
-- grep -irP 'done' qq.sh ,查找文件内是否包含特定文本
+- grep -irP 'done' command-file/ ,查找文件内是否包含特定文本
+
+    - find command-file/ -name *.md | xargs grep -i '${特定的文本}' 
 
 - echo admin:`openssl passwd -crypt admin` > .htpasswd_grafana ,nginx 基础认证，在登录其代理的网站时，要输入密码，
 
@@ -577,11 +588,15 @@ cat !$  查看上面那个文件，注意有个空格
 
 - 将上一条命令的执行结果，作为此条命令的参数，
     - locate nginx.service
-    - cat `!!`  可达到效果~
+    - cat `!!`  可达到效果... 只适用于上一条指令结果为一条的情况
 
 - journalctl -b -r -1 ，逆序展示上次开机的日志，-1 表示偏差值为1， -b表示开机至今的日志， -r逆序
 
 - 如果你的shell是 zsh，在终端输入bash 回车，就可临时切换到bash环境
+
+- 查看开机启动项， systemctl list-unit-files
+
+    - 查看某一服务是否开机自启， systemctl is-enabled nginx ，当然也可以在上面结果中查
 
 ---
 
@@ -589,3 +604,9 @@ cat !$  查看上面那个文件，注意有个空格
 
 ---
 
+1. 安装特定的工具，且制作后体积增长不大[为容器镜像定制安装linux工具](http://docs.lvrui.io/2018/10/19/%E4%B8%BA%E5%AE%B9%E5%99%A8%E9%95%9C%E5%83%8F%E5%AE%9A%E5%88%B6%E5%AE%89%E8%A3%85Linux%E5%B7%A5%E5%85%B7/)，
+
+---
+1. /proc 目录存放一些系统参数
+    head -n 3 /proc/meminfo 
+    grep 'model name' /proc/cpuinfo
