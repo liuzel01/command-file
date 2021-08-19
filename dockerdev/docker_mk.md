@@ -912,7 +912,7 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 ---
 
 - **当然，你可以更直接将storage driver 从devicemapper 更改为 overlay2**
-- 后面我先看看，这两种应该挺好转的
+- ~~后面我先看看，这两种应该挺好转的~~ 
 - 操作之前要注意⚠️：之前 docker images 会丢失，之前运行的 docker 容器服务会丢失（docker ps），进行下面步骤之前请做好数据的备份！！！
 
 1. /etc/docker/daemon.json 文件中，添加
@@ -934,7 +934,7 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 2. 参考，[关于overlay2存储驱动的磁盘配额](https://blog.sealyun.com/views/container/2019/docker-oerlay2.html#%E7%9B%91%E6%8E%A7)，[存储驱动由overlay更改为overlay2](https://www.huaweicloud.com/articles/f5783fd2f89211a698592a51c27f0c94.html)，[修改存储驱动VFS to overlay2](https://www.jianshu.com/p/ef01d7faec74)，
    1. [配置overlay2存储驱动](https://www.bookstack.cn/read/openeuler-1.0-base/Container-%E9%85%8D%E7%BD%AEoverlay2%E5%AD%98%E5%82%A8%E9%A9%B1%E5%8A%A8.md)
 3. 有的磁盘已有在存储数据了，但是类型又不支持就很[尴尬](https://www.cnblogs.com/zhangeamon/p/7918567.html)，
-4. 还未尝试，这个不敢搞。。
+4. 
 
 ### 更新所使用的镜像
 
