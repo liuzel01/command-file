@@ -660,5 +660,22 @@ WantedBy=default.target
 @reboot sleep 300 && /home/wwwjobs/clean-static-cache.sh
 ```
 
-- 
 
+
+---
+
+##### 清除日志文件时出现文件空洞
+
+- 有一个后台服务，使用nohup启动，启动指令如下， `nohup /usr/java/jdk1.8.0_271/bin/java -Xms512m -Xmx1024m -jar ${APP_NAME} > nohup-admin.log 2>&1 &`  
+
+1. 经过一段时间，nohup-admin.log文件 会很大，几十M
+   1. du -sh nohup-admin.log 
+2. 当你用  `echo > nohup-admin.log` ，再查看文件大小，发现为零。 但再次访问服务，日志文件又会马上回到之前几十M 的大小
+   1. 并且，会发现log文件顶端有大量的null...
+   2. 可以尝试， cat /dev/null > nohup-admin.log
+3. 这是典型的磁盘空间未释放的缘故。内容清空，但实际上写入的位置并没重置到文件起始位置，为覆盖写；因此重新写入时都以null占位。所以是以nohup启动，重定向到nohup-admin.log  时出的问题
+
+解决： 
+
+1. 将启动脚本修改为： >> nohup-admin.log 2>&1 &  对日志文件追加写。验证可行
+2. 这样在清空文件时，写入未知置零，追加写入则从起始位置开始写
