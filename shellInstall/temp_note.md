@@ -245,6 +245,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         1. 3/relabel_configs/e+3   第三个匹配位置，且光标位于匹配结束为（词尾）的后3个位置
         2. /address/s-3             匹配开始位（词首），前三个位置
     10. d/someword/                 适用于光标之后（一行内使用比较多），匹配到 "soneword"字符的，前面内容全部删除
+        
         1. y/domeword/              复制
     
 
@@ -253,7 +254,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     6. ctrl+w，             删除操作，光标前的一个单词（终端操作）
     7. cp lzl01.zip{,.bak}，创建备份文件，使用{} 构造字符串
         touch {1..10..2}.txt
-
+    
     8. 使用`` 或者 $() 做命令替换； 嵌套时，$()可读性更清晰
     9. readlink -f  /usr/bin/java                                  递归跟随符号链接以标注化。就是一直跟随符号链接，知道非符号链接的位置，限制是最后必须存在一个非符号链接的文件
     10. /etc/bashrc 文件添加一行，export HISTTIMEFORMAT="”%F %T "   查看历史命令时看到具体时间
@@ -265,9 +266,9 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         screen -r l01 恢复某screen会话                              可以用于在远程服务器上，登录后，创建一个自己的会话，退出时保存工作C+a,d，方便下次远程时连接入此会话
         注意，这个时候exit 就是一个比较危险的操作了
         screen -X -S 19510 quit                                     不加入会话，在外部杀死一个screen
-
+    
         常用操作二、让代码再后台运行。
-
+    
         Attached    已连接的，  Detached  分离的，                        注意看screen 后面的状态
     12. whois 119.3.247.174                                         查询到域名的注册信息
         whois qq.com
@@ -588,7 +589,7 @@ cat !$  查看上面那个文件，注意有个空格
 
 - 将上一条命令的执行结果，作为此条命令的参数，
     - locate nginx.service
-    - cat `!!`  可达到效果... 只适用于上一条指令结果为一条的情况
+    - cat \`!!\`  可达到效果... 只适用于上一条指令结果为一条的情况
 
 - journalctl -b -r -1 ，逆序展示上次开机的日志，-1 表示偏差值为1， -b表示开机至今的日志， -r逆序
 
@@ -610,3 +611,54 @@ cat !$  查看上面那个文件，注意有个空格
 1. /proc 目录存放一些系统参数
     head -n 3 /proc/meminfo 
     grep 'model name' /proc/cpuinfo
+
+- 将服务创建一个新 systemd 服务，来实现开机自启，（算是进阶方法。当然也可以将脚本用chkconfig 添加到开机自启。或写到 /etc/rc.local，不过需要source /etc/profile ）
+
+```bash
+cat /etc/rc.local 
+#!/bin/bash
+# THIS FILE IS ADDED FOR COMPATIBILITY PURPOSES
+#
+# It is highly advisable to create own systemd services or udev rules
+# to run scripts during boot instead of using this file.
+#
+# In contrast to previous versions due to parallel execution during boot
+# this script will NOT be run after all other services.
+#
+# Please note that you must run 'chmod +x /etc/rc.d/rc.local' to ensure
+# that this script will be executed during boot.
+
+touch /var/lock/subsys/local
+source /etc/profiles || vncserver :1
+```
+
+1. 创建一个名为sone 的systemd服务，
+   1. 可以将一个项目内的所有服务，写到一个脚本内。将该项目  sone 服务开机自启即可。
+   2. ~~或是，将所有要重启的服务，都写到一个restart 脚本内，之后将该服务开机自启~~ 
+
+```
+vim /lib/systemd/system/sone.service
+
+[Unit]
+Description=restart
+After=default.target
+
+[Service]
+ExecStart=/root/script/restart.sh
+
+[Install]
+WantedBy=default.target
+```
+
+2. systemctl dameon-reload 
+   1. systemctl enable sone.service 
+
+3. 还有种服务，是需要其他服务启动成功后（有时间间隔），才能启的，可以如下类似
+
+```
+# 在启动后 5 分钟内运行指定的脚本。当然可以在脚本内判断他的前置服务是否启成功
+@reboot sleep 300 && /home/wwwjobs/clean-static-cache.sh
+```
+
+- 
+
