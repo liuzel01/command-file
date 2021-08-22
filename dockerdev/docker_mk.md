@@ -42,7 +42,7 @@ docker run -it --name gitlab-runner-l01 --restart always \
     gitlab/gitlab-runner:latest
 
 - docker, 创建netdata，监控单个服务器。  可以加上时间，-v /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime
-docker run -d --name=netdata \
+  docker run -d --name=netdata \
   --hostname=netdata \
   -p 19999:19999 \
   -v /home/netdata/netdataconfig:/etc/netdata:ro \
@@ -885,9 +885,19 @@ echo 0 41943040 thin 253:3 63 | dmsetup load /dev/mapper/docker-253\:2-322270483
 6. `docker info | grep -iC5 \/home\/docker` 检查一下
    1. 然后，你新键一个container，df -hT 查看存储情况，也能看到
 
-7. <font color=#EF000>**不过，我启动docker之后，之前的images 和 container 并没有了！！！**</font>
-   1. <font color=red>**不过，**</font>
-   2. 特别注意，需要将之前的images 删除，重新下载，才会生效
+注意仔细看，systemctl status docker， 其实还加载了一个配置文件（系统给挪到这里了）
+
+​	/etc/systemd/system/docker.service.d/devicemapper.conf
+
+```
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/usr/lib/systemd/system/docker.service; enabled; vendor preset: disabled)
+  Drop-In: /etc/systemd/system/docker.service.d
+           └─devicemapper.conf
+```
+
+1. <font color=#EF000>**不过，我启动docker之后，之前的images 和 container 并没有了！！！**</font> 
+   1. <font color=red>**特别要注意，需要将之前的images 删除，重新下载，才会生效**</font> 
 
 ---
 
