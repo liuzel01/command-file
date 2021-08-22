@@ -292,39 +292,10 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         哦，用netstat 也是查不到的
         但是用ps，就能查找到，
     2. ps aux | grep 9090,                              能查出两个进程，一个 24010 /usr/bin/docker-proxy ...；一个 24045 /bin/prometheus ...（本机并未安装prometheus）
-    在top 里面显示的PID是 24045；而你用ss， 或者netstat呢，查PID理应是用24010查，用24045 就查不出来（ss 应该是用来，通过端口查进程PID的）
-    或者也可以理解为，PID 24045的进程 /bin/prometheus，不占用本机的端口？
-    经发现，该容器映射的端口为，0.0.0.0:9090->9090/tcp，    这也说明以后尽量不要将容器内和映射端口搞成一致的。
-    3. systemctl status 24010，                         显示Active: active(running)
-    systemctl status 24045，                            提示，Failed to get unit for PID 24045: PID 24045 does not belong to any loaded unit.
-
-    systemctl list-units --type=target                  获取当前正在使用的运行目标
-    systemctl list-units --all --state=inactive         列出所有没有运行的Unit
-    systemctl list-units --failed                       列出所有加载失败的Unit
-    systemctl list-units -t service                 列出所有正在运行，类型为service 的Unit
-    systemctl cat nginx18.service                       查看Unit配置的内容
-
-    systemctl list-dependencies --all nginx18.service   列出一个Unit 所有依赖，包括target 类型
-    systemctl kill nginx.service                        立即杀死服务
-    systemctl daemon-reload                             将Unit 文件内容写到缓存中，所以Unit文件更新时，要systemd 重新读取
-    systemctl reset-failed                              移除标记为丢失的Unit文件
-    systemctl get-default                               查看启动时默认的Target，查看当前的运行级别
-    systemctl set-default multi-user.target             设置默认的
-    systemctl list-unit-files --type=target             查看系统的所有Target
-    systemctl list-dependencies multi-user.target       查看一个target包含的所有Unit
-    systemctl isolate multi-user.target                 关闭前一个Target里面所有不属于后一个Target的进程
-    systemctl -l| grep -v exited | less
-
-    journalctl -u nginx18.service                       查看指定服务的日志
-    journalctl -f                                       实时滚动最新日志
-        journalctl -u nginx18.service -f
-
-    systemctl reboot[poweroff|halt|suspend]                                     重启系统[切断电源|CPU停止工作|暂停系统]
-    systemd-analyze critical-chain nginx18.service      查看指定服务的启动流
-        systemd-analyze blame
-    timedatectl                                           查看当前时区设置
-        timedatectl list-timezones
-    loginctl show-user root
+        在top 里面显示的PID是 24045；而你用ss， 或者netstat呢，查PID理应是用24010查，用24045 就查不出来（ss 应该是用来，通过端口查进程PID的）
+        或者也可以理解为，PID 24045的进程 /bin/prometheus，不占用本机的端口？
+        经发现，该容器映射的端口为，0.0.0.0:9090->9090/tcp，    这也说明以后尽量不要将容器内和映射端口搞成一致的。
+    
 
 
 8. ll -ht | head -n 2， 查看结果中排在前面的
@@ -420,24 +391,7 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
 
 技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧
 
-linux, mail,
-221.236.26.68 发送不了邮件， 且无错误提示
 
-且，119.3.247.174 也发送不了。。。先把这台搞定，上面的理应同理
-经尝试，内网服务器和IDC托管的可以正常发送了。。云上的在下面有说到
-
-yum -y install mailx  postfix
-记录下排查过程：
-OS为centos7， 6的话，可能还要安装另外...
-vim /var/logs/maillog 跟踪日志
-netstat -tlnp | grep :25
-nmap 127.0.0.1 -p 25 检查服务是否开启了
-which sendmail
-ll /usr/sbin/sendmail  接着一步一步，发现软链接指向的是 /usr/sbin/sendmail.postfix
-然后，发现 能正常发送邮件的机器上，postfix 服务正在默默的运行着...
-    systemctl status postfix
-再者，如若是云服务器（阿里云、华为云），/var/log/maillog 会提示 connect to mxbizl.qq.ccom[xxx] Connection timed out
-    很可能是因为25端口被运营商封禁了....可以申请、投诉。或是配置smtp 发送邮件
 
 ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansible
 
@@ -569,6 +523,12 @@ archlinuxcn, mirrorlist-repo  https://github.com/archlinuxcn/mirrorlist-repo
 ll sd_files/xz_web_检测网站.yml
 
 cat !$  查看上面那个文件，注意有个空格
+
+- sed -i.bak 's/SELINUX=enforcing/SELINUX=disabled/' /etc/selinux/config		将config文件内容替换，并将原文件 备份为config.bak
+  	-i[SUFFIX], --in-place[=SUFFIX]
+
+  ​	edit files in place (makes backup if SUFFIX supplied)			这是sed 的帮助页，显示的注释，可参考
+
 - mv /home/qq.sh{,.bak}  将文件重命名为 /home/qq.sh.bak
 
 - 在终端，前往命令最前 ctrl+a, 前往命令末尾 ctrl+e
@@ -595,9 +555,6 @@ cat !$  查看上面那个文件，注意有个空格
 
 - 如果你的shell是 zsh，在终端输入bash 回车，就可临时切换到bash环境
 
-- 查看开机启动项， systemctl list-unit-files
-
-    - 查看某一服务是否开机自启， systemctl is-enabled nginx ，当然也可以在上面结果中查
 
 ---
 
@@ -612,70 +569,74 @@ cat !$  查看上面那个文件，注意有个空格
     head -n 3 /proc/meminfo 
     grep 'model name' /proc/cpuinfo
 
-- 将服务创建一个新 systemd 服务，来实现开机自启，（算是进阶方法。当然也可以将脚本用chkconfig 添加到开机自启。或写到 /etc/rc.local，不过需要source /etc/profile ）
-
-```bash
-cat /etc/rc.local 
-#!/bin/bash
-# THIS FILE IS ADDED FOR COMPATIBILITY PURPOSES
-#
-# It is highly advisable to create own systemd services or udev rules
-# to run scripts during boot instead of using this file.
-#
-# In contrast to previous versions due to parallel execution during boot
-# this script will NOT be run after all other services.
-#
-# Please note that you must run 'chmod +x /etc/rc.d/rc.local' to ensure
-# that this script will be executed during boot.
-
-touch /var/lock/subsys/local
-source /etc/profiles || vncserver :1
-```
-
-1. 创建一个名为sone 的systemd服务，
-   1. 可以将一个项目内的所有服务，写到一个脚本内。将该项目  sone 服务开机自启即可。
-   2. ~~或是，将所有要重启的服务，都写到一个restart 脚本内，之后将该服务开机自启~~ 
-
-```
-vim /lib/systemd/system/sone.service
-
-[Unit]
-Description=restart
-After=default.target
-
-[Service]
-ExecStart=/root/script/restart.sh
-
-[Install]
-WantedBy=default.target
-```
-
-2. systemctl dameon-reload 
-   1. systemctl enable sone.service 
-
-3. 还有种服务，是需要其他服务启动成功后（有时间间隔），才能启的，可以如下类似
-
-```
-# 在启动后 5 分钟内运行指定的脚本。当然可以在脚本内判断他的前置服务是否启成功
-@reboot sleep 300 && /home/wwwjobs/clean-static-cache.sh
-```
 
 
+1. strace
+	strace -p 912 -f
+	其中，912 是sshd服务的pid
+	strace df -h
+	strace -t -p 3621		-t，显示时间
+2. iostat -p sda			仅显示单个设备的I/O统计信息
+	iostat -N				仅显示LVM统计信息，
+	vmstat -d 				显示所有磁盘统计信息， 展示服务器的状态值（CPU使用率、内存使用、虚拟内存交换情况、IO读写情况）
+	vmstat -t 1 5 			显示时间戳，并打印具体信息
+	vmstat 2 				每隔2秒采集一次服务器状态
+3. lsof  list open files 
+	使用场景之一： 当磁盘无法卸载时，可用此查看正在使用文件
+	lsof -u ossec			显示用户ossec 的所有打开文件的列表
+	lsof -i TCP:514			找到指定端口的所有正在运行的进程		ss -tlnp | grep 514
+	lsof -i -u ^root		排除某用户，查找所有
+	lsof -p 3311			根据PID 来筛选
+	kill -9 `lsof -t -u ossec`		将用户 ossec的所有进程杀死
+4. 为避免淘汰，做高质量键盘侠，要经常用这些命令
+	ip n					ip a， 可显示出ip(Displays details on all network interfaces. )
+	ip r					现在用ip r 来代替route
+	ip n show dev eth0		显示接口eth0 的ARP缓存 ip a show ...
+	ip n del 10.1.2.3 dev eth0		是设备eth0 上主机10.1.2.3 的ARP缓存无效
+									也可添加一条缓存条目
+5. ss 命令(可用来代替netstat)，可查看端口状态， [可参考](https://www.cnblogs.com/sztom/p/10810508.html#:~:text=%E6%9F%A5%E7%9C%8B%E4%B8%BB%E6%9C%BA%E7%9B%91%E5%90%AC%E7%9A%84%E7%AB%AF%E5%8F%A3%EF%BC%8C%E6%9C%AC%E5%9C%B0IP%E5%9C%B0%E5%9D%80%E5%8F%8Atcp%E6%95%B0%E5%AD%97%E7%AB%AF%E5%8F%A3%E5%8F%B7(t%3Atcp%3B%20n%3A%E6%95%B0%E5%AD%97%E6%98%BE%E7%A4%BA%EF%BC%9Bl%E7%9B%91%E5%90%AC))
+	ss -tlnp				ss -tanp， 显示所有的tcp连接，	-l listening, -t TCP connection 
+	ss -tlr					显示名称，
+	ss -tlnp sport eq 3000	ss -tanp sport eq 3000
+	ss -tlnu sport lt 300	端口过滤，lt小于， gt 大于，ne不等于， eq等于， le小于或等于， ge大于或等于
+							p 显示pid
+	ss dport eq 9115		通过dst/src/dport/sport 来过滤连接的来源和目标，来源端口和目标端口
+							ss dport OP PORT    OP可以
+6. tcpdump -i eth0 tcp		根据TCP 端口捕获数据包，
+	tcpdump -i eth0 port 9115
+	tcpdump -i eth0 src 192.168.10.68		dst 192.168.10.68
 
 ---
 
-##### 清除日志文件时出现文件空洞
+##### 对于别名存储位置
 
-- 有一个后台服务，使用nohup启动，启动指令如下， `nohup /usr/java/jdk1.8.0_271/bin/java -Xms512m -Xmx1024m -jar ${APP_NAME} > nohup-admin.log 2>&1 &`  
+- 对于别名，理应存储在一个文件内，参考~~centos~~（其实是git-MINGW64）上的环境
 
-1. 经过一段时间，nohup-admin.log文件 会很大，几十M
-   1. du -sh nohup-admin.log 
-2. 当你用  `echo > nohup-admin.log` ，再查看文件大小，发现为零。 但再次访问服务，日志文件又会马上回到之前几十M 的大小
-   1. 并且，会发现log文件顶端有大量的null...
-   2. 可以尝试， cat /dev/null > nohup-admin.log
-3. 这是典型的磁盘空间未释放的缘故。内容清空，但实际上写入的位置并没重置到文件起始位置，为覆盖写；因此重新写入时都以null占位。所以是以nohup启动，重定向到nohup-admin.log  时出的问题
+```
+cat /etc/profile.d/aliases.sh
+# Some good standards, which are not used if the user
+# creates his/her own .bashrc/.bash_profile
 
-解决： 
+# --show-control-chars: help showing Korean or accented characters
+alias ls='ls -F --color=auto --show-control-chars'
+alias ll='ls -l'
+alias ssh27='ssh -p 6022 root@140.246.90.106'
+alias ssh68='ssh root@192.168.10.68'
 
-1. 将启动脚本修改为： >> nohup-admin.log 2>&1 &  对日志文件追加写。验证可行
-2. 这样在清空文件时，写入未知置零，追加写入则从起始位置开始写
+case "$TERM" in
+xterm*)
+        # The following programs are known to require a Win32 Console
+        # for interactive usage, therefore let's launch them through winpty
+        # when run inside `mintty`.
+        for name in node ipython php php5 psql python2.7
+        do
+                case "$(type -p "$name".exe 2>/dev/null)" in
+                ''|/usr/bin/*) continue;;
+                esac
+                alias $name="winpty $name.exe"
+        done
+        ;;
+esac
+```
+
+- 
