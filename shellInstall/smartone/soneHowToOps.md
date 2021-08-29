@@ -131,7 +131,7 @@ scp root@192.168.10.27:/home/lzl/command-file/shellInstall/smartone/etc_init.d/s
 
   license文件的目录结构如下：   /home/sone/license/license.key   此文件应是开发给
 
-​    且，与jar项目包同级
+​    且，与jar项目包同级（和sone-auth jar包同一服务器）
 
   auth crrc123.com
 
