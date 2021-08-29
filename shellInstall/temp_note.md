@@ -640,3 +640,19 @@ esac
 ```
 
 - 
+
+#### about desktopEnv on linux
+
+cd /usr/share/xsessions/        这里存放的是，当你登录时所可选的wm
+                                [在plasma中使用其他窗口管理器](https://userbase.kde.org/Tutorials/Using_Other_Window_Managers_with_Plasma/zh-cn)
+
+displau manager:    lightdm, 或者SDDM 作为登录管理器
+            plasma，KDE plasma，作为DE
+WM:         i3WM，                          默认是KWin
+terminal:   Kitty, 而不必非要用st(simple terminal) 
+powermenu:  rofi
+
+
+
+ctrl+alt+v 可进入vim的visual模式
+                                vim的help要学会善用， :help ctrl-v
