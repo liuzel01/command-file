@@ -537,11 +537,11 @@ cat !$  查看上面那个文件，注意有个空格
 
 - yes | command_or_script 运行脚本并确定每次询问都是yes，
 
-- > filename ,只需要清空文件内容，而不删除他
+- > filename ,只需要清空文件内容，而不删除他        cat /dev/null > filename
 
 - grep -irP 'done' command-file/ ,查找文件内是否包含特定文本
 
-    - find command-file/ -name *.md | xargs grep -i '${特定的文本}' 
+    - find command-file/ -name *.md | xargs grep -i '${特定的文本}'
 
 - echo admin:`openssl passwd -crypt admin` > .htpasswd_grafana ,nginx 基础认证，在登录其代理的网站时，要输入密码，
 
@@ -594,7 +594,7 @@ cat !$  查看上面那个文件，注意有个空格
 	ip n show dev eth0		显示接口eth0 的ARP缓存 ip a show ...
 	ip n del 10.1.2.3 dev eth0		是设备eth0 上主机10.1.2.3 的ARP缓存无效
 									也可添加一条缓存条目
-5. ss 命令(可用来代替netstat)，可查看端口状态， [可参考](https://www.cnblogs.com/sztom/p/10810508.html#:~:text=%E6%9F%A5%E7%9C%8B%E4%B8%BB%E6%9C%BA%E7%9B%91%E5%90%AC%E7%9A%84%E7%AB%AF%E5%8F%A3%EF%BC%8C%E6%9C%AC%E5%9C%B0IP%E5%9C%B0%E5%9D%80%E5%8F%8Atcp%E6%95%B0%E5%AD%97%E7%AB%AF%E5%8F%A3%E5%8F%B7(t%3Atcp%3B%20n%3A%E6%95%B0%E5%AD%97%E6%98%BE%E7%A4%BA%EF%BC%9Bl%E7%9B%91%E5%90%AC))
+5. ss 命令(可用来代替netstat)，可查看端口状态， [可参考](https://www.cnblogs.com/sztom/p/10810508.html#:~:text=%E6%9F%A5%E7%9C%8B%E4%B8%BB%E6%9C%BA%E7%9B%91%E5%90%AC%E7%9A%84%E7%AB%AF%E5%8F%A3%EF%BC%8C%E6%9C%AC%E5%9C%B0IP%E5%9C%B0%E5%9D%80%E5%8F%8Atcp%E6%95%B0%E5%AD%97%E7%AB%AF%E5%8F%A3%E5%8F%B7(t%3Atcp%3B%20n%3A%E6%95%B0%E5%AD%97%E6%98%BE%E7%A4%BA%EF%BC%9Bl%E7%9B%91%E5%90%AC)) 
 	ss -tlnp				ss -tanp， 显示所有的tcp连接，	-l listening, -t TCP connection 
 	ss -tlr					显示名称，
 	ss -tlnp sport eq 3000	ss -tanp sport eq 3000
@@ -639,9 +639,7 @@ xterm*)
 esac
 ```
 
-- 
-
-#### about desktopEnv on linux
+- about DE on linux
 
 cd /usr/share/xsessions/        这里存放的是，当你登录时所可选的wm
                                 [在plasma中使用其他窗口管理器](https://userbase.kde.org/Tutorials/Using_Other_Window_Managers_with_Plasma/zh-cn)
@@ -653,6 +651,3 @@ terminal:   Kitty, 而不必非要用st(simple terminal)
 powermenu:  rofi
 
 
-
-ctrl+alt+v 可进入vim的visual模式
-                                vim的help要学会善用， :help ctrl-v
