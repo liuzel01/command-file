@@ -470,10 +470,6 @@ ACL: 实现，控制某个文件，可以让用户A访问而不让用户B访问
     移除： setfacl -x u:l01 /etc/passwd
         setfacl -b /etc/passwd 移除所有
 
-2. 手动设置ssh 连接超时时间，
-docker exec -it jenkins ssh  -o ConnectTimeout=10 root@10.0.3.218 ping -c1 10.0.3.218
-这样，也方便测试能否远程服务器了~
-
 查找当前目录下，相关log文件，并列出来
 find . -name "*log*" -exec ls -l {} \;
 查找当前目录下，相关log文件，且时间在10之前的，列出来
@@ -516,8 +512,6 @@ yay 安装包，及步骤， https://github.com/Jguer/yay
 
 archlinuxcn, mirrorlist-repo  https://github.com/archlinuxcn/mirrorlist-repo
 
-
-
 - 技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧技巧
 
 ll sd_files/xz_web_检测网站.yml
@@ -554,7 +548,6 @@ cat !$  查看上面那个文件，注意有个空格
 - journalctl -b -r -1 ，逆序展示上次开机的日志，-1 表示偏差值为1， -b表示开机至今的日志， -r逆序
 
 - 如果你的shell是 zsh，在终端输入bash 回车，就可临时切换到bash环境
-
 
 ---
 
@@ -606,39 +599,6 @@ cat !$  查看上面那个文件，注意有个空格
 	tcpdump -i eth0 port 9115
 	tcpdump -i eth0 src 192.168.10.68		dst 192.168.10.68
 
----
-
-##### 对于别名存储位置
-
-- 对于别名，理应存储在一个文件内，参考~~centos~~（其实是git-MINGW64）上的环境
-
-```
-cat /etc/profile.d/aliases.sh
-# Some good standards, which are not used if the user
-# creates his/her own .bashrc/.bash_profile
-
-# --show-control-chars: help showing Korean or accented characters
-alias ls='ls -F --color=auto --show-control-chars'
-alias ll='ls -l'
-alias ssh27='ssh -p 6022 root@140.246.90.106'
-alias ssh68='ssh root@192.168.10.68'
-
-case "$TERM" in
-xterm*)
-        # The following programs are known to require a Win32 Console
-        # for interactive usage, therefore let's launch them through winpty
-        # when run inside `mintty`.
-        for name in node ipython php php5 psql python2.7
-        do
-                case "$(type -p "$name".exe 2>/dev/null)" in
-                ''|/usr/bin/*) continue;;
-                esac
-                alias $name="winpty $name.exe"
-        done
-        ;;
-esac
-```
-
 - about DE on linux
 
 cd /usr/share/xsessions/        这里存放的是，当你登录时所可选的wm
@@ -649,5 +609,17 @@ displau manager:    lightdm, 或者SDDM 作为登录管理器
 WM:         i3WM，                          默认是KWin
 terminal:   Kitty, 而不必非要用st(simple terminal) 
 powermenu:  rofi
+
+- grep -r 
+
+    -r 选项的确会进入子目录进行递归匹配查询，但前提是： 子目录（文件夹）名称也要满足匹配规则才行。 所以要引入管道来查
+    find command-file/ -type f -name "*.sh" | xargs grep 'ping -c1'
+    非要用grep，也不是不可以， grep -iR 'ping -c1' command-file/ 时间稍长
+
+- locate 搜索不到文件，
+    修改配置文件，/etc/updatedb.conf 配置文件中有对搜索对象进行限制。 将配置注释掉即可
+
+- chroot 在制定根目录下运行， change root directory， chroot后，系统目录结构将以指定的目录位置作为 / 位置
+    一个正在运行的进程经过chroot 操作后，其根目录将被显式映射为某个指定目录，它将不能够对该目录之外的文件进行访问动作。
 
 
