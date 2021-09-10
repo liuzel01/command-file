@@ -36,9 +36,11 @@ xdotool key Return
 
 restart_vpn 
 
+# 检测VPN连接是否正常
+# 这个检测启动脚本，和重启脚本是分开的，
 sleep 10
-if pgrep EasyConnect &>/dev/null && docker exec -it jenkins-l01 ssh -o ConnectTimeout=60 root@10.0.3.218 &>/dev/null; then
+if pgrep EasyConnect &>/dev/null && docker exec -it jenkins-l01 ssh -o ConnectTimeout=60 root@10.0.3.218 ping -c1 10.0.3.218 &>/dev/null; then
     exit 1
 else
-    restart_vpn
+    DISPLAY=:1 /bin/bash /home/backup/restart_Easycont.sh
 fi
