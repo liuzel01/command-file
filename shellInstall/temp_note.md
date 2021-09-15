@@ -622,4 +622,90 @@ powermenu:  rofi
 - chroot 在制定根目录下运行， change root directory， chroot后，系统目录结构将以指定的目录位置作为 / 位置
     一个正在运行的进程经过chroot 操作后，其根目录将被显式映射为某个指定目录，它将不能够对该目录之外的文件进行访问动作。
 
+- 小工具，
+    1. yum install ShellCheck,
+        sck count_sum.sh
+    2. mycli mysql客户端，支持语法高亮和命令补全，效果类似ipython， 可替代mysql命令
+    
+
+- 测量云服务器网速，
+    1. [speedtest-cli](https://github.com/sivel/speedtest-cli) 
+    speedtest-cli --list | grep -i 'china'  查找国内的测速节点
+    speedtest-cli --share
+
+
+- systemctl， 创建自定义服务管理
+    1. 内网搭建了一个网盘服务[kiftd](https://kohgylw.gitee.io/index.html#myCarousel) ，需要做开机自启，服务目录结构如下
+    ```
+▶ tree -LN 1 /usr/local/kiftd
+/usr/local/kiftd
+├── conf
+├── filesystem
+├── fonts
+├── kiftd-1.0.35-RELEASE.jar
+├── kiftd说明文档.pdf
+├── libs
+├── logs
+├── mybatisResource
+├── nohup.out
+├── README.md
+├── startup.sh
+├── webContext
+└── 使用许可
+    ```
+    编写的启动脚本内容为：
+    ```
+cat startup.sh
+#!/bin/bash
+
+nohup java -jar kiftd-1.0.35-RELEASE.jar -start &
+    ```
+    编写的系统服务kift.service 内容为：
+    ```
+▶ cat  /usr/lib/systemd/system/kift.service
+[Unit]              # 主要描述和规定启动前后的顺序依赖关系
+Description=demo_kiftd_service
+Documentation=xxxxxx
+After=default.target
+Wants=yyyyyyy
+Requires=zzzzzzzz
+
+[Service]           # 主要是核心的控制语句
+Type=forking
+User=root
+Group=root
+KillMode=control-group
+
+ExecStart=/bin/bash -c 'nohup /usr/bin/java -jar /usr/local/kiftd/kiftd-1.0.35-RELEASE.jar -start &'
+ExecStop=/bin/bash -c 'kill -9 $(ps -ef | grep kiftd-1.0.35 | grep -v grep | awk '{print $2}')'
+ExecReload=/bin/kill -s HUP $MAINPID
+PrivateTmp=true
+RemainAfterExit=yes
+
+[Install]           # 主要是定义服务启动相关
+WantedBy=multi-user.target
+    ```
+
+    经测试，systemctl start|stop|restart kift.service 均成功
+    设置开机自启，systemctl enable kift.service
+    2. 注意看打印出的服务状态，
+    ```
+▶ systemctl status kift.service
+● kift.service - demo
+   Loaded: loaded (/usr/lib/systemd/system/kift.service; enabled; vendor preset: disabled)
+   Active: active (running) since Wed 2021-09-15 09:08:53 CST; 10min ago
+ Main PID: 15234 (java)
+   CGroup: /system.slice/kift.service
+           └─15234 /usr/bin/java -jar /usr/local/kiftd/kiftd-1.0.35-RELEASE.jar -start
+
+Sep 15 09:08:55 localhost.localdomain bash[15233]: WARNING: Illegal reflective access by org.springframework.cglib.core.ReflectUtils$1 (file:/usr/local/kiftd/libs/spring-core-5.0.6.RELEASE.jar) t...ectionDomain)
+Sep 15 09:08:55 localhost.localdomain bash[15233]: WARNING: Please consider reporting this to the maintainers of org.springframework.cglib.core.ReflectUtils$1
+Sep 15 09:08:55 localhost.localdomain bash[15233]: WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+Sep 15 09:08:55 localhost.localdomain bash[15233]: WARNING: All illegal access operations will be denied in a future release
+Sep 15 09:08:56 localhost.localdomain bash[15233]: [2021年09月15日 09:08:56]初始化文件节点...
+Sep 15 09:08:56 localhost.localdomain bash[15233]: [2021年09月15日 09:08:56]文件节点初始化完毕。
+...
+    ```
+
+- 
 
