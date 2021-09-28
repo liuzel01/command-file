@@ -202,3 +202,11 @@ redis，开机自启
 ​    config get requirepass
 
 重启后失效，所以要写到配置去， redis.conf, 添加一行requirepass vxqas168lta3p
+
+---
+
+#### 开放端口
+
+java项目服务器： 22， 80, 8848
+
+db数据库服务器：22, 3306， 6379， 9000， 
