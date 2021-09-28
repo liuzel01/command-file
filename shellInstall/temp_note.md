@@ -634,78 +634,11 @@ powermenu:  rofi
     speedtest-cli --share
 
 
-- systemctl， 创建自定义服务管理
-    1. 内网搭建了一个网盘服务[kiftd](https://kohgylw.gitee.io/index.html#myCarousel) ，需要做开机自启，服务目录结构如下
-    ```
-▶ tree -LN 1 /usr/local/kiftd
-/usr/local/kiftd
-├── conf
-├── filesystem
-├── fonts
-├── kiftd-1.0.35-RELEASE.jar
-├── kiftd说明文档.pdf
-├── libs
-├── logs
-├── mybatisResource
-├── nohup.out
-├── README.md
-├── startup.sh
-├── webContext
-└── 使用许可
-    ```
-    编写的启动脚本内容为：
-    ```
-cat startup.sh
-#!/bin/bash
-
-nohup java -jar kiftd-1.0.35-RELEASE.jar -start &
-    ```
-    编写的系统服务kift.service 内容为：
-    ```
-▶ cat  /usr/lib/systemd/system/kift.service
-[Unit]              # 主要描述和规定启动前后的顺序依赖关系
-Description=demo_kiftd_service
-Documentation=xxxxxx
-After=default.target
-Wants=yyyyyyy
-Requires=zzzzzzzz
-
-[Service]           # 主要是核心的控制语句
-Type=forking
-User=root
-Group=root
-KillMode=control-group
-
-ExecStart=/bin/bash -c 'nohup /usr/bin/java -jar /usr/local/kiftd/kiftd-1.0.35-RELEASE.jar -start &'
-ExecStop=/bin/bash -c 'kill -9 $(ps -ef | grep kiftd-1.0.35 | grep -v grep | awk '{print $2}')'
-ExecReload=/bin/kill -s HUP $MAINPID
-PrivateTmp=true
-RemainAfterExit=yes
-
-[Install]           # 主要是定义服务启动相关
-WantedBy=multi-user.target
-    ```
-
-    经测试，systemctl start|stop|restart kift.service 均成功
-    设置开机自启，systemctl enable kift.service
-    2. 注意看打印出的服务状态，
-    ```
-▶ systemctl status kift.service
-● kift.service - demo
-   Loaded: loaded (/usr/lib/systemd/system/kift.service; enabled; vendor preset: disabled)
-   Active: active (running) since Wed 2021-09-15 09:08:53 CST; 10min ago
- Main PID: 15234 (java)
-   CGroup: /system.slice/kift.service
-           └─15234 /usr/bin/java -jar /usr/local/kiftd/kiftd-1.0.35-RELEASE.jar -start
-
-Sep 15 09:08:55 localhost.localdomain bash[15233]: WARNING: Illegal reflective access by org.springframework.cglib.core.ReflectUtils$1 (file:/usr/local/kiftd/libs/spring-core-5.0.6.RELEASE.jar) t...ectionDomain)
-Sep 15 09:08:55 localhost.localdomain bash[15233]: WARNING: Please consider reporting this to the maintainers of org.springframework.cglib.core.ReflectUtils$1
-Sep 15 09:08:55 localhost.localdomain bash[15233]: WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
-Sep 15 09:08:55 localhost.localdomain bash[15233]: WARNING: All illegal access operations will be denied in a future release
-Sep 15 09:08:56 localhost.localdomain bash[15233]: [2021年09月15日 09:08:56]初始化文件节点...
-Sep 15 09:08:56 localhost.localdomain bash[15233]: [2021年09月15日 09:08:56]文件节点初始化完毕。
-...
-    ```
-
-- 
-
+        
+    4. /lib/systemd/system/zzz.service  其中的ExecStart /bin/bash -c '' 语法还有点问题
+    systemctl cat docker.service        没必要进入 /lib/systemd/system/ 目录中
+    systemctl list-dependencies docker.service      查看服务的依赖
+    
+    5. 有时候，systemctl stop 命令没有响应，可以用来给进程发出kill信号， systemctl kill httpd.service 
+- ubuntu- systemctl 
+    1. enable 之后，貌似还是不生效，有待验证
