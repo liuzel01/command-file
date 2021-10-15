@@ -642,3 +642,5 @@ powermenu:  rofi
     5. 有时候，systemctl stop 命令没有响应，可以用来给进程发出kill信号， systemctl kill httpd.service 
 - ubuntu- systemctl 
     1. enable 之后，貌似还是不生效，有待验证
+
+
