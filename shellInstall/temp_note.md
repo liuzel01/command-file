@@ -633,8 +633,6 @@ powermenu:  rofi
     speedtest-cli --list | grep -i 'china'  查找国内的测速节点
     speedtest-cli --share
 
-
-        
     4. /lib/systemd/system/zzz.service  其中的ExecStart /bin/bash -c '' 语法还有点问题
     systemctl cat docker.service        没必要进入 /lib/systemd/system/ 目录中
     systemctl list-dependencies docker.service      查看服务的依赖
