@@ -204,6 +204,10 @@ redis，开机自启
 重启后失效，所以要写到配置去， redis.conf, 添加一行requirepass vxqas168lta3p
 
 6. auth,gateway,nacos 最好在一台服务器；同时也要注意服务器资源是否够用
+7. 首页logo，存在跨域问题，
+
+在组织架构-组织管理，修改上传logo
+
 ---
 
 #### 开放端口

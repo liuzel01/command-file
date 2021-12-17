@@ -257,7 +257,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     
     8. 使用`` 或者 $() 做命令替换； 嵌套时，$()可读性更清晰
     9. readlink -f  /usr/bin/java                                  递归跟随符号链接以标注化。就是一直跟随符号链接，知道非符号链接的位置，限制是最后必须存在一个非符号链接的文件
-    10. /etc/bashrc 文件添加一行，export HISTTIMEFORMAT="”%F %T "   查看历史命令时看到具体时间
+    10. /etc/bashrc 文件添加一行，export HISTTIMEFORMAT="%F %T "   查看历史命令时看到具体时间
     11. screen, 同屏操作，nice
         screen -S l01 创建会话,  screen -x l01 加入会话， exit退出
         两个终端加入到同一个会话中，就可实现共享
