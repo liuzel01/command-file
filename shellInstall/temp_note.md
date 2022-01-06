@@ -645,3 +645,16 @@ powermenu:  rofi
     1. 内部服务器无网络，检查各项网络配置后。
         1. 检查默认路由是否正确。
         route add default gw 192.168.10.1
+
+- linux 虚拟磁盘创建、挂载
+    1. dd if=/dev/zero of=~/HDD.img bs=1M count=200             创建一个HDD.img 文件，大小为200MB，准备下一步创建虚拟磁盘用
+    fdisk ./HDD.img                                             创建磁盘分区，方式和普通的一样
+    losetup -Pf --show ~/HDD.img                                创建loop设备
+    lsblk
+    mkdir -p l01 
+    mkfs.ext4 /dev/loop0p1
+    fdisk -l /dev/loop0
+    partprobe       或是 partx -s /dev/loop0
+    mkfs.ext4 /dev/loop0p1
+    mount /dev/loop0p1 l01
+    losetup -d /dev/loop0                                       使用完，卸载虚拟磁盘

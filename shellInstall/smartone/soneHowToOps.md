@@ -89,6 +89,9 @@ scp root@192.168.10.27:/home/lzl/command-file/shellInstall/smartone/etc_init.d/m
 10.0.3.218 sone-gateway
 10.0.3.217 sone-minio
 10.0.3.217 sone-kkFileView
+
+# 主机名，配置可参考jar 包的配置， 如下一行是 sone-gate.jar 包 bootstrap-dev.yml 文件的配置，主机名为 sone-nacos
+server-addr: ${NACOS-HOST:sone-nacos}:${NACOS-PORT:8848}
 ```
 
 2. **环境搞完了，接下来就是重要的数据导入**
@@ -207,6 +210,21 @@ redis，开机自启
 7. 首页logo，存在跨域问题，
 
 在组织架构-组织管理，修改上传logo
+
+显示不出来，在minio修改权限。 Read Only  Add上即可，刷新看到效果
+
+![image-20220105183837750](https://gitee.com/liuzel01/picbed/raw/master/data/20220105183837_sone_minio_org-logo.png) 
+
+- 清除数据库
+
+1. nacos ，除了users， config_info  其余表都可以truncate
+
+- nginx 上的配置
+
+1. location /admin  这里的后缀，要看数据库 sone_route_conf 表， predicates 字段
+2. 而且，nacos 里的配置，如果把其他的删了只保留 dev，则 数据库对应的就是sone-admin， sone-auth， 所以nginx上就写  location /admin
+
+![image-20220105184158421](https://gitee.com/liuzel01/picbed/raw/master/data/20220105184158_sone_nacos_nginx_dev.png)
 
 ---
 

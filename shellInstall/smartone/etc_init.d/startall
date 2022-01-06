@@ -5,7 +5,7 @@
 # chkconfig:   - 85 15
 # description: 
 #              
-# processname: sone
+# processname: sone& redis& minio& kkfile
 
 # 启动redis
 nohup redis-server /usr/local/redis/redis.conf &
@@ -13,14 +13,20 @@ nohup redis-server /usr/local/redis/redis.conf &
 # 启动minio
 cd /home/siping/minio ;nohup ./minio server /home/siping/minio/data/ &
 
-cd /home/sone;sh restart_nacos.sh start
-[ $? -eq 0 ] && sh restart_gateway.sh start
+# 启动kkfile
+cd /opt/openoffice/kkFileView-4.0.0/bin;
+nohup java -Dfile.encoding=UTF-8 -Dspring.config.location=../config/application.properties -jar kkFileView-4.0.0.jar > ../log/kkFileView.log 2>&1 &
 
-# 开启其他jar
-dir=$(find /home/sone -maxdepth 1 -name "*.sh")
+# smartsone
+cd /home/sone;
+sh restart_nacos.sh start && sleep 10
+# 开启项目包
+dir=$( find /home/sone -maxdepth 1 -name "*.sh" ! -name "*nacos*" )
 for i in $dir
 do
 	cd /home/sone
-        nohup sh $i start &>/dev/null
+        sh $i restart &>/dev/null
 done
 [ $? -eq 0 ] && echo 'SUCCEED!!'
+
+
