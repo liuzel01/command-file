@@ -627,7 +627,6 @@ powermenu:  rofi
         sck count_sum.sh
     2. mycli mysql客户端，支持语法高亮和命令补全，效果类似ipython， 可替代mysql命令
     
-
 - 测量云服务器网速，
     1. [speedtest-cli](https://github.com/sivel/speedtest-cli) 
     speedtest-cli --list | grep -i 'china'  查找国内的测速节点
@@ -639,6 +638,7 @@ powermenu:  rofi
     
     5. 有时候，systemctl stop 命令没有响应，可以用来给进程发出kill信号， systemctl kill httpd.service 
 - ubuntu- systemctl 
+    
     1. enable 之后，貌似还是不生效，有待验证
 
 
