@@ -218,6 +218,7 @@ redis，开机自启
 - 清除数据库
 
 1. nacos ，除了users， config_info  其余表都可以truncate
+2. 这些表 以wf_instance 开头的几张表，要清空数据，否则新建流程会有问题
 
 - nginx 上的配置
 
@@ -225,6 +226,8 @@ redis，开机自启
 2. 而且，nacos 里的配置，如果把其他的删了只保留 dev，则 数据库对应的就是sone-admin， sone-auth， 所以nginx上就写  location /admin
 
 ![image-20220105184158421](https://gitee.com/liuzel01/picbed/raw/master/data/20220105184158_sone_nacos_nginx_dev.png)
+
+
 
 ---
 
