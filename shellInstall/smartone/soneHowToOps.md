@@ -146,9 +146,11 @@ scp root@192.168.10.27:/home/lzl/command-file/shellInstall/smartone/etc_init.d/s
 
 
 
-1. 在导入数据库步骤中， 会出现导入smartone_common.sql 报错，据说是用navicat15 导出来的原因。下次， 可用命令行导入试试
+1. 在导入数据库步骤中， 会出现导入smartone_common.sql 报错，是用navicat15 导出来的原因。下次， 可用命令行导入试试
 
   `audit_date` date GENERATED ALWAYS AS (cast(`audit_time` as date)) STORED COMMENT '审核日期' NULL, 将最后的NULL 删除掉，再次导入就可了~
+
+或是， “选项” 中，勾选上 "使用SHOW CREATE TABLE  中的DDL"
 
 
 
@@ -209,9 +211,15 @@ redis，开机自启
 6. auth,gateway,nacos 最好在一台服务器；同时也要注意服务器资源是否够用
 7. 首页logo，存在跨域问题，
 
+#### 上传logo
+
 在组织架构-组织管理，修改上传logo
 
-显示不出来，在minio修改权限。 Read Only  Add上即可，刷新看到效果
+显示不出来，需要改权限。设置为不需要登录访问
+
+- 在minio修改权限。 Read Only  Add上即可，刷新看到效果
+
+**除此外，还有 static-resources  user-picture  user-signature 也需要添加** 
 
 ![image-20220105183837750](https://gitee.com/liuzel01/picbed/raw/master/data/20220105183837_sone_minio_org-logo.png) 
 
@@ -227,12 +235,44 @@ redis，开机自启
 
 ![image-20220105184158421](https://gitee.com/liuzel01/picbed/raw/master/data/20220105184158_sone_nacos_nginx_dev.png)
 
+#### sone 页面，左侧菜单栏出现重复
+
+- <font color=orange>**现象**</font> 
+
+1. 登录smartone后，ps的菜单出现重复
+
+- <font color=orange>**解决**</font> 
+
+1. 连接进数据库，smartone_common   搜索表  sys_menu
+2. type=0  筛选，检查是否有重复的菜单
+3. 连接进redis， 清理缓存。
+   1. 确定 使用的是dev 环境，（启动项目脚本中有指定，默认dev）
+   2. 右键 dev，点击Delete namespace ，finish 完成
+4. 返回浏览器，刷新页面，左侧重复菜单消失
+
+![image-20220113113654915](https://gitee.com/liuzel01/picbed/raw/master/data/20220113113655_sone_ps-zy_dev.png)
+
+
+
 
 
 ---
+
+## 部署相关
 
 #### 开放端口
 
 java项目服务器： 22， 80, 8848
 
-db数据库服务器：22, 3306， 6379， 9000， 
+db数据库服务器：22, 3306， 6379， 9000， 8012
+
+#### 检查所使用的环境
+
+- 注意项目所运行的环境。从启动脚本  restart_admin.sh 中查看，
+
+  启动命令 nohup java xxxxx --spring.profiles.active=dev   这表示运行的是dev 环境
+
+1. nacos 无所谓dev 还是test，nacos包含所有，
+2. 默认nacos 的public 是dev 环境。而脚本中的启动命令 可指定运行环境。之后，nacos修改对应环境的配置即可
+
+- 
