@@ -638,7 +638,7 @@ powermenu:  rofi
     
     5. 有时候，systemctl stop 命令没有响应，可以用来给进程发出kill信号， systemctl kill httpd.service 
 - ubuntu- systemctl 
-    
+  
     1. enable 之后，貌似还是不生效，有待验证
 
 
@@ -646,7 +646,19 @@ powermenu:  rofi
         1. 检查默认路由是否正确。
         route add default gw 192.168.10.1
 
+
+#### 问题记录
+
+- nginx 启用域名访问，禁止ip直接访问  （此问题之前记录过，应当追加补充）
+
+    需要在server 配置中添加针对host的配置，[可参考](https://blog.51cto.com/u_14900374/2520162) 
+        [nginx多域名多网站绑定及禁止ip访问](https://blog.csdn.net/jamesdodo/article/details/105046766) 
+- 
+
+
+
 - linux 虚拟磁盘创建、挂载
+！！！！！！！！！！未完成！！！！！！！！！！！！！！！！！！！
     1. dd if=/dev/zero of=~/HDD.img bs=1M count=200             创建一个HDD.img 文件，大小为200MB，准备下一步创建虚拟磁盘用
     fdisk ./HDD.img                                             创建磁盘分区，方式和普通的一样
     losetup -Pf --show ~/HDD.img                                创建loop设备
@@ -658,3 +670,75 @@ powermenu:  rofi
     mkfs.ext4 /dev/loop0p1
     mount /dev/loop0p1 l01
     losetup -d /dev/loop0                                       使用完，卸载虚拟磁盘
+- lvm 新增磁盘的一部分空间，类型lvm，作为tmproot 的挂载点
+  - 可参考，[how to change a physical partition system to LVM](https://serverfault.com/questions/457831/how-to-change-a-physical-partition-system-to-lvm) 
+
+1. ~~mkfs.ext4 /dev/sdb1~~
+
+2. pvcreate /dev/sdb1
+
+3. vgcreate vgNew /dev/sdb1
+
+4. lvcreate  -n tmproot  -l 100%FREE vgNew
+
+   1. 报错了，执行lvcreate -Zn -n tmproot -l 100%FREE  vgNew
+
+   其中，-Z| --zero y|n
+
+5. mkfs.ext4 /dev/vgNew/tmproot
+
+6. mount /dev/vgNew/tmproot  /media/
+
+7. rsync -ravzxq / /media/    这样相当于，将根目录内容写入到磁盘了，
+
+   1. ls /medis/
+
+8. 生成新的引导文件，
+
+- lvm 要卸载一部分的磁盘空间，（这就要从上往下删除）
+
+1. umount /media/
+2. pvs
+3. lvremove /dev/vgNew/tmproot
+4. vgremove  vgNew
+5. pvremove  /dev/sda2
+
+
+- 记录
+
+1. 查看硬件的一些指令
+    dmidecode | less                通过读bios来获取的信息
+    dmesg -T | less                 展示时间戳， 每次开机通过内核获取的资源信息
+    lscpu
+    cat /proc/cpuinfo
+    lsusb  lspci                    查看pci总线的信息
+    lshw  -short | less
+        lshw -C system              查看系统方面的
+2. pminfo                           查看监控指标
+    pminfo -td proc.nprocs          查看某个指标的解释
+    pmval -s 5 proc.nprocs          简单收集指标数据，收集5次
+
+3. 开启虚拟机
+    rht-vmctl start classroom       必须要单独来开
+    rht-vmctl status classroom
+    rht-vmctl status all
+    rht-vmctl start bastion
+    rht-vmctl reset servera         如果某一台做错了，需要从头来做，运行此指令
+        rht-vmctl fullreset servera 推荐这个
+    
+4. 配置内核参数， /proc/sys          /proc  伪文件系统，临时的，不能永久保存的
+    dev/                            系统设备的可调参数
+    fs/                             文件系统的可调参数
+    kernel/                         内核内部工作的
+    net/                            网络的
+    vm/                             虚拟内存的
+    1. 使用sysctl 指令来修改
+    sysctl -w vm.swappiness=60
+    2. 在 /etc/sysctl.d/ 创建条目（永久）
+
+5. 
+    lsmod  | less
+    modprobe r8169                  启用模块
+    lsmod | grep r8169              能看到输出，就说明有启动此模块
+    modinfo  r8169                  查看模块信息
+    modinfo  usb_storage -p         只输出参数
