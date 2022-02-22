@@ -1,4 +1,4 @@
-## 部署环境
+## 部署环境---需要从飞书在线文档，更新
 
 - jdk-8u221
 
@@ -132,7 +132,9 @@ scp root@192.168.10.27:/home/lzl/command-file/shellInstall/smartone/etc_init.d/s
 
   操作：连接进redis，执行：
 
-  license文件的目录结构如下：   /home/sone/license/license.key   此文件应是开发给
+  license文件的目录结构如下：    /home/sone/license/license.key   此文件应是开发给
+
+ cat /home/sone/license/license.key  **注意下面， hset 的双引号内容应当与key文件内容 保持一致** 
 
 ​    且，与jar项目包同级（和sone-auth jar包同一服务器）
 
