@@ -7,6 +7,7 @@ MYSQL_PASS="sksHykf8gw6l8bfs3ef"
 BACKUP_DIR="/home/mysqlbak"
 #获取系统时间格式201806091420
 TIME="$(date +"%Y%m%d%H%M")"
+DB=( smartone_common smartone_nacos )
 #删除时间设置为当前时间前2周
 # DELETETIME=`date -d "2 week ago" +"%Y%m%d%H"`
 # config for ftpServer-win2012
@@ -23,10 +24,15 @@ bak_mysql() {
 
 cd /usr/bin
 # ./mysqldump -u$MYSQL_USER -p$MYSQL_PASS --all-databases> "$BACKUP_DIR"/mysql_"$TIME.sql"
-./mysqldump -u$MYSQL_USER -p$MYSQL_PASS  smartone_common --skip-lock-tables         > "$BACKUP_DIR"/smartone_common_"$TIME.sql"
-./mysqldump -u$MYSQL_USER -p$MYSQL_PASS  smartone_nacos --skip-lock-tables         > "$BACKUP_DIR"/smartone_nacos_"$TIME.sql"
+for i in "${DB[@]}"
+do
+    echo ${i}
+    ./mysqldump -u$MYSQL_USER -p$MYSQL_PASS --opt -R -B ${i} --skip-lock-tables     > "$BACKUP_DIR"/${i}_"$TIME".sql
+# 	mysqldump -u$MYSQL_USER -p$MYSQL_PASS --opt -R -B ${i} --force     > ./${i}_"$TIME"".sql
+done
 
 zip -r $BACKUP_DIR/mysqlbak_$TIME.zip  $BACKUP_DIR/*.sql &>/dev/null
+# tar -czvpf mysql_${TIME}.tar.gz ./*.sql
 [ $? -eq 0 ] && rm -rf $BACKUP_DIR/*.sql
 }
 
