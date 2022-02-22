@@ -32,6 +32,7 @@ topk(5,(irate(namedprocess_namegroup_cpu_seconds_total{groupname=~"$processes",i
 mysql:
 cp  support-files/mysql.server /etc/init.d/mysqld
 
+./mysql start --skip-grant-tables 用于root 登录不上，运行后登录可直接登录  update 更新mysql.user 数据库表
 select user,host,password from mysql.user;
 CREATE USER 'sks_sone'@'localhost' IDENTIFIED BY 'sksHykf8gw6l8bfs3ef';
 grant all privileges on *.* to 'sks_sone'@'%' identified by 'sksHykf8gw6l8bfs3ef' with grant option;
@@ -273,7 +274,57 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
     12. whois 119.3.247.174                                         查询到域名的注册信息
         whois qq.com
 
+    13. 记录crontab 妙用（惨遭挖矿）
+        crontab -l 
+            @reboot /tmp/.cache/.cron-tick >> /dev/null 2>&1
+            @daily /tmp/.cache/.daily-tick >> /dev/null 2>&1
+            3 * * * * /bin/dhpcd -o xxx.minemxr.com:80 -B >/dev/null 2>/dev/null
+        修改root 远程密码。 设置文件禁止修改(chattr +i -R .cache/)。 移除脚本。审计对定时任务的修改记录。
 
+        @reboot sleep 60; /root/bakup.sh  开机后等待一分钟，执行脚本
+        @reboot Run once, at startup.
+        @yearly Run once a year, “0 0 1 1 *”
+        @annually (same as @yearly)
+        @monthly Run once a month, “0 0 1 * *”
+        @weekly Run once a week, “0 0 * * 0”
+        @daily Run once a day, “0 0 * * *”
+        @midnight (same as @daily)
+        @hourly Run once an hour, “0 * * * *”
+
+    14. 截断 大日志文件
+    head -10000 nohup.log > nohup_Head.log  获取文件的前10000行。 tail获取文件的后10000
+    sed -n '1,10000' nohup.log  从第N行截取到M行
+    split -d -l 500 nohup.log nohup --verbose 
+    split -d -b 50m nohup-license.log  nohup. --verbose  每个文件50M，输出文件名 nohup.0{1..n}
+        for i in `ls | grep nohup`; do q=`echo $i | awk -F '.' '{print $1$2".log"}'`; mv $i $q ;done  文件名换位 .log 后缀
+        切割后的文件合并，cat nohup0*.log > nohup-l01
+    logrotate ，配置存放路径， /etc/logrotate.d/
+    ```
+    vim /etc/logrotate.d/new_mariadb
+    /home/data/log/maria*.log {
+    # 新文件权限 600
+	create 600 mysql mysql
+	notifempty
+	daily
+	# 每天一份，保留10份
+	rotate 10
+	# 历史文件保留目录
+	olddir /home/data/log/bakup
+	missingok
+	# 否开启压缩，压缩格式gzip
+	nocompress
+	postrotate
+	# just if mysqld is really running
+	if test -x /usr/bin/mysqladmin && \
+	/usr/bin/mysqladmin ping &>/dev/null
+	then
+	/usr/bin/mysqladmin --local flush-error-log \
+	flush-engine-log flush-general-log flush-slow-log
+	fi
+	endscript
+}
+    ```
+    logrotate -f /etc/logrotate.d/new_mariadb 用来验证是否可用
 
 
 6. 查看服务器CPU，运存情况
@@ -742,3 +793,9 @@ powermenu:  rofi
     lsmod | grep r8169              能看到输出，就说明有启动此模块
     modinfo  r8169                  查看模块信息
     modinfo  usb_storage -p         只输出参数
+
+
+- 
+1. 将文件夹下的某些文件，迁移到某目录中去
+    find  .  -name "*.tif" | xargs -I {} cp {} /home/sdata/tomcat/webapps/storage_area/form/1234567890/l01/
+
