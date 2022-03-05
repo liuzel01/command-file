@@ -17,6 +17,8 @@ install_redhat() {
     cd $OFFICE_HOME
     echo '正在下载wget... ' ;yum install -y wget &>/dev/null
     echo '正在下载'$KKFILE_VER'.tar.gz' ;wget http://meeting.sipingsoft.com/smart/$KKFILE_VER.tar.gz &&\
+# 官方脚本有变化了。。使用的libreoffice
+
       echo '正在下载Apache_OpenOffice' ;wget http://meeting.sipingsoft.com/smart/Apache_OpenOffice_4.1.5_Linux_x86-64_install-rpm_zh-CN.tar.gz  -cO openoffice_rpm.tar.gz &>/dev/null &&\
       tar -zxf $KKFILE_VER.tar.gz &&\
       tar zxf openoffice_rpm.tar.gz &&\
@@ -35,6 +37,20 @@ fi
 }
 
 install_redhat
+
+install_redhat_with_libreoffice() {
+   wget https://kkfileview.keking.cn/LibreOffice_7.1.4_Linux_x86-64_rpm.tar.gz -cO LibreOffice_7_rpm.tar.gz && tar -zxf /tmp/LibreOffice_7_rpm.tar.gz && cd /tmp/LibreOffice_7.1.4.2_Linux_x86-64_rpm/RPMS
+   echo $?
+   if [ $? -eq 0 ];then
+     yum install -y libXext.x86_64 libXext.so.6
+     yum groupinstall -y  "X Window System"
+     yum localinstall ./RPM/*.rpm
+     echo 'install finshed...'
+   else
+     echo 'download package error...'
+   fi
+}
+
 # 下面是改配置文件， 和启动脚本相关的
 cd $KKFILEVIEW_BIN_FOLDER
 echo "Using KKFILEVIEW_BIN_FOLDER $KKFILEVIEW_BIN_FOLDER"
