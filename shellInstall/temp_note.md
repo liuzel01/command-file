@@ -220,6 +220,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         cd !^，             得到上条命令的第一个参数
         vim !:2             !:n，得到上条命令第n个参数
         vim !:1-2           !:x-y，得到上条命令从x到y的参数
+            !:-1 acahi-daemon
         vim !:n*            !:n*,从n开始到最后的参数
         cp -r !*            !*,得到上条命令所有参数
         ```
@@ -799,3 +800,9 @@ powermenu:  rofi
 1. 将文件夹下的某些文件，迁移到某目录中去
     find  .  -name "*.tif" | xargs -I {} cp {} /home/sdata/tomcat/webapps/storage_area/form/1234567890/l01/
 
+2. 查看ssl 证书到期时间：
+    1. 通过域名获取： 
+    echo | openssl s_client -servername 你的域名 -connect 你的域名:443 2>/dev/null | openssl x509 -noout -dates
+
+
+3. 
