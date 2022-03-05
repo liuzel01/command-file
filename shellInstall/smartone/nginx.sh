@@ -13,7 +13,7 @@ Ngx_dir=/usr/local/nginx_18
 mkdir -p $Ngx_dir
 # 安装nginx依赖软件
 install_depend_package() {
-        yum  install gcc-c++ zlib-devel pcre-devel automake -y
+        yum  install gcc-c++ zlib-devel pcre-devel automake openssl openssl-devel -y
 }
 
 # 创建nginx源码包存放目录
@@ -37,8 +37,9 @@ compile_install_nginx() {
                 wget http://meeting.sipingsoft.com/smart/$Ngx_src -P /tmp &&\
                 tar -xzf /tmp/${Ngx_src} -C /usr/src/nginx/ &&\
                 cd /usr/src/nginx/${Ngx_bag} &&\
-                ./configure --prefix=${Ngx_dir} --with-http_gzip_static_module &&\
+                ./configure --prefix=${Ngx_dir} --with-http_gzip_static_module --with-http_sub_module --with-http_ssl_module &&\
                 make && make install || echo '已存在 '${Ngx_src}
+
 
 }
 
