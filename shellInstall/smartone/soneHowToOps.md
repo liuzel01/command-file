@@ -140,7 +140,7 @@ scp root@192.168.10.27:/home/lzl/command-file/shellInstall/smartone/etc_init.d/s
 
   auth crrc123.com
 
-  hset license "ipDPBdBfMPItM3ryw2uYLs91G0aVq5eo5HFpk16kFDznJc3i8N" "{\"initialTime\":1601534400000,\"expireTime\":null,\"ip\":\"127.0.0.1\",\"userNumber\":1000,\"productVersion\":\"portal/3.0,license/3.0,fi_cc_v2/3.0,crm_mobile/3.0,fi_ap/3.0,fi_ajs/3.0,fi_gl/3.0,fi_ar/3.0,crm/3.0,ps/3.0,fi_co/3.0,hr/3.0,fi_as/3.0,plm/3.0,erp/3.0,sys_mgt/3.0,adv_config/3.0\",\"isLocked\":0}"
+  hset license "ipDPBdBfMPItM3ryw2uYLs91G0aVq5eo5HFpk16kFDznJc3i8N" '{\"initialTime\":1601534400000,\"expireTime\":null,\"ip\":\"127.0.0.1\",\"userNumber\":1000,\"productVersion\":\"portal/3.0,license/3.0,fi_cc_v2/3.0,crm_mobile/3.0,fi_ap/3.0,fi_ajs/3.0,fi_gl/3.0,fi_ar/3.0,crm/3.0,ps/3.0,fi_co/3.0,hr/3.0,fi_as/3.0,plm/3.0,erp/3.0,sys_mgt/3.0,adv_config/3.0\",\"isLocked\":0}'
 
   测试一下，hget license "ipDPBdBfMPItM3ryw2uYLs91G0aVq5eo5HFpk16kFDznJc3i8N"
 
@@ -264,7 +264,7 @@ redis，开机自启
 
 #### 开放端口
 
-java项目服务器： 22， 80, 8848
+java项目服务器： 22， 80, 8848  9999（接口地址）
 
 db数据库服务器：22, 3306， 6379， 9000， 8012
 
