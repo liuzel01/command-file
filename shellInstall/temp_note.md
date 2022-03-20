@@ -96,6 +96,7 @@ revoke all on *.* from dba@localhost;
 - 显示过滤掉# 开头和空格后的配置信息
 
 `grep -Ev "^$|^[#;]" redis.conf`
+grep -Ev "^$|#" puppet.conf.out.bak  > puppet.conf.out
 但是，这会把脚本开头那行也给注释了...
 
 微信公众号-与开发者模式绑定，因此要用到接口去配置，比如说菜单...
@@ -274,14 +275,14 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         Attached    已连接的，  Detached  分离的，                        注意看screen 后面的状态
     12. whois 119.3.247.174                                         查询到域名的注册信息
         whois qq.com
-
+    
     13. 记录crontab 妙用（惨遭挖矿）
         crontab -l 
             @reboot /tmp/.cache/.cron-tick >> /dev/null 2>&1
             @daily /tmp/.cache/.daily-tick >> /dev/null 2>&1
             3 * * * * /bin/dhpcd -o xxx.minemxr.com:80 -B >/dev/null 2>/dev/null
         修改root 远程密码。 设置文件禁止修改(chattr +i -R .cache/)。 移除脚本。审计对定时任务的修改记录。
-
+    
         @reboot sleep 60; /root/bakup.sh  开机后等待一分钟，执行脚本
         @reboot Run once, at startup.
         @yearly Run once a year, “0 0 1 1 *”
@@ -291,42 +292,6 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         @daily Run once a day, “0 0 * * *”
         @midnight (same as @daily)
         @hourly Run once an hour, “0 * * * *”
-
-    14. 截断 大日志文件
-    head -10000 nohup.log > nohup_Head.log  获取文件的前10000行。 tail获取文件的后10000
-    sed -n '1,10000' nohup.log  从第N行截取到M行
-    split -d -l 500 nohup.log nohup --verbose 
-    split -d -b 50m nohup-license.log  nohup. --verbose  每个文件50M，输出文件名 nohup.0{1..n}
-        for i in `ls | grep nohup`; do q=`echo $i | awk -F '.' '{print $1$2".log"}'`; mv $i $q ;done  文件名换位 .log 后缀
-        切割后的文件合并，cat nohup0*.log > nohup-l01
-    logrotate ，配置存放路径， /etc/logrotate.d/
-    ```
-    vim /etc/logrotate.d/new_mariadb
-    /home/data/log/maria*.log {
-    # 新文件权限 600
-	create 600 mysql mysql
-	notifempty
-	daily
-	# 每天一份，保留10份
-	rotate 10
-	# 历史文件保留目录
-	olddir /home/data/log/bakup
-	missingok
-	# 否开启压缩，压缩格式gzip
-	nocompress
-	postrotate
-	# just if mysqld is really running
-	if test -x /usr/bin/mysqladmin && \
-	/usr/bin/mysqladmin ping &>/dev/null
-	then
-	/usr/bin/mysqladmin --local flush-error-log \
-	flush-engine-log flush-general-log flush-slow-log
-	fi
-	endscript
-}
-    ```
-    logrotate -f /etc/logrotate.d/new_mariadb 用来验证是否可用
-
 
 6. 查看服务器CPU，运存情况
     1. cat /proc/cpuinfo  | grep processor | wc -l      4个CPU处理器
@@ -485,7 +450,7 @@ pgrep -l java
 1. nmap -p 80,443,4455-5555 -n 140.246.90.106  -n不做DNS反解
 
 ---
-1. nmap 的6中端口状态
+1. nmap 的6种端口状态
     open                开放
     closed              关闭状态。但是，不排除对方系统做了一定的安全防护
     filtered            被过滤。对方主机可能存在防火墙设备将nmap包阻隔，也可能是网络拥塞造成。建议在不同时段再次扫描
@@ -512,15 +477,58 @@ docker logs $CID
 2. 
 很多东西（教程），生搬是硬套不进去的，往往是学习他的思路，他的思考方向。
 
-1. [linux Root的哪些事儿](https://evilpan.com/2020/12/06/android-rooting/#%E6%80%BB%E7%BB%93)
-ACL: 实现，控制某个文件，可以让用户A访问而不让用户B访问
-通过文件权限码可以实现一定程度上的自主访问控制，但是对于多用户系统而言只能通过用户组去管理，无法控制某个文件可以让用户A访问而不让用户B访问。
+1. ACL: 实现，控制某个文件，可以让用户A访问而不让用户B访问
+ linux file permission
+   通过文件权限码可以实现一定程度上的自主访问控制，但是对于多用户系统而言只能通过用户组去管理，无法控制某个文件可以让用户A访问而不让用户B访问。
 例如，单独给某用户添加文件的读权限：
-    setfacl -m u:l01:w /etc/passwd
+ setfacl -m u:l01:w /etc/passwd
     getfacl /etc/passwd
+   
+   setfacl -x group:redis qq.sh		# 删除用户或组的acl权限
+   
+   setfacl -b qq.sh								# 删除文件的所有acl权限
+   
     这个小知识，不常用，但是很好用
-    移除： setfacl -x u:l01 /etc/passwd
-        setfacl -b /etc/passwd 移除所有
+   setfacl -x u:l01 /etc/passwd				# 删除用户l01 的acl权限
+   
+   setfacl -x d:u:redis l01							# 取消递归的acl规则
+   
+   setfacl -m u:redis:- l01							# 使用户无法使用该目录
+   
+   setfacl -b /etc/passwd					# 移除所有的
+    setfacl -m group:redis:r-- qq.sh        # 设置用户组redis具有read权限
+    ls -l qq.sh     # 当一个文件拥有了ACL_USER 或ACL_GROUP 的值后我们就称他为ACL文件，+ 号就是提示我们的
+
+```
+[root@pptmaster]/home# ll qq.sh		# 查看文件的linux permission
+-rwxrwxr-- 1 root puppet 101 Sep  2  2021 qq.sh
+[root@pptmaster]/home# setfacl -m user:redis:rwx qq.sh		# 设置用户redis，对文件具有和root一样的permission
+[root@pptmaster]/home# getfacl --omit-header qq.sh		# 查看下acl权限
+user::rwx
+user:redis:rwx
+group::rw-
+mask::rwx
+other::r--
+
+setfacl -m mask::r-- qq.sh
+当切换到redis 用户，查看文件acl权限，发现只有rw 。因为MASK 规定了ACL_USER ACL_GROUP_OBJ ACL_GROUP 的最大权限。这里他们的最大权限也就是read only 
+bash-4.2$ ls -l qq.sh 
+-rwxrw-r--+ 1 root puppet 108 Mar 16 16:44 qq.sh
+bash-4.2$ getfacl  qq.sh 
+# file: qq.sh
+# owner: root
+# group: puppet
+user::rwx
+user:redis:rwx			#effective:rw-
+group::rwx			#effective:rw-
+mask::rw-
+other::r--
+```
+
+
+
+
+
 
 查找当前目录下，相关log文件，并列出来
 find . -name "*log*" -exec ls -l {} \;
@@ -576,6 +584,7 @@ cat !$  查看上面那个文件，注意有个空格
   ​	edit files in place (makes backup if SUFFIX supplied)			这是sed 的帮助页，显示的注释，可参考
 
 - mv /home/qq.sh{,.bak}  将文件重命名为 /home/qq.sh.bak
+	cp 则是新建一个副本
 
 - 在终端，前往命令最前 ctrl+a, 前往命令末尾 ctrl+e
 
@@ -712,16 +721,16 @@ powermenu:  rofi
 - linux 虚拟磁盘创建、挂载
 ！！！！！！！！！！未完成！！！！！！！！！！！！！！！！！！！
     1. dd if=/dev/zero of=~/HDD.img bs=1M count=200             创建一个HDD.img 文件，大小为200MB，准备下一步创建虚拟磁盘用
-    fdisk ./HDD.img                                             创建磁盘分区，方式和普通的一样
-    losetup -Pf --show ~/HDD.img                                创建loop设备
-    lsblk
-    mkdir -p l01 
-    mkfs.ext4 /dev/loop0p1
-    fdisk -l /dev/loop0
-    partprobe       或是 partx -s /dev/loop0
-    mkfs.ext4 /dev/loop0p1
-    mount /dev/loop0p1 l01
-    losetup -d /dev/loop0                                       使用完，卸载虚拟磁盘
+      fdisk ./HDD.img                                             创建磁盘分区，方式和普通的一样
+      losetup -Pf --show ~/HDD.img                                创建loop设备
+      lsblk
+      mkdir -p l01 
+      mkfs.ext4 /dev/loop0p1
+      fdisk -l /dev/loop0
+      partprobe       或是 partx -s /dev/loop0
+      mkfs.ext4 /dev/loop0p1
+      mount /dev/loop0p1 l01
+      losetup -d /dev/loop0                                       使用完，卸载虚拟磁盘
 - lvm 新增磁盘的一部分空间，类型lvm，作为tmproot 的挂载点
   - 可参考，[how to change a physical partition system to LVM](https://serverfault.com/questions/457831/how-to-change-a-physical-partition-system-to-lvm) 
 
@@ -805,4 +814,16 @@ powermenu:  rofi
     echo | openssl s_client -servername 你的域名 -connect 你的域名:443 2>/dev/null | openssl x509 -noout -dates
 
 
-3. 
+3. tail -n +10 network | less       # 查看从第10行，到最后一行
+
+4. zinit 管理zsh 插件（Zplugin）
+
+    文件备份路径， [zshrc](../../dotfile/.zshrc)
+    [使用zinit配置终端](https://kissandrun.site/shell-3/)， [zinit 插件安装配置](https://www.cnblogs.com/hongdada/p/14048612.html)， 
+    [服务器下载慢，参考加速下载镜像](https://github.com/hoochanlon/w3-goto-world/tree/master/%E4%B8%8B%E8%BD%BD%E5%8A%A0%E9%80%9FClone%E3%80%81AWS%E3%80%81Git%E9%95%9C%E5%83%8F), [安装onmyzsh失败connection refused](https://www.jianshu.com/p/8fc095ea4f5e), 
+    [安装autojump](https://github.com/wting/autojump#manual)
+
+    1. 快捷操作
+	C+a 命令行首
+	C+e 命令行尾
+	C+f 补全命令
