@@ -410,7 +410,7 @@ faqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfaqfa
 
 
 
-ansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansibleansible
+---
 
 1. locate, 搜索包含关键字的所有文件和目录。后接需要查找的文件名，也可以用正则表达式     `yum install -y mlocate`
     准确度依赖于系统上预建的文件索引数据库文件, ll /var/lib/mlocate/mlocate.db
@@ -765,6 +765,16 @@ powermenu:  rofi
 5. pvremove  /dev/sda2
 
 
+9. shell 脚本中以其他用户身份运行（没有密码的情况下）
+    visudo 
+    # 允许用户user1以 appuser 身份运行
+    user1 (ALL)=(appuser) NOPASSWD:/path/to/yourapp
+    sudo -u appuser /path/to/yourapp
+    # 允许组group1中的用户以appuser身份运行
+    %somegroup (ALL)=(appuser) /yourapp
+    sudo -u appuser /yourapp 
+
+
 - 记录
 
 1. 查看硬件的一些指令
@@ -827,3 +837,9 @@ powermenu:  rofi
 	C+a 命令行首
 	C+e 命令行尾
 	C+f 补全命令
+
+5. maven 修改配置文件（nexus新地址）后，打包 mvn clean install ，仍然出现错误
+    打包前，执行 mvn clean install -U -X
+    参考，[从远程强行拉取、更新dependencies](https://techexpertise.medium.com/force-maven-to-fetch-dependencies-from-remote-f8d44b80a37d)
+
+
