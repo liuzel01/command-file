@@ -39,12 +39,12 @@ fi
 install_redhat
 
 install_redhat_with_libreoffice() {
-   wget https://kkfileview.keking.cn/LibreOffice_7.1.4_Linux_x86-64_rpm.tar.gz -cO LibreOffice_7_rpm.tar.gz && tar -zxf /tmp/LibreOffice_7_rpm.tar.gz && cd /tmp/LibreOffice_7.1.4.2_Linux_x86-64_rpm/RPMS
+   wget https://kkfileview.keking.cn/LibreOffice_7.1.4_Linux_x86-64_rpm.tar.gz -cO LibreOffice_7_rpm.tar.gz && tar -zxf /LibreOffice_7_rpm.tar.gz && cd LibreOffice_7.1.4.2_Linux_x86-64_rpm/RPMS
    echo $?
    if [ $? -eq 0 ];then
      yum install -y libXext.x86_64 libXext.so.6
      yum groupinstall -y  "X Window System"
-     yum localinstall ./RPM/*.rpm
+     yum localinstall ./*.rpm
      echo 'install finshed...'
    else
      echo 'download package error...'

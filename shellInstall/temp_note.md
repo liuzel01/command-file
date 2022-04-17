@@ -188,13 +188,6 @@ weekly：
     不过,从使用配置层面,也要先达到最低标准
     另,从攻击角度来搞,或许能理解得更深, ？？
 
-
-clouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclouclcloucloucloucloucloucloucloucloucloucloucloucloucl
-
-- 系统更新,要一个一个部门去更新,有点烦
-    1. 先不论内网部署的. 外网部署的各个部门,要保证版本是统一的
-    2. 每次遇到问题后,都是即时更新,没有新开一个分支.不知道版本是如何管理控制的
-
 unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
 
 5. linux命令行，^替换掉上调命令的部分内容
@@ -843,3 +836,24 @@ powermenu:  rofi
     参考，[从远程强行拉取、更新dependencies](https://techexpertise.medium.com/force-maven-to-fetch-dependencies-from-remote-f8d44b80a37d)
 
 
+6. 固定服务器时间
+    0 0 * * * /etc/init.d/date &>/dev/null
+    cat /etc/init.d/date  也不需要配置自启
+    #!/bin/bash 
+    # date_mjsws       Bring up/down date
+    #
+    # chkconfig: 2345 10 90
+    # description: Activates/Deactivates all network interfaces configured to \
+    #              start at boot time.
+    timedatectl set-ntp 0;
+    date -s "20220402";
+
+    rc3.d/ rc5.d/ 目录配置自启
+
+7. 路由跟踪，traceroute
+
+查看哪些进程占用内存情况
+    for i in $(ls /proc | grep "^[0-9]" | awk '$0>100'); do awk '/Swap:/{a=a+$2}END{print '"$i"',a/1024"M"}' /proc/$i/smaps;done| sort -k2nr | head
+
+mysql全量备份， 与binlog 将误删数据恢复
+    mysqldump -uroot -p -B -F -R -x --master-data=2 test-l01| gzip > test-l01.sql.gz

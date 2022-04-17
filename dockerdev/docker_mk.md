@@ -87,7 +87,7 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
 
     1. 而且，Dockerfile里的CMD 只能有一个，有多个的话就执行最后一个。所以，最好就把多条启动命令写在一个脚本中，再在CMD 中去执行脚本就完事了～～～
 
-4. 将一个容器，打包成镜像，
+4. 将一个容器，打包成镜像，同时打标签
 
     `docker commit -a "zelin.liu" -m "test_for_legacy" legacy mylegazy:v0.1`
 
@@ -195,18 +195,23 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
 1. 这是默认行为。实际上，dockerfile的文件名并不要求必须为dockerfile，而且并不要求必须位于上下文目录中。例如，-f ../Dockerfile.php 指定某个文件作为Dockerfile
 
     1. images打包迁移，save和load命令，不推荐使用，应该直接用docker registry，无论是dockerhub还是内网私仓
-    2. `docker save <IMAGE ID> | bzip2 | pv | ssh <用户名>@<主机名> 'cat | docker load'`  用ssh和pv和管道，将images迁移并能看进度条
-
-        `docker save 7382 > mysql.tar`
-
-        `docker load -i /home/bakup/mysql.tar`
-
-    3. container打包，
-
+    
+2. `docker save <IMAGE ID> | bzip2 | pv | ssh <用户名>@<主机名> 'cat | docker load'`  用ssh和pv和管道，将images迁移并能看进度条
+    
+    `docker save 7382 > mysql.tar`  不用带标签，使用 IMAGE ID快速打包
+    
+    `docker load -i /home/bakup/mysql.tar`
+    
+    此时，新导入的镜像名称和标签都为 <none> ，手动打标签，d tag 86d8 jenkins:192.168.10.68-old  
+    
+    还可以，在save 的时候就连带镜像标签一起打包， docker save -o jenkins-68-old.tar jenkins/jenkins:2.291-centos7
+    
+3. container打包，
+    
         1. export 将一个容器导出为文件， import将文件导入成为一个新镜像。 但相比docker save, 容器文件会丢失所有元数据和历史记录，仅保存容器当时的状态，相当于虚拟机快照
-
+    
             docker export -o ubu_lzl01.tar d006
-
+    
             docker import ubu_lzl01.tar -- ubu/lzl001:v1.0
 
 - 容器的网络模式:       ifconfig -a ;route -n
@@ -397,6 +402,9 @@ docker run --detach --hostname gitlab --publish 8443:443 --publish 8000:80 --pub
     `docker ps`                                                       查看到，当前容器的STATUS 中添加了 Paused
 
     `docker unpause dfd1`
+
+9. 查看镜像支持的环境变量
+    docker run IMAGE_NAME env (同时会产生一个exited状态的容器)
 
 ## faq
 
