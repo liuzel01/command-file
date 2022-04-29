@@ -25,7 +25,7 @@
     -v source:destination
 
 - docker,创建gitlab-ce
-sudo docker run --detach \
+sudo docker run --detach --privileged=true\
   --hostname gitlab-l01 \
   --publish 443:443 --publish 80:80 --publish 22:22 \
   --name gitlab-l01 \
