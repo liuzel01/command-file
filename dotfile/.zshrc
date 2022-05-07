@@ -1,4 +1,7 @@
 # zinit
+# zinit.sh 安装脚本，https://raw.githubusercontent.com/zdharma-continuum/zinit/HEAD/scripts/install.sh
+## 或是 git clone https://github.91chi.fun/https://github.com/zdharma-continuum/zinit.git ~/.zinit/zinit.git
+## 参考，https://www.cnblogs.com/hongdada/p/14048612.html
 source "$HOME/.zinit/zinit.git/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
@@ -24,8 +27,19 @@ source "$HOME/.bashrc" 1>/dev/null 2>&1
 	[[ -s /root/.autojump/etc/profile.d/autojump.sh ]] && source /root/.autojump/etc/profile.d/autojump.sh
 
 setopt no_nomatch
-
+# ctrl+s 向后搜索
 stty -ixon
+
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+
+cdls() {
+     \cd $1 &&\
+         ls -la
+}    
 ### End of Zinit's installer chunk
 
 # 语法高亮
