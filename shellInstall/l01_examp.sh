@@ -15,12 +15,6 @@ select menu in 黄焖鸡 鱼香肉丝盖饭 烤肉饭 老碗面 招牌五谷渔�
             echo "黄焖鸡 15元";;
         2)
             echo "鱼香肉丝盖饭 15元";;
-        3)
-            echo "烤肉饭 12元";;
-        4)
-            echo "老碗面 9元";;
-        5)
-            echo "招牌五谷渔粉  12元";;
         *)
             echo "欢迎下次光临";
             beak
@@ -28,7 +22,7 @@ select menu in 黄焖鸡 鱼香肉丝盖饭 烤肉饭 老碗面 招牌五谷渔�
 done
 }
 
-# 系统版本号
+# 获取系统版本号
 os(){
     sed - 's/.*[[:space:]]([0-9])\..*/\1/' /etc/redhat-release
 }
@@ -80,7 +74,6 @@ fact(){
 # https://blog.51cto.com/u_12948961/2161449
 
 # 打印日志并追加到日志文件
-
 log() {
     TIME=$(date +%Y-%m-%d)
     LOGFILE="check-$TIME.log"
