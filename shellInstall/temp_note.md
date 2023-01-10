@@ -865,7 +865,7 @@ mysql全量备份， 与binlog 将误删数据恢复
     linux遭入侵，挖矿进程被隐藏， https://mp.weixin.qq.com/s/1AF5cgo_hJ096LmX7ZHitA
         ld.so.preload文件, 动态链接库预加载机制
         后边，写到centos7.md 文件-隐藏进程-hideprocess 中去。。
-    linux watchdogs 隐藏挖矿病毒， https://www.anquanke.com/post/id/171523%EF%BC%8C%E8%BF%99%E8%B5%B7%E4%BA%8B%E4%BB%B6%E4%B8%AD%EF%BC%8C%E6%8A%8ALD_PRELOAD%E7%9B%B8%E5%85%B3%E7%9A%84%E4%BF%A1%E6%81%AF%E4%B9%9F%E5%9C%A8Hook%E6%97%B6%E8%BF%9B%E8%A1%8C%E4%BA%86%E8%BF%87%E6%BB%A4%E3%80%82
+    linux watchdogs [隐藏挖矿病毒](https://www.anquanke.com/post/id/171523%EF%BC%8C%E8%BF%99%E8%B5%B7%E4%BA%8B%E4%BB%B6%E4%B8%AD%EF%BC%8C%E6%8A%8ALD_PRELOAD%E7%9B%B8%E5%85%B3%E7%9A%84%E4%BF%A1%E6%81%AF%E4%B9%9F%E5%9C%A8Hook%E6%97%B6%E8%BF%9B%E8%A1%8C%E4%BA%86%E8%BF%87%E6%BB%A4%E3%80%82)
     云计算， https://daimajiaoliu.com/daima/479c7e0cc100404
 
 
